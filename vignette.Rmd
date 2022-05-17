@@ -1,0 +1,350 @@
+---
+title: "UMAPVizR"
+author: "Gwendolyn MARGUERIT"
+date: '2022-04-05'
+output: 
+  html_document:
+    highlight: pygments
+runtime: shiny
+---
+
+# 1. Introduction
+
+Cytometry data are now classically analyzed using non linear dimensionality reduction approaches, but it is still challenging to easily handle the whole pipeline of computational analyses.
+
+UMAPVizR allows the statistical analysis and visualization of high dimensional cytometry data using manifold algorithms and clustering methods. Especially, several key analysis steps are available to perform data importation, manifold generation, cell cluster identification, statistical analyses, cluster visualization, and quality controls of generated results. 
+
+UMAPVizR can import cell events from FCS or txt file formats using different transformation, down-sampling, and normalization approaches. Manifold representations can be generated using the UMAP, tSNE or LargeVis algorithms to project cell events into a lower dimensionality space. The identification of cell clusters can be done using multiple clustering algorithms, depending on user's assumptions. The characteristics of cell clusters can be visualized using scatter plot, categorical heatmap of marker expressions, or using parallel coordinates representations. Cell clusters having abundances differently expressed between biological conditions can be identified using several statistical tests. Statistical results can be visualized using volcano plots or heatmaps.
+
+[insert Supervised/Unsupervised Multivariate analysis such as]
+
+### 1.1 Overview of Workflow
+
+
+```{r echo=FALSE, out.width="60%", fig.align= "center", fig.cap="Workflow"}
+
+knitr::include_graphics("workflow.png")
+
+```
+
+This object will be implemented progressively to contain the main information of the files used. This stored information will allow to realize the statistics ans visualization part of the dataset. 
+
+### 1.2 Input data
+
+The following conditions must be respected in order to analyse the data with UMAPVizR:
+
+- **Type and format of data** : The biological data that can be explored an intergrated with `UMAPVizR` are flow, mass or spectral cytometry data. The input files can be in standard cytometry format (FCS) or in txt format.\
+- **Compensation** : Before starting an analysis with `UMAPVizR` it is necessary to perform the compensation steps for flow cytométry and spectral data with conventional methods (FlowJo or Kaluza).
+- **Cleaning and gating** : It is recommended to perform data cleaning: remove debris, dead cells and doublets. You can then perform a pre-gating on a large population of interest, e.g. lymphocytes, to make the use of `UMAPVizR` more optimal.
+
+# 2. Quick start
+
+### 2.1 Installation
+
+In order to download `UMAPVizR` it is required `devtools`:
+```{r echo=TRUE, eval=FALSE}
+
+install.packages("devtools")
+library("devtools")
+install_github("xxx")
+
+```
+
+The `UMAPVizR` package automatically downloads the necessary packages for its operation such as: `coin`, `concaveman`, `dendextend`, `flowCore`, `ggdendro`, `gglot2`, `gridExtra`, `MASS`, `plyr`, `reshape`, `reshape2`, `rstatix`, `Rtsne`, `scales`, `stats`, `stringr`, `uwot`. If not, the packages are available on the `CRAN`, except `flowCore` wich is available on `Bioconductor`. 
+
+Once installed, `UMAPVizR` can be loaded using the following command:
+```{r echo=TRUE, eval=FALSE}
+
+library("xxx")
+
+```
+
+### 2.2 Importing data
+
+The first function of the package to use is the `importFCS` function which allows to import the expression matrix of the files in the `UMAPdata` object. 
+
+The files to be analysed must be in FCS or txt format. The function is used as below: 
+```{r echo=TRUE, eval=FALSE}
+# creation of a vector containing the names of the files 
+files <- list.files("./Transreg/03_Kaluza_exports_renamed/Panel_03_NK/", pattern = "fcs", full.names = TRUE)
+
+# import the fcs files  
+UMAPV <- importFCS(files, 
+                   exclude.markers = c("FS","FS.1","FS.2", "SS","SS.1","SS.2", "Time"), 
+                   transform = "logicle")
+
+# import txt files 
+## to create 
+
+```
+
+The main arguments of the `importFCS` function are:
+
+- the `exclude_markers` argument is used to remove the channels not to be used for the analysis
+- the `transform` argument allows you to choose the type of transformation to be used on the data. Advice: for flow cytometry data use a `logicle` transform and for mass cytometry data use `arcsinh` transform
+
+### 2.3 Assign metadata
+
+The metadata can be assigned to each sample in the dataset. This metadata is used by the different viewers to associate samples to specific biological conditions or individuals. The metadata file must contain exclusively the following column names:
+
+- individual: corresponds to the sample identifier
+- condition: corresponds to the biological condition of the sample
+- timepoint: corresponds to the timepoint of the sample (optional)
+
+To do this, follow the instructions below:
+```{r echo=TRUE, eval=FALSE}
+# creation of the dataframe 
+metadata = data.frame(individual = c("10105LA", "10209HE"),
+                      condition = c("HV", "HV"),
+                      timepoint = c("V1", "V1"))
+
+# assign of the dataframe 
+UMAPV <- assignMetadata(UMAPV, metadata = metadata)
+
+```
+
+### 2.4 Manifold construction and clustering
+
+This part consists of two steps. The first step is to perform the manifold on the dataset by following the instructions below:
+```{r echo=TRUE, eval=FALSE}
+# Perform Manifold from the "UMAPdata" object
+UMAPV <- generateManifold(UMAPV, 
+                          type = "UMAP",
+                          markers = c("TCR gd", "NKP44", "DR", "NKp30", "NKp46",
+                                      "NKG2D", "CD3", "CD16", "CD56", "CD8"))
+```
+
+The main arguments of the `generateManifold` function are:
+
+- the `type` argument is used to specify the clustering method to use
+- the `markers` argument is used to specify the markers to use for the manifold generation
+
+The second step allows the clustering to be performed from the manifold by following the instructions below:
+```{r echo=TRUE, eval=FALSE}
+# Clustering computation from the manifold 
+UMAPV <- identifyClusters(UMAPV, 
+                          space = "manifold", 
+                          method = "kmeans", 
+                          k = 120)
+
+```
+
+The main arguments of the `identifyClusters` function are:
+
+- the `space` argument is used to determine if clustering should be done on the markers or the manifold
+- the `method` argument is used to specify the method to use for the clustering
+- the `k` argument is used to determine the number of clusters to be performed. A specified only when methods `kmeans`, `kmedian` and `clara` are used
+
+N.B : These two steps can be switched depending on the selected parameters.
+
+### 2.5 Basic visualization
+
+Once the complete template has been generated, it is possible to perform quick visualization of the dataset.
+
+The first visualization shows a computed manifold representation for a given analysis. The manifold can be colored based on the local cell density or marker expression. 
+```{r echo=TRUE, eval=FALSE}
+# Display manifold overlay by 'density' 
+plotUMAPProjections(UMAPV, 
+                    markers = "density")
+
+# Display manifold overlay by 'markers'  
+plotUMAPProjections(UMAPV, 
+                    markers = "NKP44")
+
+```
+
+The main argument of the `plotUMAPProjections` function is `markers` which is used to specify the marker to be used for colouring. The `density` value is used to colour based on the local density 
+
+It is possible to use an additional argument called `samples` which is used to specify the biological samples to be displayed during the representation as below:
+```{r echo=TRUE, eval=FALSE}
+# Display manifold overlay by 'density' by sample 
+plotUMAPProjections(UMAPV, 
+                    markers = "density", 
+                    samples = "V1_10105LA")
+
+```
+
+The second visualization shows a heatmap displaying the expression values of each marker for the dataset as below: 
+```{r echo=TRUE, eval=FALSE}
+# Heatmap of expression markers 
+hm.exp <- plotHmExpressions(UMAPV)
+
+plot(hm.exp)
+
+```
+
+This visualization can be customized with some parameters as below:
+```{r echo=TRUE, eval=FALSE}
+# Heatmap of expression markers 
+hm.exp <- plotHmExpressions(UMAPV, 
+                            markers = c("NKP44", "NKp30", "NKp46", "NKG2D"), 
+                            clusters = c(1:50))
+
+plot(hm.exp)
+
+```
+
+The customization parameters of the `plotHmExpressions` are:
+
+- the `markers` argument is used to specify the markers to be used for heatmap
+- the `clusters` argument is used to specify the identifiers of the clusters to be displayed for heatmap
+
+These parameters can be used independently of each other. 
+
+# 3. Quality control
+
+The `UMAPVizR` package allows for a set of quality controls to be performed. 
+The quality control can be performed on the input dataset to check the names and range expression of the markers of each sample, but also, after analysis, to check the quality of the clustering performed. 
+
+### 3.1 Quality control of the dataset
+
+Quality control after the import of samples can be checked in two ways. 
+The first method of quality control is to check the concordance of the markers between the different samples as below:
+```{r echo=TRUE, eval=FALSE}
+# Check for marker concordance
+QCMarkerNames(files)
+
+```
+
+If the marker names are not the same for each sample, they can be corrected as below:
+```{r echo=TRUE, eval=FALSE}
+# Rename markers if necessary
+UMAPV <- renameMarkers(UMAPV, marker.names = c("TCRgd", "NKP44", "HLADR", "NKp30", "NKp46",
+                                               "NKG2D", "CD3", "CD16", "CD56", "CD8"))
+
+```
+
+The second quality control method is to check the low (5%) and high (95%) expression values of each marker for each sample:
+```{r echo=TRUE, eval=FALSE}
+# Check the expression values for markers
+QCMarkerRanges(files)
+
+```
+
+### 3.2 Control quality of the cell clustering result
+
+the quality control of clustering can be checked in two ways. 
+The first method allows the identification of small clusters, i.e. clusters whose number of cells is below a specific threshold. The method is shown below:
+```{r echo=TRUE, eval=FALSE}
+# QC for small clusters 
+QCSmallClusters(UMAPV)
+
+```
+
+The second method allows to identify the uniform clusters, i.e. those with unimodal expression and low dispersion of expression for all its markers. The method is shown below:
+```{r echo=TRUE, eval=FALSE}
+# QC for uniform clusters
+QCUniformClusters(UMAPV)
+
+```
+
+# 4. Statistics and visualization
+### 4.1 Statistical analysis
+
+Once the whole template has been completed and the number of clusters has been quality controlled, it is possible to perform differential analysis on the dataset.
+
+The statistics are calculated as follows:
+```{r echo=TRUE, eval=FALSE}
+# Compute statistics 
+baseline <- "^V1_"
+list.conditions <- c("^V6_", "^V7_", "^V8_")
+
+stats <- data.frame()
+for (condition in list.conditions) {
+  stat = computeStatistics(UMAPV, condition = paste0(condition), ref.condition = paste0(baseline), 
+                           test.statistics = "wilcoxon", 
+                           paired = "unpaired")
+  stats = rbind(stats, cbind(stat, cond=condition))
+}
+
+dt@statistic = stats 
+
+```
+
+For the `computeStatistics` function:
+
+- the `condition` argument is used to specify the condition to be compared,
+- the `ref.condition` argument is used to specify the reference condition,
+- the `test.statistics` argument is used to specify the method of statistical test,
+- the `paired` argument is used to specify the paired or unpaired comparison should be applied. 
+
+The visualization of this differential analysis can be done in different possibilities, either as a volcano plot as follows: 
+```{r echo=TRUE, eval=FALSE}
+# Volcano plot for differential analysis 
+plotVolcanoPlot(UMAPV)
+
+```
+
+Either in the heatmap as follows:
+```{r echo=TRUE, eval=FALSE}
+# Heatmap of statistics
+plotHmStatistics(UMAPV, clusters = NULL,
+                 statistics = "pvalue")
+```
+
+For the `plotHmStatistics` function:
+
+- the `clusters` argument is used to specify the identifiers of the clusters to be displayed for heatmap,
+- the `statistics` argument is used to specify the reference condition.
+
+```{r echo=TRUE, eval=FALSE}
+# Heatmap of abundances
+plotHmAbundances(UMAPV, clusters = NULL,
+                 samples = NULL)
+
+```
+
+For the `plotHmStatistics` function:
+
+- the `clusters` argument is used to specify the identifiers of the clusters to be displayed for heatmap,
+- the `samples` argument is used to specify the biological samples to be displayed for heatmap,
+- the `saturation` argument is used to xxx.
+
+It is possible to perform a differential analysis in the boxplot format as follows:
+```{r echo=TRUE, eval=FALSE}
+# Boxplot for differential analysis
+plotBoxPlot(UMAPV, clusters = c(1:10), 
+            samples = NULL, 
+            observation = "timepoint", 
+            test.statistics = "wilcoxon", 
+            paired = "unpaired")
+
+```
+
+For the `plotBoxPlot` function:
+
+- the `clusters` argument is used to specify the identifiers of the clusters to be displayed,
+- the `samples` argument is used to specify the biological samples to be displayed,
+- the `observation` argument is used to specify the xxx, 
+- the `test.statistics` argument is used to specify the method of statistical test,
+- the `paired` argument is used to specify the paired or unpaired comparison should be applied. 
+
+
+
+### 4.2 Visualization
+
+```{r echo=TRUE, eval=FALSE}
+# MDS
+plotMDS(UMAPV, levels = "clusters", clusters = c(1:10))
+plotMDS(UMAPV, levels = "samples", samples = NULL)
+
+```
+
+```{r echo=TRUE, eval=FALSE}
+# PCA
+plotPCA(UMAPV, levels = "clusters", clusters = c(1:10), components = c(1,2))
+plotPCA(UMAPV, levels = "samples", samples = NULL, components = c(1,2))
+
+```
+
+
+# 5. Advanced usage
+### 5.1 Upsampling 
+
+### 5.2 Export 
+
+```{r}
+knitr::outpu
+```
+
+
