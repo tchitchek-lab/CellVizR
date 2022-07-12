@@ -4,10 +4,12 @@
 \alias{plotVolcanoPlot}
 \title{Plots of a volcano plot of statistical analysis}
 \usage{
-plotVolcanoPlot(UMAPdata, th.pv = 1.3, th.fc = 1.5)
+plotVolcanoPlot(UMAPdata, comparison, th.pv = 1.3, th.fc = 1.5)
 }
 \arguments{
 \item{UMAPdata}{a UMAPdata object}
+
+\item{comparison}{a character value containing the comparison to study}
 
 \item{th.pv}{a numeric value containing the p-value threshold to use}
 

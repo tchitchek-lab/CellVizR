@@ -45,9 +45,9 @@ identifyClusters <- function(UMAPdata,
   message(paste0("Identifying cell clusters..."))
   
   if(space=="manifold"){
-    data = proj
+    data <- proj
   }else if (space == "markers") {
-    data = exprs
+    data <- exprs
   }
   
   set.seed(seed)
@@ -102,18 +102,18 @@ identifyClusters <- function(UMAPdata,
   
 }
 
-#' @title Internal - Computes the concave hulls for identified cell clusters
-#'
-#' @description This function is used internally to computes the concave hulls each cell cluster.
-#' Each concave hulls correspond the boundaries of the cells cluster with manifold representation.
-#'
-#' @param proj a data.frame providing the manifold representation
-#' @param clusters a character vector providing id of cell clusters for which the concave hulls must be computed
-#' @param concavity a numeric value providing a relative measure of concavity (please refer to the function 'concaveman' of the 'concaveman' package)
-#' @param length.threshold a numeric value providing a threshold for the segment length (please refer to the function 'concaveman' of the concaveman package)
-#'
-#' @return a data.frame containing the concave hulls for each cluster (dim1, dim2, clusters)
-#'
+# @title Internal - Computes the concave hulls for identified cell clusters
+#
+# @description This function is used internally to computes the concave hulls each cell cluster.
+# Each concave hulls correspond the boundaries of the cells cluster with manifold representation.
+#
+# @param proj a data.frame providing the manifold representation
+# @param clusters a character vector providing id of cell clusters for which the concave hulls must be computed
+# @param concavity a numeric value providing a relative measure of concavity (please refer to the function 'concaveman' of the 'concaveman' package)
+# @param length.threshold a numeric value providing a threshold for the segment length (please refer to the function 'concaveman' of the concaveman package)
+#
+# @return a data.frame containing the concave hulls for each cluster (dim1, dim2, clusters)
+#
 computeConcaveHulls <- function(proj,
                                 clusters,
                                 concavity = 2,
@@ -143,16 +143,16 @@ computeConcaveHulls <- function(proj,
   return(concave.hulls)
 }
 
-#' @title Internal - Computes the number of cells for each cluster
-#'
-#' @description This function is used internally to computes the number of cells for each cluster.
-#'
-#' @param proj a data.frame providing the manifold representation with two columns
-#' @param clusters a character vector providing the cluster to analyse the associated with cell cluster
-#' @param samples a character vector providing for each cell the associated biological sample
-#'
-#' @return a data.frame containing the numbers of cells associated for each cluster for each sample (rownames = clusters / colnames = samples)
-#'
+# @title Internal - Computes the number of cells for each cluster
+#
+# @description This function is used internally to computes the number of cells for each cluster.
+#
+# @param proj a data.frame providing the manifold representation with two columns
+# @param clusters a character vector providing the cluster to analyse the associated with cell cluster
+# @param samples a character vector providing for each cell the associated biological sample
+#
+# @return a data.frame containing the numbers of cells associated for each cluster for each sample (rownames = clusters / colnames = samples)
+#
 computeCellCounts <- function(proj,
                               clusters,
                               samples) {
@@ -171,14 +171,14 @@ computeCellCounts <- function(proj,
   return(cell.count)
 }
 
-#' @title Internal - Computes the abundances for each cell cluster
-#'
-#' @description This function is used internally to computes the abundance of each cluster for each sample.
-#'
-#' @param count a data.frame providing the numbers of cells associated to each cluster for each sample
-#'
-#' @return a data.frame containing the abundance of cells to each clusters for each sample
-#'
+# @title Internal - Computes the abundances for each cell cluster
+#
+# @description This function is used internally to computes the abundance of each cluster for each sample.
+#
+# @param count a data.frame providing the numbers of cells associated to each cluster for each sample
+#
+# @return a data.frame containing the abundance of cells to each clusters for each sample
+#
 computeClusterAbundances <- function(count) {
   
   matrix.abundance <- apply(count, 2, function(df){df / sum(df)}) * 100

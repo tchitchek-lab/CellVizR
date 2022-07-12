@@ -1,50 +1,50 @@
-#' @title Internal - Rescales marker expression by quantile 
-#'
-#' @description This function is used internally to rescale the marker expression by the quantile method.
-#' 
-#' @param exprs a data.frame containing the marker expressions for each cluster
-#' @param quant.low a numeric value providing the value of the first quantile
-#' @param quant.high a numeric value providing the value of the last quantile 
-#'  
-#' @return a data.frame containing quantile rescale marker expressions 
-#' 
+# @title Internal - Rescales marker expression by quantile 
+#
+# @description This function is used internally to rescale the marker expression by the quantile method.
+# 
+# @param exprs a data.frame containing the marker expressions for each cluster
+# @param quant.low a numeric value providing the value of the first quantile
+# @param quant.high a numeric value providing the value of the last quantile 
+#  
+# @return a data.frame containing quantile rescale marker expressions 
+# 
 rescaleMarkerExpressions = function(exprs,
                                     quant.low = 0.05, 
                                     quant.high = 0.95) {
   
-  exprs = plyr::ddply(exprs, "marker", function(df) {
+  exprs <- plyr::ddply(exprs, "marker", function(df) {
     
-    quantiles = stats::quantile(df$value, probs=c(quant.low, quant.high))
-    low = quantiles[1]
-    high = quantiles[2]
-    df$value[df$value<low] = low
-    df$value[df$value>high] = high
-    values = scales::rescale(df$value, from=c(low, high), to=c(0,4))
+    quantiles <- stats::quantile(df$value, probs = c(quant.low, quant.high))
+    low <- quantiles[1]
+    high <- quantiles[2]
+    df$value[df$value<low] <- low
+    df$value[df$value>high] <- high
+    values <- scales::rescale(df$value, from = c(low, high), to = c(0,4))
     
-    return(data.frame(clusters=df$clusters, value=values))
+    return(data.frame(clusters = df$clusters, value = values))
   })
   
   return(exprs)
   
 }
 
-#' @title Internal - Computes marker expression medians for each cluster
-#'
-#' @description This function is used internally to computes marker expression medians for each cluster.
-#' 
-#' @param exprs a data.frame containing the marker expressions for each cell
-#'  
-#' @return a data.frame containing the median of marker expressions for each cluster (clusters, markers, medians)
-#' 
+# @title Internal - Computes marker expression medians for each cluster
+#
+# @description This function is used internally to computes marker expression medians for each cluster.
+# 
+# @param exprs a data.frame containing the marker expressions for each cell
+#  
+# @return a data.frame containing the median of marker expressions for each cluster (clusters, markers, medians)
+# 
 computeMarkerMedians = function(exprs) { 
   
-  exprs = plyr::ddply(exprs, c("clusters", "marker"), function(df) {
-    med = stats::median(df$value)
+  exprs <- plyr::ddply(exprs, c("clusters", "marker"), function(df) {
+    med <- stats::median(df$value)
     return(med) })
   
-  colnames(exprs) = c("clusters", "marker", "med")
-  exprs$clusters = as.character(exprs$clusters)
-  exprs$marker = as.vector(exprs$marker)
+  colnames(exprs) <- c("clusters", "marker", "med")
+  exprs$clusters <- as.character(exprs$clusters)
+  exprs$marker <- as.vector(exprs$marker)
   
   return(exprs)
 }
@@ -84,106 +84,106 @@ plotHmExpressions = function(UMAPdata,
   checkmate::qassert(nb.cat, "N1")
   checkmate::qassert(seed, "N1")
   
-  rainbow.color.palette = c("white", "yellow", "orange", "red", "red4")
-  rainbow.color.palette = grDevices::colorRampPalette(rainbow.color.palette)(nb.cat)
+  rainbow.color.palette <- c("white", "yellow", "orange", "red", "red4")
+  rainbow.color.palette <- grDevices::colorRampPalette(rainbow.color.palette)(nb.cat)
   
-  proj = cbind(UMAPdata@manifold, UMAPdata@identify.clusters)
-  colnames(proj) = c("dim1","dim2","clusters")
+  proj <- cbind(UMAPdata@manifold, UMAPdata@identify.clusters)
+  colnames(proj) <- c("dim1","dim2","clusters")
   
   if (!is.null(markers)) { 
-    exp.markers = UMAPdata@matrix.expression[,markers]
+    exp.markers <- UMAPdata@matrix.expression[,markers]
   } else {
-    exp.markers = UMAPdata@matrix.expression[,colnames(UMAPdata@matrix.expression)]
+    exp.markers <- UMAPdata@matrix.expression[,colnames(UMAPdata@matrix.expression)]
   }
   
-  proj.sub = cbind(proj[,"clusters"], exp.markers) 
-  colnames(proj.sub) = c("clusters", colnames(exp.markers))
+  proj.sub <- cbind(proj[,"clusters"], exp.markers) 
+  colnames(proj.sub) <- c("clusters", colnames(exp.markers))
   
   if(!is.null(clusters)) {
-    proj.sub = proj.sub[proj.sub$clusters %in% clusters,]
+    proj.sub <- proj.sub[proj.sub$clusters %in% clusters,]
   } 
   
-  proj.melt = reshape::melt(proj.sub, id="clusters")
-  colnames(proj.melt) = c("clusters", "marker", "value")
+  proj.melt <- reshape::melt(proj.sub, id="clusters")
+  colnames(proj.melt) <- c("clusters", "marker", "value")
   
-  proj.melt = rescaleMarkerExpressions(proj.melt)
-  proj.melt = computeMarkerMedians(proj.melt)
+  proj.melt <- rescaleMarkerExpressions(proj.melt)
+  proj.melt <- computeMarkerMedians(proj.melt)
   
-  row.data = reshape::cast(proj.melt, marker~clusters, value = "med")
-  row.data$marker = NULL
-  hclust.row = stats::hclust(stats::dist(row.data), method = method.hclust)
-  labels.row = hclust.row$labels[hclust.row$order]
-  proj.melt$marker = factor(proj.melt$marker, levels = labels.row)
+  row.data <- reshape::cast(proj.melt, marker~clusters, value = "med")
+  row.data$marker <- NULL
+  hclust.row <- stats::hclust(stats::dist(row.data), method = method.hclust)
+  labels.row <- hclust.row$labels[hclust.row$order]
+  proj.melt$marker <- factor(proj.melt$marker, levels = labels.row)
   
-  col.data = reshape::cast(proj.melt, clusters~marker, value = "med")
-  col.data$clusters = NULL
-  hclust.col = stats::hclust(stats::dist(col.data), method = method.hclust)
+  col.data <- reshape::cast(proj.melt, clusters~marker, value = "med")
+  col.data$clusters <- NULL
+  hclust.col <- stats::hclust(stats::dist(col.data), method = method.hclust)
   
   set.seed(seed)
-  dist.col = stats::dist(col.data)
-  isoMDS = MASS::isoMDS(dist.col,k=1)
-  col.tsne = isoMDS$points
+  dist.col <- stats::dist(col.data)
+  isoMDS <- MASS::isoMDS(dist.col, k = 1)
+  col.tsne <- isoMDS$points
   
-  col.order = rownames(col.tsne)[order(col.tsne)]
-  hclust.col = dendextend::rotate(hclust.col, col.order)
-  labels.col = hclust.col$labels[hclust.col$order]
-  proj.melt$clusters = factor(proj.melt$clusters, levels = labels.col)
+  col.order <- rownames(col.tsne)[order(col.tsne)]
+  hclust.col <- dendextend::rotate(hclust.col, col.order)
+  labels.col <- hclust.col$labels[hclust.col$order]
+  proj.melt$clusters <- factor(proj.melt$clusters, levels = labels.col)
   
-  plot = ggplot2::ggplot(proj.melt, ggplot2::aes_string(x="clusters", y="marker")) + 
+  plot <- ggplot2::ggplot(proj.melt, ggplot2::aes_string(x="clusters", y="marker")) + 
     ggplot2::geom_tile(ggplot2::aes_string(fill="med"), color="black", size=0.1) +
     ggplot2::scale_x_discrete(expand = c(0,0)) +
     ggplot2::scale_y_discrete(expand = c(0,0)) 
   
-  plot = plot + 
+  plot <- plot + 
     ggplot2::scale_fill_gradientn(colours = rainbow.color.palette, na.value = "black")
   
-  plot = plot + 
+  plot <- plot + 
     ggplot2::theme_void() +
     ggplot2::theme(
       panel.background = ggplot2::element_blank()) 
   
-  dend.data = ggdendro::dendro_data(stats::as.dendrogram(hclust.row), type = "rectangle")
+  dend.data <- ggdendro::dendro_data(stats::as.dendrogram(hclust.row), type = "rectangle")
   
-  dendro.row = ggplot2::ggplot(dend.data$segments) +
+  dendro.row <- ggplot2::ggplot(dend.data$segments) +
     ggplot2::geom_segment(ggplot2::aes_string(x="x", y="y", xend="xend", yend="yend")) +
     ggplot2::scale_x_continuous(expand = c(0.5/length(unique(proj.melt$marker)), 0.5/length(unique(proj.melt$marker)))) +
     ggplot2::coord_flip() +
     ggplot2::scale_y_reverse() +
     ggplot2::theme_void()
   
-  label.row = ggplot2::ggplot() +
+  label.row <- ggplot2::ggplot() +
     ggplot2::geom_text(data = dend.data$labels, ggplot2::aes_string(x="x", label = "label"), 
                        size=4, y=0, hjust=0, vjust=0.5, angle=0) +
     ggplot2::scale_x_continuous(expand = c(0.5/length(unique(proj.melt$marker)), 0.5/length(unique(proj.melt$marker)))) +
     ggplot2::coord_flip() +
     ggplot2::theme_void()
   
-  dend.data = ggdendro::dendro_data(stats::as.dendrogram(hclust.col), type = "rectangle")
+  dend.data <- ggdendro::dendro_data(stats::as.dendrogram(hclust.col), type = "rectangle")
   
-  dendro.col = ggplot2::ggplot(dend.data$segments) +
+  dendro.col <- ggplot2::ggplot(dend.data$segments) +
     ggplot2::geom_segment(ggplot2::aes_string(x="x", y="y", xend="xend", yend="yend")) +
     ggplot2::scale_x_continuous(expand = c(0.5/length(unique(proj.melt$clusters)), 0.5/length(unique(proj.melt$clusters)))) + 
     ggplot2::theme_void() +
     ggplot2::theme(
       plot.title = ggplot2::element_text(hjust = 0.5, size = 12, face = "bold"))
   
-  label.col = ggplot2::ggplot() + 
+  label.col <- ggplot2::ggplot() + 
     ggplot2::geom_text(data = dend.data$labels, ggplot2::aes_string(x="x", label="label"), y=1, hjust=0, vjust=0.5, angle=-90, size=4) + 
     ggplot2::scale_x_continuous(expand = c(0.5/length(unique(proj.melt$clusters)), 0.5/length(unique(proj.melt$clusters)))) + 
     ggplot2::theme_void() + 
     ggplot2::theme(
       legend.position = "none")
   
-  grob = list()
+  grob <- list()
   
-  grob[["hm"]] = plot + ggplot2::theme(legend.position = "none")
-  grob[["dendro.col"]] = dendro.col
-  grob[["dendro.row"]] = dendro.row
-  grob[["label.col"]] = label.col
-  grob[["label.row"]] = label.row
-  grob[["legend"]] =  ggpubr::get_legend(plot)
+  grob[["hm"]] <- plot + ggplot2::theme(legend.position = "none")
+  grob[["dendro.col"]] <- dendro.col
+  grob[["dendro.row"]] <- dendro.row
+  grob[["label.col"]] <- label.col
+  grob[["label.row"]] <- label.row
+  grob[["legend"]] <- ggpubr::get_legend(plot)
   
-  hm.exp = gridExtra::arrangeGrob(
+  hm.exp <- gridExtra::arrangeGrob(
     grobs = grob,
     layout_matrix = rbind(
       c(6,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,NA),
@@ -225,8 +225,8 @@ plotHmExpressions = function(UMAPdata,
       c(NA,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,NA))
   )
   
-  hm.exp$order.clusters = labels.col
-  hm.exp$order.markers = labels.row
+  hm.exp$order.clusters <- labels.col
+  hm.exp$order.markers <- labels.row
   
   invisible(hm.exp)
 }
@@ -262,51 +262,51 @@ plotHmAbundances = function(UMAPdata,
   checkmate::qassert(saturation, "N1")
   checkmate::qassert(rescale, "B1")
   
-  abundances = UMAPdata@matrix.abundance
+  abundances <- UMAPdata@matrix.abundance
   
   if (rescale == TRUE) {
-    abundances = t(scale(t(abundances)))
-    abundances = data.frame(abundances)
+    abundances <- t(scale(t(abundances)))
+    abundances <- data.frame(abundances)
   } else { 
-    abundances = data.frame(abundances)
+    abundances <- data.frame(abundances)
   }
   
   if (!is.null(samples)) {
-    abundances = abundances[, names(abundances) %in% samples]
+    abundances <- abundances[, names(abundances) %in% samples]
   }
   
-  abundances$clusters = rownames(abundances)
+  abundances$clusters <- rownames(abundances)
   
   if (!is.null(clusters)) {
-    abundances$clusters = abundances$clusters[abundances$clusters %in% clusters]
-    abundances$clusters = factor(abundances$clusters, levels = clusters)
+    abundances$clusters <- abundances$clusters[abundances$clusters %in% clusters]
+    abundances$clusters <- factor(abundances$clusters, levels = clusters)
   } else {
-    abundances$clusters = factor(abundances$clusters, levels = gtools::mixedsort(unique(abundances$clusters)))
+    abundances$clusters <- factor(abundances$clusters, levels = gtools::mixedsort(unique(abundances$clusters)))
   }
   
-  abundances.melt = reshape::melt(abundances, id="clusters")
-  colnames(abundances.melt) = c("clusters","samples","value")
-  abundances.melt$samples = as.vector(abundances.melt$samples)
+  abundances.melt <- reshape::melt(abundances, id="clusters")
+  colnames(abundances.melt) <- c("clusters","samples","value")
+  abundances.melt$samples <- as.vector(abundances.melt$samples)
   
-  abundances.melt = plyr::ddply(abundances.melt, c("samples", "clusters"), function(x){
+  abundances.melt <- plyr::ddply(abundances.melt, c("samples", "clusters"), function(x){
     return(mean(x$value))
   })
-  colnames(abundances.melt) = c("samples", "clusters", "value")
+  colnames(abundances.melt) <- c("samples", "clusters", "value")
   
-  abundances.melt$samples = factor(abundances.melt$samples, levels = rev(unique(abundances.melt$samples)))
+  abundances.melt$samples <- factor(abundances.melt$samples, levels = rev(unique(abundances.melt$samples)))
   
-  abundances.melt$value[abundances.melt$value>saturation] = saturation
-  abundances.melt$value[abundances.melt$value<(-saturation)] = -saturation
+  abundances.melt$value[abundances.melt$value>saturation] <- saturation
+  abundances.melt$value[abundances.melt$value<(-saturation)] <- -saturation
   
-  abundances.melt$label = as.numeric(as.vector(abundances.melt$clusters))
-  abundances.melt$label = stringr::str_pad(abundances.melt$label, 3, pad="0")
+  abundances.melt$label <- as.numeric(as.vector(abundances.melt$clusters))
+  abundances.melt$label <- stringr::str_pad(abundances.melt$label, 3, pad="0")
   
-  plot = ggplot2::ggplot() +
+  plot <- ggplot2::ggplot() +
     ggplot2::geom_tile(data = abundances.melt, 
                        ggplot2::aes_string(x="clusters", y="samples", fill="value"), 
                        color=NA, size=4)
   
-  plot = plot +
+  plot <- plot +
     ggplot2::labs(fill="abundance") +
     ggplot2::scale_fill_gradientn(colours = c("green", "black", "red"), 
                                   limits = c(-saturation,saturation), 
@@ -314,7 +314,7 @@ plotHmAbundances = function(UMAPdata,
     ggplot2::scale_x_discrete(expand = c(0,0)) +
     ggplot2::scale_y_discrete(expand = c(0,0)) 
   
-  plot = plot +
+  plot <- plot +
     ggplot2::theme_void() +
     ggplot2::theme(
       legend.position = "bottom",
@@ -345,7 +345,7 @@ plotHmAbundances = function(UMAPdata,
 #' 
 plotHmStatistics = function(UMAPdata, 
                             clusters = NULL, 
-                            statistics = c("pvalue","lfc","statistic"),
+                            statistics = c("pvalue","lfc","effsize"),
                             saturation = 3) {
   
   statistics <- match.arg(statistics)
@@ -358,37 +358,37 @@ plotHmStatistics = function(UMAPdata,
   # pvalue = 3
   # effect size = 0.5
   
-  stats = UMAPdata@statistic
-  stats$value = stats[,statistics]
+  stats <- UMAPdata@statistic
+  stats$value <- stats[,statistics]
   
-  stats$clusters = as.character(stats$clusters)
+  stats$clusters <- as.character(stats$clusters)
   
   if (!is.null(clusters)) {
-    stats$clusters = stats$clusters[stats$clusters %in% clusters] 
-    stats$clusters = factor(stats$clusters, levels = clusters)
+    stats$clusters <- stats$clusters[stats$clusters %in% clusters] 
+    stats$clusters <- factor(stats$clusters, levels = clusters)
   } else {
-    stats$clusters = factor(stats$clusters, levels = gtools::mixedsort(unique(stats$clusters)))
+    stats$clusters <- factor(stats$clusters, levels = gtools::mixedsort(unique(stats$clusters)))
   }
   
   
   if(statistics == "pvalue"){
-    stats$value = -log(stats$value)/log(10)
-    stats$value = stats$value*sign(stats$lfc)
+    stats$value <- -log(stats$value)/log(10)
+    stats$value <- stats$value*sign(stats$lfc)
   }
   
-  stats$value[stats$value > saturation] = saturation
-  stats$value[stats$value < (-saturation)] = -saturation
+  stats$value[stats$value > saturation] <- saturation
+  stats$value[stats$value < (-saturation)] <- -saturation
   
-  stats$cond = factor(stats$cond, levels = rev(unique(stats$cond)))
+  stats$comparison <- factor(stats$comparison, levels = rev(unique(stats$comparison)))
   
-  stats$label = as.numeric(as.vector(stats$clusters))
-  stats$label = stringr::str_pad(stats$label, 3, pad = "0")
+  stats$label <- as.numeric(as.vector(stats$clusters))
+  stats$label <- stringr::str_pad(stats$label, 3, pad = "0")
   
-  plot = ggplot2::ggplot() + 
-    ggplot2::geom_tile(data = stats, ggplot2::aes_string(x="clusters", y="cond", fill="value"), color="black", size=0.1)
-  #ggplot2::geom_text(data = stats, ggplot2::aes_string(x="clusters", y="cond", label="label", color="sign"), size = 2, angle = -90)
+  plot <- ggplot2::ggplot() + 
+    ggplot2::geom_tile(data = stats, ggplot2::aes_string(x="clusters", y="comparison", fill="value"), color="black", size=0.1)
+  #ggplot2::geom_text(data = stats, ggplot2::aes_string(x="clusters", y="comparison", label="label", color="sign"), size = 2, angle = -90)
   
-  plot = plot +     
+  plot <- plot +     
     ggplot2::labs(fill = statistics) + 
     ggplot2::guides(color = FALSE) + 
     ggplot2::scale_fill_gradientn(limits = c(-saturation, saturation), colours = c("orange", "gray", "blue"),
@@ -398,7 +398,7 @@ plotHmStatistics = function(UMAPdata,
     ggplot2::scale_x_discrete(expand = c(0,0)) +
     ggplot2::scale_y_discrete(expand = c(0,0)) 
   
-  plot = plot +
+  plot <- plot +
     ggplot2::theme_void() +
     ggplot2::theme(
       legend.position = "bottom",
@@ -409,14 +409,14 @@ plotHmStatistics = function(UMAPdata,
       # axis.text.y = ggplot2::element_text(color = "black")
     )
   
-  label.row = ggplot2::ggplot() +
-    ggplot2::geom_text(data = stats, ggplot2::aes_string(x="cond", label="cond"), 
+  label.row <- ggplot2::ggplot() +
+    ggplot2::geom_text(data = stats, ggplot2::aes_string(x="comparison", label="comparison"), 
                        size=4, y=0, hjust=0, vjust=0.5, angle=0) + 
-    ggplot2::scale_x_discrete(expand = c(0.5/length(unique(stats$cond)), 0.5/length(unique(stats$cond)))) + 
+    ggplot2::scale_x_discrete(expand = c(0.5/length(unique(stats$comparison)), 0.5/length(unique(stats$comparison)))) + 
     ggplot2::coord_flip() +
     ggplot2::theme_void()
   
-  label.col = ggplot2::ggplot() + 
+  label.col <- ggplot2::ggplot() + 
     ggplot2::geom_text(data = stats, ggplot2::aes_string(x="clusters", label="clusters"), 
                        size=4, y=1, hjust=0, vjust=0.5, angle=-90) + 
     ggplot2::scale_x_discrete(expand = c(0.5/length(unique(stats$clusters)), 0.5/length(unique(stats$clusters)))) + 
@@ -425,14 +425,14 @@ plotHmStatistics = function(UMAPdata,
       legend.position = "none")
   
   
-  grob = list()
+  grob <- list()
   
-  grob[["hm_stats"]] = plot + ggplot2::theme(legend.position = "none")
-  grob[["label.row"]] = label.row
-  grob[["label.col"]] = label.col
-  grob[["legend"]] = ggpubr::get_legend(plot)
+  grob[["hm_stats"]] <- plot + ggplot2::theme(legend.position = "none")
+  grob[["label.row"]] <- label.row
+  grob[["label.col"]] <- label.col
+  grob[["legend"]] <- ggpubr::get_legend(plot)
   
-  hm.stats = gridExtra::arrangeGrob(
+  hm.stats <- gridExtra::arrangeGrob(
     grobs = grob,
     layout_matrix = rbind(
       c(6,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2),
@@ -477,9 +477,9 @@ plotHmStatistics = function(UMAPdata,
 plotCombineHM = function(HM1,
                          HM2) {
   
-  grob2 = c(HM1$grobs, HM2$grobs)
+  grob2 <- c(HM1$grobs, HM2$grobs)
   
-  combineHM = gridExtra::grid.arrange(
+  combineHM <- gridExtra::grid.arrange(
     grobs = grob2,
     layout_matrix = rbind(
       c(6,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,NA),
@@ -504,7 +504,7 @@ plotCombineHM = function(HM1,
       c(NA,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,NA),
       c(NA,NA,10,10,10,10,10,10,10,10,10,10,10,10,10,10,NA,NA))
   )
-
+  
   invisible(combineHM)
   
 }

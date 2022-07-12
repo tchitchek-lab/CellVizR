@@ -1,11 +1,11 @@
-#' @title Internal - Creates of a FlowFrame object
-#'
-#' @description This function is used internally to create a flowframe object with the purpose extracting marker intensities to FCS files. 
-#'
-#' @param intensities a data.frame providing the cell profile intensities
-#'
-#' @return a flowframe object containing the marker expression
-#' 
+# @title Internal - Creates of a FlowFrame object
+#
+# @description This function is used internally to create a flowframe object with the purpose extracting marker intensities to FCS files. 
+#
+# @param intensities a data.frame providing the cell profile intensities
+#
+# @return a flowframe object containing the marker expression
+# 
 createFlowframe <- function(intensities) {
   
   markers <- colnames(intensities)
@@ -72,40 +72,40 @@ methods::setMethod("export",c("UMAPdata"),
                      checkmate::qassert(clusters, c("0","S*"))
                      checkmate::qassert(samples, c("0","S*"))
                      
-                     exprs                  <- UMAPdata@matrix.expression
+                     exprs <- UMAPdata@matrix.expression
                      
                      if(length(UMAPdata@manifold)!=0){
-                       exprs = cbind(exprs,UMAPdata@manifold)
+                       exprs <- cbind(exprs,UMAPdata@manifold)
                      }
                      if(length(UMAPdata@identify.clusters)!=0){
-                       exprs = cbind(exprs,cluster=as.numeric(UMAPdata@identify.clusters))
+                       exprs <- cbind(exprs,cluster=as.numeric(UMAPdata@identify.clusters))
                      }
                      
-                     exprs = cbind(exprs,samples=UMAPdata@samples)
+                     exprs <- cbind(exprs,samples=UMAPdata@samples)
                      
                      
                      if(!is.null(samples)){
-                       exprs = exprs[exprs$samples %in% samples,]
+                       exprs <- exprs[exprs$samples %in% samples,]
                      }
                      if(!is.null(clusters)){
-                       exprs = exprs[exprs$clusters %in% clusters,]
+                       exprs <- exprs[exprs$clusters %in% clusters,]
                      }
                      
-                     exprs = data.frame(exprs)
+                     exprs <- data.frame(exprs)
                      
                      if(any(tools::file_ext(filename)%in% c("fcs","FCS"))){
                        
-                       exprs$samples = as.numeric(factor(exprs$samples))					 
+                       exprs$samples <- as.numeric(factor(exprs$samples))					 
                        
-                       flowFrame = suppressWarnings(createFlowframe(exprs))
+                       flowFrame <- suppressWarnings(createFlowframe(exprs))
                        flowCore::write.FCS(flowFrame,filename=filename)
                        
                      }else{
                        
-                       exprs$sample.id = as.numeric(factor(exprs$samples))	
+                       exprs$sample.id <- as.numeric(factor(exprs$samples))	
                        
-                       write.table(exprs,file=filename,sep="\t",row.names=FALSE)
-                     }
+                       utils::write.table(exprs, file = filename, sep="\t", row.names=FALSE)
+                     } 
                      
                    }
 )

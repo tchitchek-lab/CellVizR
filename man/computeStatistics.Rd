@@ -8,8 +8,8 @@ computeStatistics(
   UMAPdata,
   condition,
   ref.condition,
-  test.statistics = c("wilcoxon", "t-test"),
-  paired = c("paired", "unpaired")
+  test.statistics = c("wilcox.test", "t.test"),
+  paired = FALSE
 )
 }
 \arguments{

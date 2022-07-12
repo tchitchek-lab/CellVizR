@@ -7,7 +7,7 @@
 plotHmStatistics(
   UMAPdata,
   clusters = NULL,
-  statistics = c("pvalue", "lfc", "statistic"),
+  statistics = c("pvalue", "lfc", "effsize"),
   saturation = 3
 )
 }

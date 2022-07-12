@@ -25,6 +25,16 @@ setMethod("print", "UMAPdata",
             cat("Numbers of cells: ")
             cat(formatC(nrow(x@matrix.expression), big.mark = ","))
             cat("\n")
+            cat("- Metadata: ")
+            cat("\n")
+            if(all(c("condition") %in% colnames(x@metadata))) { 
+              cat(paste0("Conditions: ", paste0(names(table(x@metadata$condition )), "=", table(x@metadata$condition) , collapse = ", ")))
+              cat("\n")
+            }
+            if(all(c("timepoint") %in% colnames(x@metadata))) { 
+              cat(paste0("Timepoint: ", paste0(names(table(x@metadata$timepoint)), "=", table(x@metadata$timepoint) , collapse = ", ")))
+              cat("\n") 
+            }
             cat("- Manifold")
             cat("\n")
             if (length(x@manifold) == 0) {
@@ -42,7 +52,7 @@ setMethod("print", "UMAPdata",
               cat(paste0("Numbers of clusters: ", length(unique(x@identify.clusters))))
               cat("\n")
               cat(paste0("Parameters: ", paste0(names(x@identify.clusters.params), "=", x@identify.clusters.params, collapse = ", " )))
-			  cat("\n")
+              cat("\n")
             }
             
           })

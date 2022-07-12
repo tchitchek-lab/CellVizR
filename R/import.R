@@ -36,67 +36,68 @@ import = function(files,
   checkmate::qassert(exclude.markers, c("0", "S*"))
   checkmate::qassert(seed, "N1")
   
-  exprs = data.frame()
-  samples = c()
+  exprs <- data.frame()
+  samples <- c()
   
   for(file in files) {
     
     message(paste0("importing ",basename(file)," file"))
     
-    if(filetype=="fcs"){
-      fcs = flowCore::read.FCS(file)
+    if(filetype == "fcs"){
+      fcs <- flowCore::read.FCS(file)
     }else{
-      exprs = read.delim(file,sep="\t")
-      exprs = exprs[,!colnames(exprs) %in% exclude.markers]
-      fcs = suppressWarnings(createFlowframe(exprs))
+      exprs <- utils::read.delim(file,sep="\t")
+      exprs <- exprs[,!colnames(exprs) %in% exclude.markers]
+      fcs <- suppressWarnings(createFlowframe(exprs))
     }
     
     switch(transform, 
            logicle = {
-             trans = flowCore::estimateLogicle(fcs, channels = flowCore::colnames(fcs), m = 5.5)
-             fcs = flowCore::transform(fcs, trans)
+             trans <- flowCore::estimateLogicle(fcs, channels = flowCore::colnames(fcs), m = 5.5)
+             fcs <- flowCore::transform(fcs, trans)
            },
            arcsinh = {
-             trans.arcsinh = flowCore::arcsinhTransform(a=0, b=0.2)
-             marker.trans = flowCore::colnames(fcs)
-             trans = flowCore::transformList(marker.trans, trans.arcsinh)
-             fcs = flowCore::transform(fcs, trans)
+             trans.arcsinh <- flowCore::arcsinhTransform(a=0, b=0.2)
+             marker.trans <- flowCore::colnames(fcs)
+             trans <- flowCore::transformList(marker.trans, trans.arcsinh)
+             fcs <- flowCore::transform(fcs, trans)
            },
            logarithmic = {
-             trans.log = flowCore::logTransform(logbase = 10, r=1,d=1)
-             marker.trans = flowCore::colnames(fcs)
-             trans = flowCore::transformList(marker.trans, trans.log)
-             fcs = flowCore::transform(fcs, trans)
+             trans.log <- flowCore::logTransform(logbase = 10, r=1,d=1)
+             marker.trans <- flowCore::colnames(fcs)
+             trans <- flowCore::transformList(marker.trans, trans.log)
+             fcs <- flowCore::transform(fcs, trans)
            }, 
            none = {
-             fcs = fcs 
+             fcs <- fcs 
            })
     
-    exprs.sub =  flowCore::exprs(fcs)
-    exprs.sub = exprs.sub[,colnames(exprs.sub) %in% names(flowCore::markernames(fcs))]
+    exprs.sub <- flowCore::exprs(fcs)
+    exprs.sub <- exprs.sub[,colnames(exprs.sub) %in% names(flowCore::markernames(fcs))]
     
     if(!is.null(downsampling)){
       set.seed(seed)
-      exprs.sub = exprs.sub[sample(nrow(exprs.sub),min(downsampling,nrow(exprs.sub))),]
+      exprs.sub <- exprs.sub[sample(nrow(exprs.sub),min(downsampling,nrow(exprs.sub))),]
     }
     
-    colnames(exprs.sub) = flowCore::markernames(fcs)
+    colnames(exprs.sub) <- flowCore::markernames(fcs)
     
-    exprs = rbind(exprs, exprs.sub)
+    exprs <- rbind(exprs, exprs.sub)
     
-    sample = gsub(".fcs", "", basename(file))
-    samples = c(samples, rep(sample, nrow(exprs.sub)))
+    sample <- gsub(".fcs", "", basename(file))
+    samples <- c(samples, rep(sample, nrow(exprs.sub)))
     
   }
   
   if(!is.null(exclude.markers)){
-    exprs = exprs[,!colnames(exprs) %in% exclude.markers]
+    exprs <- exprs[,!colnames(exprs) %in% exclude.markers]
   }
   
-  res = methods::new("UMAPdata",
-                     matrix.expression = exprs,
-                     samples = samples,
-                     matrix.abundance = data.frame())
+  res <- methods::new("UMAPdata",
+                      matrix.expression = exprs,
+                      samples = samples,
+                      raw.markers = colnames(exprs),
+                      matrix.abundance = data.frame())
   
   return(res)
 }
@@ -154,10 +155,12 @@ assignMetadata = function(UMAPdata,
   if(length(unique(colnames(metadata)))!=length(colnames(metadata))){
     stop("colnames are not unique")
   }
+  
   if(!all(colnames(metadata) %in% c("individual", "condition", "timepoint"))) {
     stop("colnames must be 'individual', 'condition', or 'timepoint'")
   }
-  if(!all(c("individual") %in% colnames(metadata) )) {
+  
+  if(!all(c("individual") %in% colnames(metadata))) {
     stop("colnames 'individual' is missing")
   }
   
@@ -165,7 +168,7 @@ assignMetadata = function(UMAPdata,
     stop("sample names (rownames) of the metadata are inconcistent with the sample names stored in the UMAPdata object")
   }
   
-  UMAPdata@metadata = metadata
+  UMAPdata@metadata <- metadata
   
   return(UMAPdata)
 }

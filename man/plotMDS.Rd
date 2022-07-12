@@ -7,6 +7,7 @@
 plotMDS(
   UMAPdata,
   levels = c("clusters", "samples"),
+  condition.samples = c("condition", "timepoint"),
   clusters = NULL,
   samples = NULL
 )
@@ -15,6 +16,8 @@ plotMDS(
 \item{UMAPdata}{a UMAPdata object}
 
 \item{levels}{a character value containing the variable to be displayed. Possible values are: 'clusters' or 'samples'}
+
+\item{condition.samples}{a character vector containing xxx}
 
 \item{clusters}{a character vector containing the identifiers of the clusters to use. By default, all clusters are used}
 

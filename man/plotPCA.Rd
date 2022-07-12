@@ -6,10 +6,11 @@
 \usage{
 plotPCA(
   UMAPdata,
-  levels = c("clusters", "samples", "both"),
+  levels = c("both", "clusters", "samples"),
   clusters = NULL,
   samples = NULL,
   components = c(1, 2),
+  condition.samples = c("condition", "timepoint"),
   cor.radius.th = 0.6,
   cluster.label.size = 3,
   sample.label.size = 3,
@@ -27,6 +28,8 @@ plotPCA(
 \item{samples}{a character vector containing the names of biological samples to use. By default, all samples are used}
 
 \item{components}{a numeric vector providing the components to display}
+
+\item{condition.samples}{a character vector containing xxx}
 
 \item{cor.radius.th}{a numeric value containing}
 

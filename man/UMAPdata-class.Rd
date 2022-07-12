@@ -13,6 +13,8 @@ The UMAPdata object is a S4 object containing all cytometry expressions.
 \describe{
 \item{\code{samples}}{a character vector containing the names of the biological samples}
 
+\item{\code{raw.markers}}{a character vector containing the names of the raw markers}
+
 \item{\code{matrix.expression}}{a data.frame containing the marker expressions of each cell}
 
 \item{\code{manifold}}{a data.frame containing the manifold coordinates}

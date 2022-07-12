@@ -3,6 +3,7 @@
 #' @description The UMAPdata object is a S4 object containing all cytometry expressions.
 #'
 #' @slot samples a character vector containing the names of the biological samples
+#' @slot raw.markers a character vector containing the names of the raw markers
 #' @slot matrix.expression a data.frame containing the marker expressions of each cell
 #' @slot manifold a data.frame containing the manifold coordinates
 #' @slot manifold.params a list containing the parameters used for manifold creation
@@ -21,6 +22,7 @@
 
 UMAPdata <- methods::setClass("UMAPdata",
                               slots = c(samples = "vector",
+                                        raw.markers = "vector",
                                         matrix.expression = "data.frame",
                                         manifold = "data.frame",
                                         manifold.params = "list",
@@ -32,12 +34,12 @@ UMAPdata <- methods::setClass("UMAPdata",
                                         statistic = "data.frame",
                                         metadata = "data.frame"),
                               validity = function(object) {
-                                  # if (nrow(matrix.cell.count) != length(unique(samples))) {
-                                  #        stop("...")
-                                  # }
-                                  # if (nrow(matrix.abundance) != length(unique(samples))) {
-                                  #        stop("...")
-                                  # }
-                                  return(TRUE)
+                                # if (nrow(matrix.cell.count) != length(unique(samples))) {
+                                #        stop("...")
+                                # }
+                                # if (nrow(matrix.abundance) != length(unique(samples))) {
+                                #        stop("...")
+                                # }
+                                return(TRUE)
                               }
 )

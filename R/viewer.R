@@ -36,73 +36,73 @@ plotCellCounts = function(UMAPdata,
   checkmate::qassert(samples, c("0", "S*"))
   checkmate::qassert(sort, "B1")
   
-  nb.cells = UMAPdata@matrix.expression
-  nb.cells$samples = UMAPdata@samples
+  nb.cells <- UMAPdata@matrix.expression
+  nb.cells$samples <- UMAPdata@samples
   
   if (!is.null(samples)) {
-    nb.cells = nb.cells[nb.cells$samples %in% samples,]
+    nb.cells <- nb.cells[nb.cells$samples %in% samples,]
   }
   
-  nb.cells = plyr::ddply(nb.cells, "samples", nrow) 
-  colnames(nb.cells) = c("samples", "nb")
+  nb.cells <- plyr::ddply(nb.cells, "samples", nrow) 
+  colnames(nb.cells) <- c("samples", "nb")
   
   if (sort == TRUE) {
-    nb.cells = nb.cells[order(nb.cells$nb, decreasing = TRUE),]
-    nb.cells$samples = factor(nb.cells$samples, levels = nb.cells$samples)
+    nb.cells <- nb.cells[order(nb.cells$nb, decreasing = TRUE),]
+    nb.cells$samples <- factor(nb.cells$samples, levels = nb.cells$samples)
   } else {
     nb.cells$samples <- factor(nb.cells$samples,levels= nb.cells$samples)
   }
   
-  min = min(nb.cells$nb)
-  mean = mean(nb.cells$nb)
-  median = stats::median(nb.cells$nb)
-  q75 = stats::quantile(nb.cells$nb, probs = 0.75)
-  max = max(nb.cells$nb)
+  min <- min(nb.cells$nb)
+  mean <- mean(nb.cells$nb)
+  median <- stats::median(nb.cells$nb)
+  q75 <- stats::quantile(nb.cells$nb, probs = 0.75)
+  max <- max(nb.cells$nb)
   
-  xscale.middle = nrow(nb.cells)/2
+  xscale.middle <- nrow(nb.cells)/2
   if(xscale.middle%%2==0){
-    xscale.middle = xscale.middle+0.5
+    xscale.middle <- xscale.middle+0.5
   }
   
-  plot = ggplot2::ggplot() +
+  plot <- ggplot2::ggplot() +
     ggplot2::geom_segment(data = nb.cells, ggplot2::aes_string(x="samples", xend="samples", yend="nb"), y=0, color = "gray50") + 
     ggplot2::geom_point(data = nb.cells, ggplot2::aes_string(x="samples", y="nb"), size=2)
   
   if("min" %in% stats){
-    plot = plot +
+    plot <- plot +
       ggplot2::geom_hline(yintercept=min, color="blue") +
       ggplot2::geom_text(data = nb.cells, ggplot2::aes_string(x="xscale.middle", y="min"), label=paste0("min: ", format(min, scientific = FALSE, big.mark = ",")), color="blue", vjust=0)
   }
   
   if("max" %in% stats){
-    plot = plot +
+    plot <- plot +
       ggplot2::geom_hline(yintercept=max, color="blue") +
       ggplot2::geom_text(data = nb.cells, ggplot2::aes_string(x="xscale.middle", y="max"), label=paste0("max: ", format(max, scientific = FALSE, big.mark = ",")), color="blue", vjust=0)
   }
   
   if("median" %in% stats){
-    plot = plot +
+    plot <- plot +
       ggplot2::geom_hline(yintercept=median, color="red") +
       ggplot2::geom_text(data = nb.cells, ggplot2::aes_string(x="xscale.middle", y="median"),label=paste0("median: ", format(median, scientific = FALSE, big.mark = ",")), color="red", vjust=0)
   }
   
   if("mean" %in% stats){
-    plot = plot +
+    plot <- plot +
       ggplot2::geom_hline(yintercept=mean, color="orange") +
       ggplot2::geom_text(data = nb.cells, ggplot2::aes_string(x="xscale.middle", y="mean"), label=paste0("mean: ", format(mean, scientific = FALSE, big.mark= "," )),color="orange", vjust=0)
   }
   
   if("q75" %in% stats){
-    plot = plot +
+    plot <- plot +
       ggplot2::geom_hline(yintercept=q75, color="purple") +
       ggplot2::geom_text(data = nb.cells, ggplot2::aes_string(x="xscale.middle", y="q75"), label=paste0("q75: ", format(q75, scientific = FALSE, big.mark = ",")), color="purple", vjust=0)
   }
   
-  plot = plot +
+  plot <- plot +
     ggplot2::scale_y_continuous(labels = function(x){format(x, scientific = FALSE, big.mark=",")}) +
     ggplot2::ylab("number of cells") 
   
-  plot = plot + 
+  plot <- plot + 
     ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5), 
                    plot.subtitle = ggplot2::element_text(hjust = 0.5, face = "italic"), 
                    axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust = 1, size = 5.5),
@@ -135,23 +135,22 @@ plotClustersCounts = function(UMAPdata,
                               clusters = NULL,
                               sort = TRUE) {
   
-  checkmate::qassert(stats, "S*")
-  checkmate::qassert(samples, c("0", "S*"))
+  checkmate::qassert(clusters, c("0", "N+"))
   checkmate::qassert(sort, "B1")
   
-  matrix.cell = UMAPdata@matrix.cell.count
+  matrix.cell <- UMAPdata@matrix.cell.count
   
   if (!is.null(clusters)) {
-    matrix.cell = matrix.cell[rownames(matrix.cell) %in% clusters,]
+    matrix.cell <- matrix.cell[rownames(matrix.cell) %in% clusters,]
   } else {
-    clusters = unique(UMAPdata@identify.clusters)
-    matrix.cell = matrix.cell[clusters, , drop = FALSE]
+    clusters <- unique(UMAPdata@identify.clusters)
+    matrix.cell <- matrix.cell[clusters, , drop = FALSE]
   }
   
-  cells.number = sum(colSums(matrix.cell))
-  matrix.cell = cbind(matrix.cell, "sum.of.samples" = apply(matrix.cell, 1, sum))
+  cells.number <- sum(colSums(matrix.cell))
+  matrix.cell <- cbind(matrix.cell, "sum.of.samples" = apply(matrix.cell, 1, sum))
   
-  matrix.cell = cbind("clusters" = rownames(matrix.cell), matrix.cell)
+  matrix.cell <- cbind("clusters" = rownames(matrix.cell), matrix.cell)
   
   if (sort == TRUE) {
     order <- order(matrix.cell$sum.of.samples,decreasing=TRUE)
@@ -164,7 +163,7 @@ plotClustersCounts = function(UMAPdata,
   colnames(data.melted) <- c("clusters", "samples", "values")
   data.melted$total <- ifelse(data.melted[, "samples"] == "sum.of.samples", "sum for selected samples", "")
   
-  plot = ggplot2::ggplot() + 
+  plot <- ggplot2::ggplot() + 
     ggplot2::ggtitle(paste0("Count viewer (", format(cells.number, big.mark = " "), " cells)", sep="")) + 
     ggplot2::geom_jitter(data = subset(data.melted, samples != "sum.of.samples"),
                          ggplot2::aes_string(x="clusters", y="values", size="values", fill="samples"),
@@ -173,19 +172,19 @@ plotClustersCounts = function(UMAPdata,
                         ggplot2::aes_string(x="clusters", y="values", size="values", shape = "total"),
                         fill = "grey40")
   
-  plot = plot + 
+  plot <- plot + 
     ggplot2::scale_size_area(name = "Number of cells") + 
     ggplot2::scale_shape_manual(values = 21) + 
     ggplot2::scale_y_continuous(expand = c(0,0), limits = c(0, 1.1 * max(data.melted$values))) + 
     ggplot2::xlab("clusters") + 
     ggplot2::ylab("Number of cells")
   
-  plot = plot + 
+  plot <- plot + 
     ggplot2::theme_bw() +
     ggplot2::theme(
+      plot.title = ggplot2::element_text(hjust = 0.5),
       axis.text.x = ggplot2::element_text(angle = 90, hjust = 1, vjust = 0.5), 
-      legend.key = ggplot2::element_blank(), 
-      plot.title = ggplot2::element_text(hjust = 0.5))
+      legend.key = ggplot2::element_blank())
   
   invisible(plot)
   
@@ -216,69 +215,70 @@ plotPhenoClusters = function(UMAPdata,
   checkmate::qassert(quant.high, "N1")
   checkmate::qassert(dip.th, "N1")
   
-  expression_color_palette = c("white","yellow","orange","red","red4")
+  expression_color_palette <- c("white","yellow","orange","red","red4")
   
-  matrix.exp = UMAPdata@matrix.expression
-  samples = UMAPdata@samples
-  clusters = UMAPdata@identify.clusters
-  assignments = UMAPdata@metadata
+  matrix.exp <- UMAPdata@matrix.expression
+  samples <- UMAPdata@samples
+  clusters <- UMAPdata@identify.clusters
+  assignments <- UMAPdata@metadata
   
-  proj = cbind(samples, matrix.exp, clusters)
+  proj <- cbind(samples, matrix.exp, clusters)
   
-  parameters = colnames(proj)
-  markers = parameters[!parameters %in% c("samples", "clusters")]
+  parameters <- colnames(proj)
+  markers <- parameters[!parameters %in% c("samples", "clusters")]
   
-  grob = list()
+  grob <- list()
   
   for (marker in markers) {
     
-    exp.values = proj[,c(marker, "clusters", "samples")]
-    colnames(exp.values) = c("exp", "clusters", "samples")
-    quantiles = stats::quantile(exp.values$exp, probs = c(quant.low, quant.high))
+    exp.values <- proj[,c(marker, "clusters", "samples")]
+    colnames(exp.values) <- c("exp", "clusters", "samples")
+    quantiles <- stats::quantile(exp.values$exp, probs = c(quant.low, quant.high))
     
     print(cluster)
-    exp.values.clusters = exp.values[exp.values$clusters %in% cluster,]
+    exp.values.clusters <- exp.values[exp.values$clusters %in% cluster,]
     
-    order = unique(assignments$timepoint)
-    assignments = assignments[samples, , drop = FALSE]
-    exp.values$timepoint = assignments[exp.values$samples,"timepoint"]
-    order = intersect(order, unique(assignments$timepoint))
-    exp.values$timepoint = factor(exp.values$timepoint, levels = order)
+    order <- unique(assignments$timepoint)
+    assignments <- assignments[samples, , drop = FALSE]
+    exp.values$timepoint <- assignments[exp.values$samples,"timepoint"]
+    order <- intersect(order, unique(assignments$timepoint))
+    exp.values$timepoint <- factor(exp.values$timepoint, levels = order)
     
-    median = median(exp.values.clusters$exp)
-    tmp.exp = exp.values.clusters$exp
-    dip = diptest::dip.test(tmp.exp)
+    median <- median(exp.values.clusters$exp)
+    tmp.exp <- exp.values.clusters$exp
+    dip <- diptest::dip.test(tmp.exp)
     
     if(dip$p.value<dip.th){
-      color = "red"
+      color <- "red"
     }else{
-      color = "green"
+      color <- "green"
     }
     
-    plot = ggplot2::ggplot() + 
+    plot <- ggplot2::ggplot() + 
       ggplot2::ggtitle(marker) + 
-      ggridges::geom_density_ridges_gradient(data = exp.values, ggplot2::aes(x=exp, fill=stat(x), y=0)) + 
+      ggridges::geom_density_ridges_gradient(data = exp.values, ggplot2::aes(x=exp, fill=ggplot2::stat(x), y=0)) + 
       ggplot2::scale_fill_gradientn(limits=c(quantiles[1], quantiles[2]),
                                     colours = expression_color_palette, na.value = "black") +
       ggplot2::geom_density(data = exp.values.clusters, ggplot2::aes_string(x="exp"), 
-                            color = color, fill=NA, size=0.75) + 
-      # ggplot2::geom_density(data = exp.values, ggplot2::aes_string(x="exp", color = "TP"), 
-      #                       size = 0.75) + group = "samples",
-      ggplot2::geom_vline(xintercept = median, linetype = "dashed", color = "gray20") +
+                            color = color, fill=NA, size=0.75) +
+      ggplot2::geom_vline(xintercept = median, linetype = "dashed", color = "gray20")
+    
+    plot <- plot + 
       ggplot2::scale_x_continuous(limits = c(-2,6), breaks = c(-2:6)) +
-      ggplot2::scale_y_continuous(labels = function(x) {format(round(x, 1), nsmall = 1)}) +
+      ggplot2::scale_y_continuous(labels = function(x) {format(round(x, 1), nsmall = 1)})
+    
+    plot <- plot + 
       ggplot2::theme_bw() +
       ggplot2::theme(
-        legend.position = "none",
-        legend.key.width = grid::unit(0.35, "cm"),
         plot.title = ggplot2::element_text(hjust = 0.5, size = 10, face = "bold"),
         axis.title.x = ggplot2::element_blank(),
         axis.title.y = ggplot2::element_blank(),
+        panel.grid.minor = ggplot2::element_blank(),
         panel.grid.major = ggplot2::element_blank(),
-        panel.grid.minor = ggplot2::element_blank()
-      )
+        legend.position = "none",
+        legend.key.width = grid::unit(0.35, "cm"))
     
-    grob[[marker]] = plot
+    grob[[marker]] <- plot
   }
   
   test = gridExtra::grid.arrange(grobs = grob,
@@ -310,11 +310,13 @@ plotPhenoClusters = function(UMAPdata,
 #' @export
 #'    
 plotManifold = function(UMAPdata, 
-                        markers = "density",
+                        markers = c("density","markers"),
                         samples = NULL,
                         scale = FALSE,
                         quant.low = 0.05,
                         quant.high = 0.95) {
+  
+  markers <- match.arg(markers)
   
   checkmate::qassert(markers, "S1")
   checkmate::qassert(samples, c("0","S*"))
@@ -322,61 +324,61 @@ plotManifold = function(UMAPdata,
   checkmate::qassert(quant.low, "N1")
   checkmate::qassert(quant.high, "N1")
   
-  proj = UMAPdata@manifold
-  colnames(proj) = c("UMAP1","UMAP2")
-  clusters = UMAPdata@identify.clusters
+  proj <- UMAPdata@manifold
+  colnames(proj) <- c("UMAP1","UMAP2")
+  clusters <- UMAPdata@identify.clusters
   
   if(length(clusters)!=0){
-    proj$clusters = clusters
+    proj$clusters <- clusters
   }
   
-  proj = na.omit(proj)
+  proj <- stats::na.omit(proj)
   
-  lines = UMAPdata@concave.hulls
+  lines <- UMAPdata@concave.hulls
   
   if(markers=="density"){
-    legend.title =  "cell density"
-    proj$value = computeCellDensities(proj, n=100)
+    legend.title <- "cell density"
+    proj$value <- computeCellDensities(proj, n=100)
   }else{
-    legend.title =  paste0(markers," expression")
-    proj$value = UMAPdata@matrix.expression[,markers]
-    palette = rev(grDevices::rainbow(100,alpha=1)[seq(1,85)])
+    legend.title <- paste0(markers," expression")
+    proj$value <- UMAPdata@matrix.expression[,markers]
+    palette <- rev(grDevices::rainbow(100,alpha=1)[seq(1,85)])
   }
   
-  plot = ggplot2::ggplot()
+  plot <- ggplot2::ggplot()
   
   if(!is.null(samples)){
-    proj.ref = proj
-    proj     = proj[UMAPdata@samples %in% samples,]
-    plot = plot +
+    proj.ref <- proj
+    proj     <- proj[UMAPdata@samples %in% samples,]
+    plot <- plot +
       ggplot2::geom_point(data=proj.ref, ggplot2::aes_string(x="UMAP1", y="UMAP2"), color="gray", size=0.0001) +
       ggnewscale::new_scale_color()
   }
   
-  plot = plot +
+  plot <- plot +
     ggplot2::geom_point(data=proj, ggplot2::aes_string(x="UMAP1", y="UMAP2", color="value"), size=0.0001)
   
   
   if(nrow(lines)!=0){
-    plot = plot + ggplot2::geom_path(data=lines, ggplot2::aes_string(x="dim1", y="dim2", group="clusters"), color="black", size=0.2)
+    plot <- plot + ggplot2::geom_path(data=lines, ggplot2::aes_string(x="dim1", y="dim2", group="clusters"), color="black", size=0.2)
   }
   
   if(markers=="density"){
-    plot = plot + ggplot2::scale_color_gradientn(colours=c("black","red"),
-                                                 labels=function(x){return(rep("", length(x)))})
+    plot <- plot + ggplot2::scale_color_gradientn(colours=c("black","red"),
+                                                  labels=function(x){return(rep("", length(x)))})
   }else{
     limits = abs.proj(proj, scale, quant.low, quant.high)
-    plot = plot + ggplot2::scale_color_gradientn(colours = palette,limits = limits)
+    plot <- plot + ggplot2::scale_color_gradientn(colours = palette,limits = limits)
   }
   
-  plot = plot+
+  plot <- plot+
     ggplot2::labs(title = "UMAP representation", color=legend.title)
   
-  plot = plot+
+  plot <- plot+
     ggplot2::scale_x_continuous(expand = c(0.01,0.01)) +
     ggplot2::scale_y_continuous(expand = c(0.01,0.01))
   
-  plot = plot + 
+  plot <- plot + 
     ggplot2::theme_bw() +
     ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5),
                    aspect.ratio = 1,
@@ -399,6 +401,7 @@ plotManifold = function(UMAPdata,
 #' @param clusters a character vector containing the identifier of the cluster to use. By default, all clusters are used
 #' @param samples a character vector containing the names of biological samples to use. By default, all samples are used
 #' @param components a numeric vector providing the components to display 
+#' @param condition.samples a character vector containing xxx
 #' @param cor.radius.th a numeric value containing
 #' @param cluster.label.size a numeric value containing xxx
 #' @param sample.label.size a numeric value containing xxx
@@ -410,10 +413,11 @@ plotManifold = function(UMAPdata,
 #' @export
 #' 
 plotPCA <- function(UMAPdata,
-                    levels = c("clusters", "samples", "both"),
+                    levels = c("both", "clusters", "samples"),
                     clusters = NULL,
                     samples = NULL,
                     components = c(1,2),
+                    condition.samples = c("condition", "timepoint"),
                     cor.radius.th = 0.6,
                     cluster.label.size = 3,
                     sample.label.size = 3,
@@ -421,11 +425,13 @@ plotPCA <- function(UMAPdata,
                     sample.dot.size = 3){
   
   levels <- match.arg(levels)
+  condition.samples <- match.arg(condition.samples)
   
   checkmate::qassert(levels, "S1")
   checkmate::qassert(clusters, c("0","S*"))
   checkmate::qassert(samples, c("0","S*"))
   checkmate::qassert(components, "N2")
+  checkmate::qassert(condition.samples, "S1")
   checkmate::qassert(cor.radius.th, "N1")
   checkmate::qassert(cluster.label.size, "N1")
   checkmate::qassert(sample.label.size, "N1")
@@ -440,47 +446,52 @@ plotPCA <- function(UMAPdata,
     return(data.frame(x = x, y = y))
   }
   
-  matrix.abundance = UMAPdata@matrix.abundance
+  matrix.abundance <- UMAPdata@matrix.abundance
   
   if(!is.null(clusters)) {
-    matrix.abundance = matrix.abundance[rownames(matrix.abundance) %in% clusters, ]
+    matrix.abundance <- matrix.abundance[rownames(matrix.abundance) %in% clusters, ]
   }
   if(!is.null(samples)) {
-    matrix.abundance = matrix.abundance[, colnames(matrix.abundance) %in% samples]
+    matrix.abundance <- matrix.abundance[, colnames(matrix.abundance) %in% samples]
   }
   
-  res.PCA         = FactoMineR::PCA(t(matrix.abundance), graph=FALSE)
-  var.explained   = res.PCA$eig[,2]
+  res.PCA <- FactoMineR::PCA(t(matrix.abundance), graph=FALSE)
+  var.explained <- res.PCA$eig[,2]
   
-  data_clusters    = data.frame(res.PCA$var$coord[,components])
-  colnames(data_clusters) = c("x","y")
-  data_clusters$id = rownames(matrix.abundance)
+  data_clusters <- data.frame(res.PCA$var$coord[,components])
+  colnames(data_clusters) <- c("x","y")
+  data_clusters$id <- rownames(matrix.abundance)
   
-  data_variables = data.frame(res.PCA$ind$coord[,components])
-  colnames(data_variables) = c("x","y")
-  data_variables$id = colnames(matrix.abundance)
+  data_variables <- data.frame(res.PCA$ind$coord[,components])
+  colnames(data_variables) <- c("x","y")
+  data_variables$id <- colnames(matrix.abundance)
   
-  data_variables$x = scales::rescale(data_variables$x,to=c(-1,1))
-  data_variables$y = scales::rescale(data_variables$y,to=c(-1,1))
+  data_variables$x <- scales::rescale(data_variables$x,to=c(-1,1))
+  data_variables$y <- scales::rescale(data_variables$y,to=c(-1,1))
+  
+  data_variables <- merge(data_variables, UMAPdata@metadata, by = "row.names")
+  data_variables$Row.names <- NULL
   
   circle1 <- circleFun(c(0,0),2,npoints = 100)
   circle2 <- circleFun(c(0,0),2*cor.radius.th,npoints = 100)
   
-  data_clusters = data_clusters[sqrt(data_clusters$x^2+data_clusters$y^2)>cor.radius.th,]
+  data_clusters <- data_clusters[sqrt(data_clusters$x^2+data_clusters$y^2)>cor.radius.th,]
   
-  xlab = paste0("PCA",components[1]," (",round(var.explained[components[1]],2),"%)")
-  ylab = paste0("PCA",components[2]," (",round(var.explained[components[2]],2),"%)")
+  xlab <- paste0("PCA",components[1]," (",round(var.explained[components[1]],2),"%)")
+  ylab <- paste0("PCA",components[2]," (",round(var.explained[components[2]],2),"%)")
   
   plot <- ggplot2::ggplot()
   
   if (levels == "clusters" || levels == "both") {
     
-    plot <- plot+
+    plot <- plot +
       ggplot2::geom_hline(yintercept=0,linetype = "dashed",size=0.2) + 
       ggplot2::geom_vline(xintercept=0,linetype = "dashed",size=0.2) + 
       ggplot2::geom_path(data=circle1,ggplot2::aes_string(x="x",y="y"),size=0.2,color="gray") +
       ggplot2::geom_path(data=circle2,ggplot2::aes_string(x="x",y="y"),size=0.2,linetype="dashed",color="gray") +
-      ggplot2::geom_point(data = data_clusters, ggplot2::aes_string(x="x", y="y"),shape=21,size=cluster.dot.size,stroke=0.1,fill="black",color="black") +
+      ggplot2::geom_point(data = data_clusters, ggplot2::aes_string(x="x", y="y"),
+                          shape=21,size=cluster.dot.size,
+                          stroke=0.1,fill="black",color="black") +
       ggrepel::geom_text_repel(data = data_clusters, ggplot2::aes_string(x="x", y="y", label="id"),
                                size = cluster.label.size,
                                color = "black",
@@ -496,7 +507,10 @@ plotPCA <- function(UMAPdata,
     plot <- plot +
       ggplot2::geom_hline(yintercept=0,linetype = "dashed",size=0.2) + 
       ggplot2::geom_vline(xintercept=0,linetype = "dashed",size=0.2) + 
-      ggplot2::geom_point(data = data_variables, ggplot2::aes_string(x="x", y="y"),shape=21,size=sample.dot.size,stroke=0.1,fill="gray",color="black") +
+      ggplot2::geom_path(data=circle1,ggplot2::aes_string(x="x",y="y"),size=0.2,color="gray") +
+      ggplot2::geom_path(data=circle2,ggplot2::aes_string(x="x",y="y"),size=0.2,linetype="dashed",color="gray") +
+      ggplot2::geom_point(data = data_variables, ggplot2::aes_string(x="x", y="y", fill = condition.samples),
+                          shape=21,size=sample.dot.size,stroke=0.1, color = "black") +
       ggrepel::geom_text_repel(data = data_variables, ggplot2::aes_string(x="x", y="y", label="id"),
                                size=sample.label.size,
                                color = "black",
@@ -506,7 +520,7 @@ plotPCA <- function(UMAPdata,
                                segment.size = 0.1)
   }
   
-  plot <- plot + ggplot2::labs(title="PCA represnetation")
+  plot <- plot + ggplot2::labs(title="PCA representation")
   
   plot <- plot +
     ggplot2::coord_fixed() +
@@ -516,18 +530,14 @@ plotPCA <- function(UMAPdata,
   plot <- plot +
     ggplot2::theme_bw() +
     ggplot2::theme(
-      panel.grid.minor = ggplot2::element_blank(),
-      panel.grid.major = ggplot2::element_blank(),
-      panel.background = ggplot2::element_rect(color=NA),
+      plot.title = ggplot2::element_text(hjust = 0.5),
+      aspect.ratio = 1,
       axis.text.x = ggplot2::element_blank(),
       axis.text.y = ggplot2::element_blank(),
       axis.ticks = ggplot2::element_blank(),
-      aspect.ratio = 1,
-      plot.title = ggplot2::element_text(hjust = 0.5))
-  
-  
-  plot
-  
+      panel.background = ggplot2::element_rect(color=NA),
+      panel.grid.minor = ggplot2::element_blank(),
+      panel.grid.major = ggplot2::element_blank())
   
   return(plot)
 }
@@ -540,6 +550,7 @@ plotPCA <- function(UMAPdata,
 #'     
 #' @param UMAPdata a UMAPdata object
 #' @param levels a character value containing the variable to be displayed. Possible values are: 'clusters' or 'samples'
+#' @param condition.samples a character vector containing xxx
 #' @param clusters a character vector containing the identifiers of the clusters to use. By default, all clusters are used
 #' @param samples a character vector containing the names of biological samples to use. By default, all samples are used 
 #'  
@@ -549,21 +560,24 @@ plotPCA <- function(UMAPdata,
 #' 
 plotMDS <- function(UMAPdata,
                     levels = c("clusters", "samples"),
+                    condition.samples = c("condition", "timepoint"),
                     clusters = NULL,
                     samples = NULL){
   
   levels <- match.arg(levels)
+  condition.samples <- match.arg(condition.samples)
   
   checkmate::qassert(levels, "S1")
+  checkmate::qassert(condition.samples, "S1")
   checkmate::qassert(clusters, c("0","S*"))
   checkmate::qassert(samples, c("0","S*"))
-
-  matrix.abundance = UMAPdata@matrix.abundance
+  
+  matrix.abundance <- UMAPdata@matrix.abundance
   
   if (levels == "clusters") { 
     
     if(!is.null(clusters)) {
-      matrix.abundance = matrix.abundance[rownames(matrix.abundance) %in% clusters, ]
+      matrix.abundance <- matrix.abundance[rownames(matrix.abundance) %in% clusters, ]
     }
     
     dist.clusters <- stats::dist(matrix.abundance)
@@ -572,13 +586,13 @@ plotMDS <- function(UMAPdata,
     x1 <- fit1$points[,1]
     y1 <- fit1$points[,2]
     
-    min.lim = min(min(x1),min(y1))*1.1
-    max.lim = max(max(x1),max(y1))*1.1
+    min.lim <- min(min(x1),min(y1))*1.1
+    max.lim <- max(max(x1),max(y1))*1.1
     
-    proj.clusters = data.frame(x=x1,
-                               y=y1)
+    proj.clusters <- data.frame(x=x1,
+                                y=y1)
     
-    proj.clusters$clusters = rownames(matrix.abundance)
+    proj.clusters$clusters <- rownames(matrix.abundance)
     
     plot <- ggplot2::ggplot() +
       ggplot2::labs(title = "Multidimensional Scaling",
@@ -609,7 +623,7 @@ plotMDS <- function(UMAPdata,
   } else if (levels == "samples") { 
     
     if (!is.null(samples)) {
-      matrix.abundance = matrix.abundance[, names(matrix.abundance) %in% samples]
+      matrix.abundance <- matrix.abundance[, names(matrix.abundance) %in% samples]
     } 
     
     dist.samples <- stats::dist(t(matrix.abundance))
@@ -618,13 +632,16 @@ plotMDS <- function(UMAPdata,
     x2 <- fit2$points[,1]
     y2 <- fit2$points[,2]
     
-    min.lim = min(min(x2),min(y2))*1.1
-    max.lim = max(max(x2),max(y2))*1.1
+    min.lim <- min(min(x2),min(y2))*1.1
+    max.lim <- max(max(x2),max(y2))*1.1
     
-    proj.samples = data.frame(x=x2,
-                              y=y2)
+    proj.samples <- data.frame(x=x2,
+                               y=y2)
     
-    proj.samples$samples = colnames(matrix.abundance)
+    proj.samples$samples <- colnames(matrix.abundance)
+    
+    proj.samples <- merge(proj.samples, UMAPdata@metadata, by = "row.names")
+    proj.samples$Row.names <- NULL
     
     plot <- ggplot2::ggplot() +
       ggplot2::labs(title = "Multidimensional Scaling",
@@ -632,7 +649,7 @@ plotMDS <- function(UMAPdata,
       ggplot2::geom_hline(yintercept=(min.lim+max.lim)/2, linetype = "dashed") + 
       ggplot2::geom_vline(xintercept=(min.lim+max.lim)/2, linetype = "dashed") + 
       #geom_polygon(data = hulls, aes(x=x,y=y,group=cond,fill=color), alpha = 0.6) +
-      ggplot2::geom_point(data = proj.samples, ggplot2::aes_string(x="x", y="y",fill="samples"),shape=21,color="black") +
+      ggplot2::geom_point(data = proj.samples, ggplot2::aes_string(x="x", y="y",fill=condition.samples),shape=21,color="black") +
       ggrepel::geom_text_repel(data = proj.samples, ggplot2::aes_string(x="x", y="y",label="samples"),size=4) 
     
     plot <- plot + ggplot2::coord_fixed()
@@ -649,8 +666,7 @@ plotMDS <- function(UMAPdata,
                      panel.background = ggplot2::element_blank(),
                      panel.border = ggplot2::element_rect(fill=NA),
                      panel.grid.minor=ggplot2::element_blank(),
-                     panel.grid.major=ggplot2::element_blank(),
-                     legend.position="none")
+                     panel.grid.major=ggplot2::element_blank())
   }
   
   return(plot)
@@ -688,37 +704,37 @@ plotBoxplot = function(UMAPdata,
   observation <- match.arg(observation)
   test.statistics <- match.arg(test.statistics)
   
-  checkmate::qassert(clusters, "N+")
-  checkmate::qassert(samples, c("0","S*"))
+  checkmate::qassert(clusters, "S+")
+  checkmate::qassert(samples, c("0","S+"))
   checkmate::qassert(observation, "S1")
   checkmate::qassert(test.statistics, "S1")
   checkmate::qassert(paired, "B1")
   checkmate::qassert(hide.ns, "B1")
-
-  matrix.cell.count = UMAPdata@matrix.cell.count
+  
+  matrix.cell.count <- UMAPdata@matrix.cell.count
   
   if(!is.null(samples)) {
-    matrix.cell.count = matrix.cell.count[, colnames(matrix.cell.count) %in% samples]
+    matrix.cell.count <- matrix.cell.count[, colnames(matrix.cell.count) %in% samples]
   }
   
-  metadata = UMAPdata@metadata
+  metadata <- UMAPdata@metadata
   
-  matrix.cell.count = matrix.cell.count[rownames(matrix.cell.count) %in% clusters,] 
-  matrix.cell.count = base::apply(matrix.cell.count, 2, sum)
-  matrix.cell.count = matrix.cell.count/base::apply(UMAPdata@matrix.cell.count, 2, sum)*100
+  matrix.cell.count <- matrix.cell.count[rownames(matrix.cell.count) %in% clusters,] 
+  matrix.cell.count <- base::apply(matrix.cell.count, 2, sum)
+  matrix.cell.count <- matrix.cell.count/base::apply(UMAPdata@matrix.cell.count, 2, sum)*100
   
-  matrix.cell.count = reshape::melt(matrix.cell.count)
+  matrix.cell.count <- reshape::melt(matrix.cell.count)
   
-  matrix.cell.count = merge(matrix.cell.count, metadata, by = "row.names")
+  matrix.cell.count <- merge(matrix.cell.count, metadata, by = "row.names")
   
-  position_jitter = ggplot2::position_jitter(seed=42,width=0.15)
+  position_jitter <- ggplot2::position_jitter(seed=42,width=0.15)
   
-  stat.test  = ggpubr::compare_means(data=matrix.cell.count, formula= as.formula(paste0("value ~ ",observation)), method = test.statistics, paired = paired)
-  stat.test  = data.frame(stat.test)
-  stat.test$y.position = max(matrix.cell.count$value)
+  stat.test  <- ggpubr::compare_means(data=matrix.cell.count, formula= stats::as.formula(paste0("value ~ ",observation)), method = test.statistics, paired = paired)
+  stat.test  <- data.frame(stat.test)
+  stat.test$y.position <- max(matrix.cell.count$value)
   
   
-  plot = ggplot2::ggplot() +
+  plot <- ggplot2::ggplot() +
     ggplot2::ggtitle(paste0("abundance of cluster: ", paste0(clusters, collapse = ", "))) +
     ggplot2::geom_boxplot(data=matrix.cell.count,ggplot2::aes_string(x=observation,y="value"),
                           fill="gray",outlier.shape=NA,size=0.2,fatten = 1) +
@@ -727,16 +743,15 @@ plotBoxplot = function(UMAPdata,
     ggpubr::stat_pvalue_manual(stat.test,label = "p.signif",color = "purple",size=5,hide.ns=hide.ns)
   
   
-  plot = plot+
+  plot <- plot +
     ggplot2::ylab("abundance of cluster relative to parent gate")
   
-  plot = plot +
+  plot <- plot +
     ggplot2::theme_bw() +
     ggplot2::theme(plot.title =  ggplot2::element_text(hjust=0.5),
                    panel.grid.minor =  ggplot2::element_blank(),
                    panel.grid.major =  ggplot2::element_blank(),
                    legend.position = "none")
-  
   
   return(plot)
   
@@ -751,6 +766,7 @@ plotBoxplot = function(UMAPdata,
 #'
 #'     
 #' @param UMAPdata a UMAPdata object
+#' @param comparison a character value containing the comparison to study 
 #' @param th.pv a numeric value containing the p-value threshold to use
 #' @param th.fc a numeric value containing the fold-change threshold to use 
 #' 
@@ -760,33 +776,45 @@ plotBoxplot = function(UMAPdata,
 #' @export
 #' 
 plotVolcanoPlot = function(UMAPdata,
+                           comparison,
                            th.pv = 1.3,
                            th.fc = 1.5){
   
+  checkmate::qassert(comparison, "S1")
   checkmate::qassert(th.pv, "N1")
   checkmate::qassert(th.fc, "N1")
   
-  stats = UMAPdata@statistic
-  stats$log10.pvalue = -log10(stats$pvalue)
-  max.fc = max(abs(stats$lfc))
+  stats <- UMAPdata@statistic
+  stats <- stats[stats$comparison==comparison,]
   
-  stats$dir = "none"
-  stats$dir[stats$log10.pvalue > th.pv & stats$lfc > th.fc] = "red"
-  stats$dir[stats$log10.pvalue > th.pv & stats$lfc < th.fc] = "green"
+  stats$log10.pvalue <- -log10(stats$pvalue)
+  max.fc <- max(abs(stats$lfc))
   
-  plot = ggplot2::ggplot() +
+  stats$dir <- "none"
+  stats$dir[stats$log10.pvalue > th.pv & stats$lfc > th.fc] <- "red"
+  stats$dir[stats$log10.pvalue > th.pv & stats$lfc < th.fc] <- "green"
+  
+  plot <- ggplot2::ggplot() +
     ggplot2::geom_point(data=stats, ggplot2::aes_string(x="lfc",y="log10.pvalue",fill="dir"),
-                        shape=21,color="black") +
-    ggplot2::scale_fill_manual(values=c("none"="gray","green"="green","red"="red")) +
-    ggplot2::scale_x_continuous(limits=c(-max.fc,max.fc),breaks=seq(-10,10,1)) +
-    ggplot2::scale_y_continuous(breaks=c(seq(0,10,1), th.pv)) +
+                        shape=21,color="black") + 
     ggplot2::geom_hline(yintercept= th.pv, linetype = "dashed") + 
     ggplot2::geom_vline(xintercept=log2(th.fc), linetype = "dashed") + 
-    ggplot2::geom_vline(xintercept=-log2(th.fc), linetype = "dashed") + 
-    ggplot2::theme_bw() +
+    ggplot2::geom_vline(xintercept=-log2(th.fc), linetype = "dashed")
+  
+  plot <- plot + 
+    ggplot2::scale_fill_manual(guide= ggplot2::guide_legend(title = "NA", nrow = 1),
+                               # limits = c("down-regulated", "upp-regulated"),
+                               values=c("none"="gray","green"="green","red"="red")) + 
+    # scale_fill_manual(guide=guide_legend(title=NA,nrow=1),
+    #                   limits = c(paste0("down-regulated",addlegend), paste0("up-regulated",addlegend)),values = values) +
+    ggplot2::scale_x_continuous(limits=c(-max.fc,max.fc),breaks=seq(-10,10,1)) +
+    ggplot2::scale_y_continuous(breaks=c(seq(0,10,1), th.pv)) + 
     ggplot2::xlab("log2(fold-change)") + 
-    ggplot2::ylab("-log10(p-value)") +
-    ggplot2::theme(legend.position = "none")
+    ggplot2::ylab("-log10(p-value)")
+  
+  plot <- plot + 
+    ggplot2::theme_bw() 
+  # ggplot2::theme(legend.position = "none")
   
   return(plot) 
   
@@ -799,54 +827,56 @@ plotVolcanoPlot = function(UMAPdata,
 #' 
 #' @param UMAPdata a UMAPdata object
 #' @param clusters a character vector containing the identifier of the cluster to use
-#' @param show.on.device a numeric value containg xxx
 #'  
 #' @return a ggplot2 object
 #' 
 #' @export
 #'    
 plotDistogram = function(UMAPdata,
-                         clusters = NULL,
-                         show.on.device = TRUE) {
+                         clusters = NULL) {
   
   
-  matrix.exp = UMAPdata@matrix.expression
-  samples = UMAPdata@samples
-  cluster = UMAPdata@identify.clusters
+  checkmate::qassert(clusters, c("0","S+"))
   
-  proj = cbind(samples, cluster, matrix.exp)
+  matrix.exp <- UMAPdata@matrix.expression
+  samples <- UMAPdata@samples
+  cluster <- UMAPdata@identify.clusters
+  
+  proj <- cbind(samples, cluster, matrix.exp)
   
   if(is.null(clusters)) {
-    clusters = unique(cluster)
+    clusters <- unique(cluster)
   } else if (all(clusters %in% UMAPdata@identify.clusters)) {
     if (typeof(clusters) != "character") {
       stop("Error in plotDistogram : 'clusters' parameter must be character vector")
     }
     
-    clusters = unique(clusters)
-    clusters.select = proj[, "cluster"] %in% clusters
-    proj = proj[clusters.select,]
+    clusters <- unique(clusters)
+    clusters.select <- proj[, "cluster"] %in% clusters
+    proj <- proj[clusters.select,]
     
   } else {
     stop("Error in plotDistogram:\nUnknown clusters : ", paste0(setdiff(unique(clusters), unique(cluster)), collapse = " "))
   }
   
-  proj = proj[, -c(1,2)]
-  proj = stats::na.omit(proj)
+  proj <- proj[, -c(1,2)]
+  proj <- stats::na.omit(proj)
   
-  cormat = round(stats::cor(proj, method = "pearson"), 2)
-  dist = stats::as.dist(1 - cormat)
-  hc = stats::hclust(dist)
-  cormat = cormat[hc$order, hc$order]
+  cormat <- round(stats::cor(proj, method = "pearson"), 2)
+  dist <- stats::as.dist(1 - cormat)
+  hc <- stats::hclust(dist)
+  cormat <- cormat[hc$order, hc$order]
   cormat[upper.tri(cormat, diag = TRUE)] <- NA
   
-  markers = colnames(cormat)
-  dimnames(cormat) = NULL
-  melted.cormat = reshape2::melt(cormat)
+  markers <- colnames(cormat)
+  dimnames(cormat) <- NULL
+  melted.cormat <- reshape2::melt(cormat)
   
-  plot = ggplot2::ggplot(data = melted.cormat, ggplot2::aes_string(x="Var1", y="Var2", fill="value")) +
+  plot <- ggplot2::ggplot(data = melted.cormat, ggplot2::aes_string(x="Var1", y="Var2", fill="value")) +
     ggplot2::ggtitle("Distogram") + 
-    ggplot2::geom_tile(color = "white") + 
+    ggplot2::geom_tile(color = "white")
+  
+  plot <- plot +
     ggplot2::scale_fill_gradient2(low = "green", high = "red", mid = "black",
                                   midpoint = 0, limit = c(-1,1), na.value = "white",
                                   name = "Pearson correlation") + 
@@ -856,37 +886,36 @@ plotDistogram = function(UMAPdata,
                       angle = -45,
                       size = 4,
                       label = markers,
-                      hjust = 1) + 
+                      hjust = 1)
+  
+  plot <- plot + 
     ggplot2::coord_fixed() +
-    ggplot2::theme(axis.line = ggplot2::element_blank(),
-                   axis.text.x = ggplot2::element_blank(),
-                   axis.text.y = ggplot2::element_blank(),
-                   axis.ticks = ggplot2::element_blank(),
-                   axis.title.x = ggplot2::element_blank(),
-                   axis.title.y = ggplot2::element_blank(),
-                   panel.background = ggplot2::element_blank(),
-                   panel.border = ggplot2::element_blank(),
-                   panel.grid.major = ggplot2::element_blank(),
-                   panel.grid.minor = ggplot2::element_blank(),
-                   plot.background = ggplot2::element_blank(),
-                   legend.justification = c(1, 0),
-                   legend.position = c(0.4, 0.7),
-                   legend.direction = "horizontal",
-                   legend.key = ggplot2::element_blank(),
-                   plot.title = ggplot2::element_text(hjust=0.5)) +
+    ggplot2::theme(
+      plot.title = ggplot2::element_text(hjust=0.5),
+      plot.background = ggplot2::element_blank(),
+      axis.title.x = ggplot2::element_blank(),
+      axis.title.y = ggplot2::element_blank(),
+      axis.text.x = ggplot2::element_blank(),
+      axis.text.y = ggplot2::element_blank(),
+      axis.ticks = ggplot2::element_blank(),
+      axis.line = ggplot2::element_blank(),
+      panel.background = ggplot2::element_blank(),
+      panel.border = ggplot2::element_blank(),
+      panel.grid.minor = ggplot2::element_blank(),
+      panel.grid.major = ggplot2::element_blank(),
+      legend.justification = c(1, 0),
+      legend.position = c(0.4, 0.7),
+      legend.direction = "horizontal",
+      legend.key = ggplot2::element_blank()) + 
     ggplot2::guides(fill = ggplot2::guide_colorbar(barwidth = 7,
                                                    barheight      = 1,
                                                    title.position = "top",
                                                    title.hjust    = 0.5))
   
-  if (show.on.device) {
-    plot(plot)
-  }
+  rownames(cormat) <- markers
+  colnames(cormat) <- markers
   
-  rownames(cormat) = markers
-  colnames(cormat) = markers
-  
-  plot$cor = cormat
+  plot$cor <- cormat
   
   invisible(plot)
   
@@ -912,42 +941,46 @@ plotScatter = function(UMAPdata,
                        samples = NULL,
                        clusters = NULL) {
   
-  matrix.exp   = UMAPdata@matrix.expression
-  samples.xxx  = UMAPdata@samples
-  clusters.xxx = UMAPdata@identify.clusters
+  checkmate::qassert(marker1, "C1")
+  checkmate::qassert(marker2, "C1")
+  checkmate::qassert(samples, c("0","S+"))
+  checkmate::qassert(clusters, c("0","S+"))
   
-  proj = cbind(samples.xxx, clusters.xxx, matrix.exp)
   
-  proj = proj[,c(marker1,marker2,"samples.xxx","clusters.xxx")]
-  colnames(proj) = c("marker1","marker2","samples","clusters")
+  matrix.exp <- UMAPdata@matrix.expression
+  sample <- UMAPdata@samples
+  cluster <- UMAPdata@identify.clusters
+  
+  proj <- cbind(sample, cluster, matrix.exp)
+  
+  proj <- proj[,c(marker1,marker2,"sample","cluster")]
+  colnames(proj) <- c("marker1","marker2","samples","clusters")
   
   if(!is.null(samples)){
-    proj = proj[proj$samples %in% samples]
+    proj <- proj[proj$samples %in% samples]
   }
   if(!is.null(clusters)){
-    proj = proj[proj$clusters %in% clusters]
+    proj <- proj[proj$clusters %in% clusters]
   }
   
-  proj$value = computeCellDensities(proj, n=100)
+  proj$value <- computeCellDensities(proj, n=100)
   
-  plot = ggplot2::ggplot() +
+  plot <- ggplot2::ggplot() +
     ggplot2::geom_point(data=proj,ggplot2::aes_string(x="marker1",y="marker2",color="value"))
   
-  
-  plot = plot+
+  plot <- plot +
     ggplot2::scale_color_gradient(low="yellow",high="red") + 
     ggplot2::xlab(marker1)+
     ggplot2::ylab(marker2)
   
-  plot = plot +
+  plot <- plot +
     ggplot2::theme_bw() +
     ggplot2::theme(plot.title =  ggplot2::element_text(hjust=0.5),
                    panel.grid.minor =  ggplot2::element_blank(),
                    panel.grid.major =  ggplot2::element_blank(),
                    legend.position = "none")
   
-  
-  plot
+  invisible(plot)
   
 }
 
