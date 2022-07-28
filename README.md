@@ -23,7 +23,7 @@ Cell clusters having abundances differently expressed between biological
 conditions can be identified using several statistical tests.
 Statistical results can be visualized using volcano plots or heatmaps.
 
-### 1.1 Overview of Workflow
+## 1.1 Overview of Workflow
 
 In `UMAPVizR` workflow, an S4 object in R to implement progressively to
 contain the main information of the files used. This stored information
@@ -32,9 +32,14 @@ dataset.
 
 <img src="workflow.png" width="90%" style="display: block; margin: auto;" />
 
-*Figure 1 : Workflow of UMAPVizR*
+*Figure 1: Workflow of UMAPVizR* *It consists of three main steps: (1)
+importing the data in FCS or txt format resulting in the creation of an
+S4 UMAPdata object, (2) adding the metadata to the UMAPdata object, (3)
+generating the manifold and clustering. The results can be (4)
+visualised in different ways and (5) differential analyses are
+possible.*
 
-### 1.2 Input data
+## 1.2 Input data
 
 The following conditions must be respected to analyse the data with
 `UMAPVizR`:
@@ -53,7 +58,7 @@ The following conditions must be respected to analyse the data with
 
 # 2. Quick start
 
-### 2.1 Installation
+## 2.1 Installation
 
 To download `UMAPVizR` it is required `devtools`:
 
@@ -76,7 +81,7 @@ Once installed, `UMAPVizR` can be loaded using the following command:
 library("UMAPVizR")
 ```
 
-### 2.2 Importing data
+## 2.2 Importing data
 
 The first function of the package to use is the `import` function which
 allows importing the expression matrix of the files in the `UMAPdata`
@@ -96,30 +101,30 @@ UMAPV <- import(files,
                 filetype = "fcs", 
                 transform = "logicle", 
                 exclude.markers = c("FS","FS.1","FS.2", "SS","SS.1","SS.2", "Time"), 
-                downsampling = 1000)
+                downsampling = 5000)
 ```
 
 The main arguments of the `import` function are:
 
 -   the `filetype` argument allows you to define the type of format
-    which is used for the data
+    which is used for the data,
 -   the `transform` argument allows you to choose the type of
     transformation to be used on the data. Advice: For flow cytometry,
     data use a `logicle` transform and for mass cytometry data use an
-    `arcsinh` transform
+    `arcsinh` transform,
 -   the `exclude_markers` argument is used to remove the channels not to
-    be used for the analysis
+    be used for the analysis.
 
-### 2.3 Assign metadata
+## 2.3 Assign metadata
 
 The metadata can be assigned to each sample in the dataset. The
 different viewers associate samples with specific biological conditions
 or individuals using this metadata. The metadata file must contain
 exclusively the following column names:
 
--   individual: corresponds to the sample identifier
--   condition: corresponds to the biological condition of the sample
--   timepoint: corresponds to the timepoint of the sample (optional)
+-   individual: corresponds to the sample identifier,
+-   condition: corresponds to the biological condition of the sample,
+-   timepoint: corresponds to the timepoint of the sample (optional).
 
 To do this, follow the instructions below:
 
@@ -146,7 +151,7 @@ rownames(metadata) = paste0(metadata$timepoint,"_", metadata$individual)
 UMAPV <- assignMetadata(UMAPV, metadata = metadata)
 ```
 
-### 2.4 Manifold construction and clustering
+## 2.4 Manifold construction and clustering
 
 If the marker names are not the same for each sample (refer to point 3
 to check), they can be corrected as below:
@@ -177,32 +182,32 @@ UMAPV <- generateManifold(UMAPV,
 
     ## Manifold markers are: TCRgd, NKP44, HLADR, NKp30, NKp46, NKG2D, CD3, CD16, CD56, CD8
 
-    ## 12:27:19 UMAP embedding parameters a = 1.896 b = 0.8006
+    ## 16:56:21 UMAP embedding parameters a = 1.896 b = 0.8006
 
-    ## 12:27:19 Read 42000 rows and found 10 numeric columns
+    ## 16:56:21 Read 193322 rows and found 10 numeric columns
 
-    ## 12:27:19 Using Annoy for neighbor search, n_neighbors = 15
+    ## 16:56:21 Using Annoy for neighbor search, n_neighbors = 15
 
-    ## 12:27:20 Building Annoy index with metric = euclidean, n_trees = 50
+    ## 16:56:22 Building Annoy index with metric = euclidean, n_trees = 50
 
     ## 0%   10   20   30   40   50   60   70   80   90   100%
 
     ## [----|----|----|----|----|----|----|----|----|----|
 
     ## **************************************************|
-    ## 12:27:23 Writing NN index file to temp file C:\Users\GWMA\AppData\Local\Temp\Rtmpqm4wTr\file2c987a2e71c0
-    ## 12:27:23 Searching Annoy index using 40 threads, search_k = 1500
-    ## 12:27:25 Annoy recall = 100%
-    ## 12:27:25 Commencing smooth kNN distance calibration using 40 threads
-    ## 12:27:26 Initializing from normalized Laplacian + noise
-    ## 12:27:27 Commencing optimization for 200 epochs, with 843812 positive edges using 1 thread
-    ## 12:27:55 Optimization finished
+    ## 16:56:37 Writing NN index file to temp file C:\Users\GWMA\AppData\Local\Temp\RtmpmIkY0J\file1cc0551d85c
+    ## 16:56:38 Searching Annoy index using 40 threads, search_k = 1500
+    ## 16:56:47 Annoy recall = 100%
+    ## 16:56:47 Commencing smooth kNN distance calibration using 40 threads
+    ## 16:56:51 Initializing from normalized Laplacian + noise
+    ## 16:56:57 Commencing optimization for 200 epochs, with 3859266 positive edges using 1 thread
+    ## 16:59:15 Optimization finished
 
 The main arguments of the `generateManifold` function are:
 
 -   the `markers` argument is used to specify the markers to use for the
-    manifold generation
--   the `type` argument is used to specify the clustering method to use
+    manifold generation,
+-   the `type` argument is used to specify the clustering method to use.
 
 The second step allows the clustering to be performed from the manifold
 by following the instructions below:
@@ -223,21 +228,26 @@ UMAPV <- identifyClusters(UMAPV, space = "manifold", method = "kmeans", centers 
 The main arguments of the `identifyClusters` function are:
 
 -   the `space` argument is used to determine if clustering should be
-    done on the markers or the manifold
+    done on the markers or the manifold,
 -   the `method` argument is used to specify the method to use for the
-    clustering
+    clustering.
 
 N.B: These two steps can be switched depending on the selected
 parameters.
 
-### 2.5 Basic visualization
+## 2.5 Basic visualization
+
+### 2.5.1 Plots a representation of a computed manifold (PlotManifold)
 
 Once the complete template has been generated, it is possible to perform
 quick visualization of the dataset.
 
 The first visualization shows a computed manifold representation for a
 given analysis. The manifold can be coloured based on the local cell
-density or marker expression.
+density or marker expression. The main argument of the `plotManifold`
+function is `markers` which are used to specify the marker to be used
+for colouring. The `density` value is used to colour based on the local
+density.
 
 ``` r
 # Display manifold overlay by 'density' 
@@ -247,17 +257,21 @@ plotManifold(UMAPV,
 
 ![](README_files/figure-markdown_github/PlotManifold-1.png)
 
+*The UMAP representation shows the distribution of cell density within
+the clusters (delimited by the black lines) for all samples.*
+
+The name of the marker is used to colour based on its expression.
+
 ``` r
 # Display manifold overlay by 'markers'  
 plotManifold(UMAPV, 
              markers = "NKP44")
 ```
 
-![](README_files/figure-markdown_github/PlotManifold-2.png)
+![](README_files/figure-markdown_github/PlotManifold2-1.png)
 
-The main argument of the `plotManifold` function is `markers` which are
-used to specify the marker to be used for colouring. The `density` value
-is used to colour based on the local density
+*The UMAP representation shows the the expression of the NKP44 marker
+within the clusters (delimited by the black lines) for all samples.*
 
 It is possible to use an additional argument called `samples` which are
 used to specify the biological samples to be displayed during the
@@ -270,7 +284,11 @@ plotManifold(UMAPV,
              samples = "V1_10105LA")
 ```
 
-![](README_files/figure-markdown_github/PlotManifold2-1.png)
+![](README_files/figure-markdown_github/PlotManifold3-1.png)
+
+*The same representation as the first UMAP but for a single sample.*
+
+### 2.5.2 Plots an heatmap of cell marker expressions (plotHmExpressions)
 
 The second visualization shows a heatmap displaying the expression
 values of each marker for the dataset as below:
@@ -280,10 +298,10 @@ values of each marker for the dataset as below:
 hm.exp <- plotHmExpressions(UMAPV)
 ```
 
-    ## initial  value 42.855331 
-    ## iter   5 value 33.778382
-    ## iter  10 value 29.675223
-    ## final  value 28.854105 
+    ## initial  value 40.803864 
+    ## iter   5 value 30.625984
+    ## iter  10 value 28.366871
+    ## final  value 28.271998 
     ## converged
 
 ``` r
@@ -291,6 +309,11 @@ plot(hm.exp)
 ```
 
 ![](README_files/figure-markdown_github/PlotHMExpressions-1.png)
+
+*Heatmap showing marker median relative expressions for all clusters.
+The mean of the median expression of each marker has been classified in
+4 categories. Hierarchical clustering has been performed at both the
+marker and cluster levels and are represented using dendograms.*
 
 This visualization can be customized with some parameters as below:
 
@@ -301,9 +324,9 @@ hm.exp <- plotHmExpressions(UMAPV,
                             clusters = c(1:50))
 ```
 
-    ## initial  value 25.860554 
-    ## iter   5 value 21.327538
-    ## final  value 21.219535 
+    ## initial  value 20.946861 
+    ## iter   5 value 17.131285
+    ## final  value 17.059982 
     ## converged
 
 ``` r
@@ -312,12 +335,14 @@ plot(hm.exp)
 
 ![](README_files/figure-markdown_github/plotHmExpressions2-1.png)
 
+*The same representation but with marker and cluster defined.*
+
 The customization parameters of the `plotHmExpressions` are:
 
 -   the `markers` argument is used to specify the markers to be used for
-    the heatmap
+    the heatmap,
 -   the `clusters` argument is used to specify the identifiers of the
-    clusters to be displayed for the heatmap
+    clusters to be displayed for the heatmap.
 
 These parameters can be used independently of each other.
 
@@ -328,7 +353,7 @@ performed. The quality control can be performed on the input dataset to
 check the names and range expression of the markers of each sample, but
 also, after analysis, to check the quality of the clustering performed.
 
-### 3.1 Quality control of the dataset
+## 3.1 Quality control of the dataset
 
 Quality control after the import of samples can be checked in two ways.
 The first method of quality control is to check the concordance of the
@@ -406,7 +431,7 @@ QCR <- QCMarkerRanges(files)
     ## V1_10503DC   4.264874 3.901291
     ## V1_10707BL   4.446657 3.906904
 
-### 3.2 Control quality of the cell clustering result
+## 3.2 Control quality of the cell clustering result
 
 The quality control of clustering can be checked in two ways. The first
 method allows the identification of small clusters, i.e. clusters whose
@@ -420,55 +445,64 @@ QCS <- QCSmallClusters(UMAPV)
 
 ![](README_files/figure-markdown_github/QCSmallClusters-1.png)
 
+*Heatmap showing the results for the cell clusters with a number of
+associated cells less than the number of cells specified by the user. On
+the left are the contributions of each sample and on the right the
+contribution of the whole dataset.* *If the tile is red then the cluster
+is less than the specified number of cells, if the tile is green, the
+cluster is greater than or equal to the specified number of cells.* *The
+percentage of clusters with a small number of cells among all clusters
+is shown at the top of the heatmap.*
+
     ##      V1_10105LA V1_10209HE V1_10306CG V1_10307BR V1_10503DC V1_10707BL
-    ## [1,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [2,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [3,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [4,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [5,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [6,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [1,]      FALSE       TRUE      FALSE       TRUE       TRUE      FALSE
+    ## [2,]       TRUE       TRUE       TRUE       TRUE      FALSE       TRUE
+    ## [3,]       TRUE      FALSE      FALSE       TRUE       TRUE       TRUE
+    ## [4,]       TRUE       TRUE       TRUE      FALSE       TRUE       TRUE
+    ## [5,]       TRUE      FALSE       TRUE      FALSE       TRUE       TRUE
+    ## [6,]      FALSE      FALSE       TRUE       TRUE      FALSE       TRUE
     ##      V1_11204CD V1_20208AA V1_20210RF V6_10105LA V6_10209HE V6_10304KJ
-    ## [1,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [2,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [3,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [1,]       TRUE       TRUE       TRUE      FALSE       TRUE       TRUE
+    ## [2,]      FALSE       TRUE      FALSE       TRUE       TRUE       TRUE
+    ## [3,]       TRUE       TRUE      FALSE      FALSE      FALSE       TRUE
     ## [4,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [5,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [6,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [5,]       TRUE      FALSE       TRUE       TRUE      FALSE       TRUE
+    ## [6,]      FALSE      FALSE       TRUE      FALSE      FALSE       TRUE
     ##      V6_10306CG V6_10309BR V6_10503DC V6_11204CD V6_20208AA V6_20210RF
-    ## [1,]       TRUE      FALSE       TRUE       TRUE       TRUE       TRUE
-    ## [2,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [3,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [4,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [1,]      FALSE       TRUE       TRUE       TRUE       TRUE      FALSE
+    ## [2,]      FALSE       TRUE       TRUE      FALSE       TRUE       TRUE
+    ## [3,]       TRUE       TRUE       TRUE       TRUE       TRUE      FALSE
+    ## [4,]      FALSE       TRUE       TRUE       TRUE       TRUE       TRUE
     ## [5,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
     ## [6,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
     ##      V6_21203AS V7_10105LA V7_10207BL V7_10209HE V7_10304KJ V7_10306CG
-    ## [1,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [2,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [3,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [4,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [5,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [6,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [1,]      FALSE       TRUE      FALSE       TRUE       TRUE      FALSE
+    ## [2,]       TRUE       TRUE       TRUE      FALSE       TRUE       TRUE
+    ## [3,]       TRUE      FALSE       TRUE      FALSE       TRUE      FALSE
+    ## [4,]       TRUE       TRUE       TRUE      FALSE      FALSE      FALSE
+    ## [5,]       TRUE      FALSE       TRUE      FALSE      FALSE       TRUE
+    ## [6,]       TRUE       TRUE       TRUE      FALSE      FALSE       TRUE
     ##      V7_10503DC V7_10807BR V7_10904VP V7_11204CD V7_20208AA V7_20210RF
     ## [1,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [2,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [3,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [4,]       TRUE       TRUE      FALSE       TRUE       TRUE       TRUE
-    ## [5,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [6,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ##      V8_10105LA V8_10207BL V8_10209HE V8_10304KJ V8_10306CG V8_10503DC
-    ## [1,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [2,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [3,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [4,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [5,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [6,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ##      V8_10807BR V8_10904VP V8_11204CD V8_20208AA V8_20210RF V8_21203AS
-    ## [1,]      FALSE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [2,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [3,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [2,]      FALSE       TRUE       TRUE       TRUE      FALSE      FALSE
+    ## [3,]       TRUE       TRUE       TRUE       TRUE       TRUE      FALSE
     ## [4,]       TRUE      FALSE       TRUE       TRUE       TRUE       TRUE
     ## [5,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
     ## [6,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ##      V8_10105LA V8_10207BL V8_10209HE V8_10304KJ V8_10306CG V8_10503DC
+    ## [1,]       TRUE      FALSE       TRUE       TRUE      FALSE       TRUE
+    ## [2,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [3,]      FALSE       TRUE      FALSE       TRUE       TRUE       TRUE
+    ## [4,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [5,]      FALSE       TRUE      FALSE       TRUE       TRUE       TRUE
+    ## [6,]      FALSE       TRUE      FALSE      FALSE       TRUE      FALSE
+    ##      V8_10807BR V8_10904VP V8_11204CD V8_20208AA V8_20210RF V8_21203AS
+    ## [1,]       TRUE       TRUE       TRUE       TRUE       TRUE      FALSE
+    ## [2,]       TRUE       TRUE      FALSE       TRUE      FALSE       TRUE
+    ## [3,]       TRUE       TRUE       TRUE       TRUE      FALSE       TRUE
+    ## [4,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [5,]      FALSE       TRUE       TRUE      FALSE       TRUE       TRUE
+    ## [6,]      FALSE       TRUE       TRUE       TRUE       TRUE      FALSE
     ##      total.cells
     ## [1,]       FALSE
     ## [2,]       FALSE
@@ -491,17 +525,22 @@ QCU <- QCUniformClusters(UMAPV)
 
 ![](README_files/figure-markdown_github/QCUniformClusters-1.png)
 
+*Heatmap showing the results for the cell clusters having uniform
+phenotypes* *The percentage of clusters having an uniform phenotype
+among all clusters is shown at the top of the heatmap. If the score is
+high, it indicates that the clustering is good.*
+
     ##   clusters markers    pv_dip       IQR passed
-    ## 1        1    CD16 0.8554493 0.3016465   TRUE
-    ## 2        1     CD3 0.9832709 0.3543482   TRUE
-    ## 3        1    CD56 0.7896015 0.3257572   TRUE
-    ## 4        1     CD8 0.9365678 0.2962026   TRUE
-    ## 5        1   HLADR 0.9934848 0.3759687   TRUE
-    ## 6        1   NKG2D 0.9967922 0.2298130   TRUE
+    ## 1        1    CD16 0.9941370 0.3805965   TRUE
+    ## 2        1     CD3 0.9975060 0.3220588   TRUE
+    ## 3        1    CD56 0.9913321 0.3781783   TRUE
+    ## 4        1     CD8 0.9938748 0.4152218   TRUE
+    ## 5        1   HLADR 0.9822374 0.4882654   TRUE
+    ## 6        1   NKG2D 0.9912756 0.2313864   TRUE
 
 # 4. Statistics and visualization
 
-### 4.1 Statistical analysis
+## 4.1 Statistical analysis
 
 Once the whole template has been completed and the number of clusters
 has been quality controlled, it is possible to perform differential
@@ -612,24 +651,27 @@ For the `plotBoxPlot` function:
 -   the `paired` argument is used to specify whether the paired or
     unpaired comparison should be applied.
 
-### 4.2 Visualization
+## 4.2 Visualization
 
 ``` r
 # MDS
 plotMDS(UMAPV, levels = "samples", condition.samples = "timepoint", clusters = NULL, samples = NULL)
 ```
 
-    ## initial  value 38.858247 
-    ## iter   5 value 17.286888
-    ## iter  10 value 13.514743
-    ## iter  15 value 12.869353
-    ## iter  20 value 12.686695
-    ## iter  25 value 12.595042
-    ## iter  30 value 12.467530
-    ## final  value 12.402360 
+    ## initial  value 33.715896 
+    ## iter   5 value 15.595230
+    ## iter  10 value 13.403076
+    ## iter  15 value 12.786789
+    ## iter  20 value 12.452971
+    ## iter  25 value 11.953629
+    ## iter  30 value 11.676708
+    ## iter  35 value 11.566281
+    ## iter  35 value 11.557324
+    ## iter  35 value 11.553379
+    ## final  value 11.553379 
     ## converged
 
-    ## Warning: ggrepel: 34 unlabeled data points (too many overlaps). Consider
+    ## Warning: ggrepel: 31 unlabeled data points (too many overlaps). Consider
     ## increasing max.overlaps
 
 ![](README_files/figure-markdown_github/plotMDS-1.png)
@@ -638,19 +680,18 @@ plotMDS(UMAPV, levels = "samples", condition.samples = "timepoint", clusters = N
 plotMDS(UMAPV, levels = "clusters", clusters = NULL, samples = NULL)
 ```
 
-    ## initial  value 38.919096 
-    ## iter   5 value 16.633328
-    ## iter  10 value 14.221820
-    ## iter  15 value 13.482529
-    ## iter  20 value 13.214701
-    ## iter  25 value 12.984593
-    ## iter  30 value 12.815211
-    ## iter  35 value 12.616428
-    ## iter  40 value 12.489229
-    ## final  value 12.417639 
+    ## initial  value 34.721215 
+    ## iter   5 value 15.419858
+    ## iter  10 value 12.288058
+    ## iter  15 value 11.390489
+    ## iter  20 value 11.246439
+    ## iter  25 value 11.017206
+    ## iter  30 value 10.707776
+    ## iter  35 value 10.589177
+    ## final  value 10.562997 
     ## converged
 
-    ## Warning: ggrepel: 106 unlabeled data points (too many overlaps). Consider
+    ## Warning: ggrepel: 113 unlabeled data points (too many overlaps). Consider
     ## increasing max.overlaps
 
 ![](README_files/figure-markdown_github/plotMDS-2.png)
@@ -676,6 +717,6 @@ plotPCA(UMAPV, clusters = NULL, samples = NULL)
 
 # 5. Advanced usage
 
-### 5.1 Upsampling
+## 5.1 Upsampling
 
-### 5.2 Export
+## 5.2 Export
