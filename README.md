@@ -32,7 +32,7 @@ dataset.
 
 <img src="README/figures/workflow.png" width="90%" style="display: block; margin: auto;" />
 
-*Figure 1 : Workflow of UMAPVizR*
+*Figure 1 Workflow of UMAPVizR: It consists of three main steps: (1) importing the data in FCS or TXT format resulting in the creation of an S4 UMAPdata object, (2) adding the metadata to the UMAPdata object, (3) generating the manifold and clustering. The results can be (4) visualised in different ways and (5) differential analyses are possible*
 
 ### 1.2 Input data
 
