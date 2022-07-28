@@ -19,8 +19,7 @@ plotVolcanoPlot(UMAPdata, comparison, th.pv = 1.3, th.fc = 1.5)
 a ggplot2 object
 }
 \description{
-This function aims to visualize the results of a differentially abundant a analysis using a Volcano plot.
-
+This function aims to visualize the results of a differentially abundant a analysis using a Volcano plot
 In such representation, each in dot corresponds to a cell cluster and dots are positioned in two dimensional space where the X-axis represents the log2(fold-change) and the Y-axis represents the -log10 of the p-value.
 Un horizontal line is displayed accordingly to the p-value threshold and to vertical lines are displayed accordingly to the fold-change threshold.
 }

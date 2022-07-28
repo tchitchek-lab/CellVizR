@@ -8,10 +8,10 @@
 #' Cell marker having technical or biological biaises can be excluded during the import. 
 #'  
 #' @param files a character vector specifying the path of the tab-separated or FCS files to load 
-#' @param filetype a character vector specifying xxx
+#' @param filetype a character vector specifying the format of the loaded files. By default, FCS is used
 #' @param transform a character value containing the type of the transformation to apply. Possible values are: 'logicle', 'arcsinh', 'logarithmic' or 'none' 
 #' @param downsampling a numeric value providing the number of cells to downsample for each sample
-#' @param d.method a character value containing the type of the dowsampling to apply. Possible values are: 'uniform' or 'density'
+#' @param d.method a character value containing the type of the downsampling to apply. Possible values are: 'uniform' or 'density'
 #' @param exclude.markers a character vector providing the marker names to be excluded during the import
 #' @param seed a numeric value providing the random seed to use during stochastic operations 
 #' 

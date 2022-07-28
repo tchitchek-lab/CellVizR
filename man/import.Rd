@@ -17,13 +17,13 @@ import(
 \arguments{
 \item{files}{a character vector specifying the path of the tab-separated or FCS files to load}
 
-\item{filetype}{a character vector specifying xxx}
+\item{filetype}{a character vector specifying the format of the loaded files. By default, FCS is used}
 
 \item{transform}{a character value containing the type of the transformation to apply. Possible values are: 'logicle', 'arcsinh', 'logarithmic' or 'none'}
 
 \item{downsampling}{a numeric value providing the number of cells to downsample for each sample}
 
-\item{d.method}{a character value containing the type of the dowsampling to apply. Possible values are: 'uniform' or 'density'}
+\item{d.method}{a character value containing the type of the downsampling to apply. Possible values are: 'uniform' or 'density'}
 
 \item{exclude.markers}{a character vector providing the marker names to be excluded during the import}
 

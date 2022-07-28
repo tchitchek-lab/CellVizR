@@ -196,9 +196,9 @@ plotClustersCounts = function(UMAPdata,
 #' 
 #' @param UMAPdata a UMAPdata object
 #' @param cluster a character vector containing the identifier of the cluster to use
-#' @param quant.low a numeric value containg xxx
-#' @param quant.high a numeric value containing xxx
-#' @param dip.th a numeric value containing xxx
+#' @param quant.low a numeric value providing the number of first quantile
+#' @param quant.high a numeric value providing the number of last quantile  
+#' @param dip.th a numeric value specifing xxx
 #'  
 #' @return a ggplot2 object
 #' 
@@ -235,7 +235,6 @@ plotPhenoClusters = function(UMAPdata,
     colnames(exp.values) <- c("exp", "clusters", "samples")
     quantiles <- stats::quantile(exp.values$exp, probs = c(quant.low, quant.high))
     
-    print(cluster)
     exp.values.clusters <- exp.values[exp.values$clusters %in% cluster,]
     
     order <- unique(assignments$timepoint)
@@ -256,7 +255,7 @@ plotPhenoClusters = function(UMAPdata,
     
     plot <- ggplot2::ggplot() + 
       ggplot2::ggtitle(marker) + 
-      ggridges::geom_density_ridges_gradient(data = exp.values, ggplot2::aes(x=exp, fill=ggplot2::stat(x), y=0)) + 
+      ggridges::geom_density_ridges_gradient(data = exp.values, ggplot2::aes(x=exp, fill=stat(x), y=0)) + 
       ggplot2::scale_fill_gradientn(limits=c(quantiles[1], quantiles[2]),
                                     colours = expression_color_palette, na.value = "black") +
       ggplot2::geom_density(data = exp.values.clusters, ggplot2::aes_string(x="exp"), 
@@ -310,13 +309,11 @@ plotPhenoClusters = function(UMAPdata,
 #' @export
 #'    
 plotManifold = function(UMAPdata, 
-                        markers = c("density","markers"),
+                        markers = "density",
                         samples = NULL,
                         scale = FALSE,
                         quant.low = 0.05,
                         quant.high = 0.95) {
-  
-  markers <- match.arg(markers)
   
   checkmate::qassert(markers, "S1")
   checkmate::qassert(samples, c("0","S*"))
@@ -397,16 +394,16 @@ plotManifold = function(UMAPdata,
 #' The representation can be restricted to specific cell clusters and samples. In addition, it is possible to choose the levels displayed, clusters or samples. 
 #' 
 #' @param UMAPdata a UMAPdata object
-#' @param levels a character value containing the variable to be displayed. Possible values are: 'clusters' or 'samples'
+#' @param levels a character value containing the variable to be displayed. Possible values are: 'both', 'clusters' or 'samples'
 #' @param clusters a character vector containing the identifier of the cluster to use. By default, all clusters are used
 #' @param samples a character vector containing the names of biological samples to use. By default, all samples are used
 #' @param components a numeric vector providing the components to display 
-#' @param condition.samples a character vector containing xxx
-#' @param cor.radius.th a numeric value containing
-#' @param cluster.label.size a numeric value containing xxx
-#' @param sample.label.size a numeric value containing xxx
-#' @param cluster.dot.size a numeric value containing xxx
-#' @param sample.dot.size a numeric value containing xxx
+#' @param condition.samples a character vector containing the variable to be studied for the samples. Possible values are: 'condition' or 'timepoint"
+#' @param cor.radius.th a numeric value specifing xxx 
+#' @param cluster.label.size a numeric value specifing the label size for clusters
+#' @param sample.label.size a numeric value specifing the label size for the samples 
+#' @param cluster.dot.size a numeric value specifing the dot size for the clusters
+#' @param sample.dot.size a numeric value specifing the dot size for the samples 
 #'     
 #' @return a ggplot2 object
 #' 
@@ -550,7 +547,7 @@ plotPCA <- function(UMAPdata,
 #'     
 #' @param UMAPdata a UMAPdata object
 #' @param levels a character value containing the variable to be displayed. Possible values are: 'clusters' or 'samples'
-#' @param condition.samples a character vector containing xxx
+#' @param condition.samples a character vector containing the variable to be studied for the samples. Possible values are: 'condition' or 'timepoint"
 #' @param clusters a character vector containing the identifiers of the clusters to use. By default, all clusters are used
 #' @param samples a character vector containing the names of biological samples to use. By default, all samples are used 
 #'  
@@ -729,15 +726,15 @@ plotBoxplot = function(UMAPdata,
   
   position_jitter <- ggplot2::position_jitter(seed=42,width=0.15)
   
-  stat.test  <- ggpubr::compare_means(data=matrix.cell.count, formula= stats::as.formula(paste0("value ~ ",observation)), method = test.statistics, paired = paired)
+  stat.test  <- ggpubr::compare_means(data=matrix.cell.count, formula= stats::as.formula(paste0("value ~ ",observation)), 
+                                      method = test.statistics, paired = paired)
   stat.test  <- data.frame(stat.test)
   stat.test$y.position <- max(matrix.cell.count$value)
   
-  
   plot <- ggplot2::ggplot() +
     ggplot2::ggtitle(paste0("abundance of cluster: ", paste0(clusters, collapse = ", "))) +
-    ggplot2::geom_boxplot(data=matrix.cell.count,ggplot2::aes_string(x=observation,y="value"),
-                          fill="gray",outlier.shape=NA,size=0.2,fatten = 1) +
+    ggplot2::geom_boxplot(data=matrix.cell.count,ggplot2::aes_string(x=observation,y="value", fill=observation),
+                          outlier.shape=NA,size=0.2,fatten = 1) +
     ggplot2::geom_jitter(data=matrix.cell.count,ggplot2::aes_string(x=observation,y="value"),
                          fill="black",shape=21,size=0.1,position=position_jitter) +
     ggpubr::stat_pvalue_manual(stat.test,label = "p.signif",color = "purple",size=5,hide.ns=hide.ns)
@@ -759,12 +756,10 @@ plotBoxplot = function(UMAPdata,
 
 #' @title Plots of a volcano plot of statistical analysis
 #'
-#' @description This function aims to visualize the results of a differentially abundant a analysis using a Volcano plot.
-#' 
+#' @description This function aims to visualize the results of a differentially abundant a analysis using a Volcano plot
 #' In such representation, each in dot corresponds to a cell cluster and dots are positioned in two dimensional space where the X-axis represents the log2(fold-change) and the Y-axis represents the -log10 of the p-value.
 #' Un horizontal line is displayed accordingly to the p-value threshold and to vertical lines are displayed accordingly to the fold-change threshold.
 #'
-#'     
 #' @param UMAPdata a UMAPdata object
 #' @param comparison a character value containing the comparison to study 
 #' @param th.pv a numeric value containing the p-value threshold to use
@@ -821,9 +816,13 @@ plotVolcanoPlot = function(UMAPdata,
   
 }
 
-#' @title Plots of marker co-expression
+#' @title Plots of a distogram of marker co-expression
 #'
-#' @description This function aims to visualize xxx
+#' @description This function aims to visualize the pairwise co-expression between all markers using a distogram representation.
+#' Each tile corresponds to the co-expression between two markers and is gradient-colored based on the Pearson correlation.  
+#' 
+#' @details 
+#' The Pearson correlation is computed based on the marker expressions.
 #' 
 #' @param UMAPdata a UMAPdata object
 #' @param clusters a character vector containing the identifier of the cluster to use
@@ -835,7 +834,6 @@ plotVolcanoPlot = function(UMAPdata,
 plotDistogram = function(UMAPdata,
                          clusters = NULL) {
   
-  
   checkmate::qassert(clusters, c("0","S+"))
   
   matrix.exp <- UMAPdata@matrix.expression
@@ -843,21 +841,19 @@ plotDistogram = function(UMAPdata,
   cluster <- UMAPdata@identify.clusters
   
   proj <- cbind(samples, cluster, matrix.exp)
+  colnames(proj) <- c("samples","clusters", colnames(matrix.exp))
   
-  if(is.null(clusters)) {
-    clusters <- unique(cluster)
-  } else if (all(clusters %in% UMAPdata@identify.clusters)) {
-    if (typeof(clusters) != "character") {
-      stop("Error in plotDistogram : 'clusters' parameter must be character vector")
-    }
-    
-    clusters <- unique(clusters)
-    clusters.select <- proj[, "cluster"] %in% clusters
-    proj <- proj[clusters.select,]
-    
-  } else {
-    stop("Error in plotDistogram:\nUnknown clusters : ", paste0(setdiff(unique(clusters), unique(cluster)), collapse = " "))
+  if(!is.null(clusters)){
+    proj <- proj[proj$clusters %in% clusters,]
   }
+  
+  # if(is.null(clusters)) {
+  #   clusters <- unique(cluster)
+  # } else if (all(clusters %in% UMAPdata@identify.clusters)) {
+  #   clusters <- unique(clusters)
+  #   clusters.select <- proj[, "cluster"] %in% clusters
+  #   proj <- proj[clusters.select,]
+  # } 
   
   proj <- proj[, -c(1,2)]
   proj <- stats::na.omit(proj)
@@ -881,8 +877,8 @@ plotDistogram = function(UMAPdata,
                                   midpoint = 0, limit = c(-1,1), na.value = "white",
                                   name = "Pearson correlation") + 
     ggplot2::annotate(geom = "text", 
-                      x = 1:length(markers),
-                      y = 1:length(markers),
+                      x = seq(1,length(markers)),
+                      y = seq(1,length(markers)),
                       angle = -45,
                       size = 4,
                       label = markers,
@@ -921,17 +917,17 @@ plotDistogram = function(UMAPdata,
   
 }
 
-#' @title Plots of scatter
+#' @title Plots of a scatter plot of marker co-expression 
 #'
-#' @description This function aims to visualize xxx
+#' @description This function aims to visualize co-expression between two markers using a scatter representation
 #' 
 #' @param UMAPdata a UMAPdata object
-#' @param marker1 a character value containing xxx
-#' @param marker2 a character value containing xxx
+#' @param marker1 a character value specifying the first marker to be visualised
+#' @param marker2 a character value specifying the second marker to be visualised 
 #' @param samples a character vector containing the names of biological samples to use. By default, all samples are used
 #' @param clusters a character vector containing the identifiers of the clusters to use. By default, all clusters are used
 #'  
-#' @return xx
+#' @return a ggplot2 object
 #' 
 #' @export
 #'    
@@ -941,11 +937,10 @@ plotScatter = function(UMAPdata,
                        samples = NULL,
                        clusters = NULL) {
   
-  checkmate::qassert(marker1, "C1")
-  checkmate::qassert(marker2, "C1")
+  checkmate::qassert(marker1, "S1")
+  checkmate::qassert(marker2, "S1")
   checkmate::qassert(samples, c("0","S+"))
   checkmate::qassert(clusters, c("0","S+"))
-  
   
   matrix.exp <- UMAPdata@matrix.expression
   sample <- UMAPdata@samples
@@ -957,10 +952,10 @@ plotScatter = function(UMAPdata,
   colnames(proj) <- c("marker1","marker2","samples","clusters")
   
   if(!is.null(samples)){
-    proj <- proj[proj$samples %in% samples]
+    proj <- proj[proj$samples %in% samples,]
   }
   if(!is.null(clusters)){
-    proj <- proj[proj$clusters %in% clusters]
+    proj <- proj[proj$clusters %in% clusters,]
   }
   
   proj$value <- computeCellDensities(proj, n=100)

@@ -17,11 +17,11 @@ plotPhenoClusters(
 
 \item{cluster}{a character vector containing the identifier of the cluster to use}
 
-\item{quant.low}{a numeric value containg xxx}
+\item{quant.low}{a numeric value providing the number of first quantile}
 
-\item{quant.high}{a numeric value containing xxx}
+\item{quant.high}{a numeric value providing the number of last quantile}
 
-\item{dip.th}{a numeric value containing xxx}
+\item{dip.th}{a numeric value specifing xxx}
 }
 \value{
 a ggplot2 object

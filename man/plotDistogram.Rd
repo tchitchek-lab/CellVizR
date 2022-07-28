@@ -2,7 +2,7 @@
 % Please edit documentation in R/viewer.R
 \name{plotDistogram}
 \alias{plotDistogram}
-\title{Plots of marker co-expression}
+\title{Plots of a distogram of marker co-expression}
 \usage{
 plotDistogram(UMAPdata, clusters = NULL)
 }
@@ -15,5 +15,9 @@ plotDistogram(UMAPdata, clusters = NULL)
 a ggplot2 object
 }
 \description{
-This function aims to visualize xxx
+This function aims to visualize the pairwise co-expression between all markers using a distogram representation.
+Each tile corresponds to the co-expression between two markers and is gradient-colored based on the Pearson correlation.
+}
+\details{
+The Pearson correlation is computed based on the marker expressions.
 }

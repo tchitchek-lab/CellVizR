@@ -1,12 +1,12 @@
 #' @title Computes the percentage of cell clusters with low number of cells  
 #'
-#' @description This function aims to compute and show cell clusters having a number of associated cells lower than a specific threshold.
+#' @description This function aims to compute and show cell clusters having a number of associated cells lower than a specific threshold
 #' 
 #' @param UMAPdata a UMAPdata object
 #' @param th.size a numeric value providing the minimum number of cells needed for a cluster to be considered a small cluster
 #' @param plot.device a boolean value specifying a results representation must be displayed
 #'  
-#' @return a numerical value corresponding to the percentage of cell cluster with low number of cells. 
+#' @return a numerical value corresponding to the percentage of cell cluster with low number of cells 
 #' 
 #' @export
 #' 
@@ -30,15 +30,15 @@ QCSmallClusters = function(UMAPdata,
 
 # @title Internal - Computes the percentage of clusters with low number of cells 
 #
-# @description This function is used internally to compute the percentage of clusters having a number of associated cells lower than a specific threshold.
+# @description This function is used internally to compute the percentage of clusters having a number of associated cells lower than a specific threshold
 # 
 #  
 # @param UMAPdata a UMAPdata object
 # @param th.size a numeric value providing the minimum number of cells needed for a cluster to be considered a small cluster
 #  
-# @return a list containing QC information for small clusters. 
-# Returns a data.frame with a boolean value indicating if the number of associated cells is greater or less than the threshold.
-# In addition, returns the percentage of the calculation.
+# @return a list containing QC information for small clusters
+# Returns a data.frame with a boolean value indicating if the number of associated cells is greater or less than the threshold
+# In addition, returns the percentage of the calculation
 # 
 # @export  
 #   
@@ -59,9 +59,9 @@ computeSmallClusters = function(UMAPdata,
 
 # @title Internal - Plots a representation of QC for small clusters 
 #
-# @description This function is used internally to create a representation showing the fraction of clusters having a number associated cell lower than a specific threshold.
+# @description This function is used internally to create a representation showing the fraction of clusters having a number associated cell lower than a specific threshold
 #  
-# @param values.small a list providing the small cluster QC information. Such as data.frame containing the boolean values and the percentage computed. 
+# @param values.small a list providing the small cluster QC information. Such as data.frame containing the boolean values and the percentage computed
 #  
 # @return a ggplot2 object 
 # 
@@ -107,9 +107,9 @@ plotSmallClusters = function(values.small) {
 
 #' @title Computes the percentage of clusters with uniform phenotypes
 #' 
-#' @description This function aims to identify and show cell clusters having a uniform phenotype.
+#' @description This function aims to identify and show cell clusters having a uniform phenotype
 #'  
-#' A uniform cluster corresponds to a cluster that have a unimodal expression and a low spread of expression for all its markers.
+#' A uniform cluster corresponds to a cluster that have a unimodal expression and a low spread of expression for all its markers
 #'
 #' @details 
 #' -'uniform' corresponds to the verification of the unimodal distribution of markers with a Hartigans test
@@ -165,9 +165,9 @@ QCUniformClusters <- function(UMAPdata,
 # @param th.pvalue a numeric value providing the p-value threshold of the Hartigan's dip test (unimodal if pvalue > th.pvalue)
 # @param th.IQR a numeric value providing the IQR (interquartile range) threshold to assume a distribution as uniform
 # 
-# @return a list containing QC information for small clusters. 
-# Returns a data.frame with a boolean value indicating xxx.
-# In addition, returns the percentage of the calculation.
+# @return a list containing QC information for small clusters
+# Returns a data.frame with a boolean value indicating if the clusters have a uniform phenotype
+# In addition, returns the percentage of the calculation
 # 
 computeUniformClusters <- function(UMAPdata,
                                    uniform.test,
@@ -233,9 +233,9 @@ computeUniformClusters <- function(UMAPdata,
 
 # @title Internal - Plots a representation of QC for uniform phenotype cluster
 # 
-# @description This function is used internally to create a graphic representation.
+# @description This function is used internally to create a graphic representation
 #
-# @param values_uniform a list providing the uniform cluster QC information. Such as data.frame containing the boolean values and the percentage computed. 
+# @param values_uniform a list providing the uniform cluster QC information. Such as data.frame containing the boolean values and the percentage computed 
 # 
 # @return a ggplot2 object
 # 
@@ -245,7 +245,7 @@ plotUniformClusters <- function(values_uniform){
   perc <- values_uniform$perc
   
   title <- paste0("Uniform clusters quality control")
-  subtitle <- paste0("percentage of clusters having xxx = ",
+  subtitle <- paste0("percentage of clusters having a uniform phenotype = ",
                      format(round(perc, 2), nsmall = 2), "%")
   
   plot <- ggplot2::ggplot(data = res) +

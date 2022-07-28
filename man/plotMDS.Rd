@@ -17,7 +17,7 @@ plotMDS(
 
 \item{levels}{a character value containing the variable to be displayed. Possible values are: 'clusters' or 'samples'}
 
-\item{condition.samples}{a character vector containing xxx}
+\item{condition.samples}{a character vector containing the variable to be studied for the samples. Possible values are: 'condition' or 'timepoint"}
 
 \item{clusters}{a character vector containing the identifiers of the clusters to use. By default, all clusters are used}
 

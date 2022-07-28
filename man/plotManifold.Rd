@@ -6,7 +6,7 @@
 \usage{
 plotManifold(
   UMAPdata,
-  markers = c("density", "markers"),
+  markers = "density",
   samples = NULL,
   scale = FALSE,
   quant.low = 0.05,

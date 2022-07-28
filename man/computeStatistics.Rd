@@ -27,10 +27,10 @@ computeStatistics(
 a S4 object of class 'UMAPdata'
 }
 \description{
-This function aims to compute the statistics of Differentially Abundant Clusters 'DAC'. 
+This function aims to compute the statistics of Differentially Abundant Clusters 'DAC'.
 
 DAC correspond to cell clusters having abundances statistically different between two biological conditions.
-The statistical test used for the comparisons can be defined by users. 
-For each cluster, the p-value, log2 fold-change and effect size relative to the reference condition are computed.  
+The statistical test used for the comparisons can be defined by users.
+For each cluster, the p-value, log2 fold-change and effect size relative to the reference condition are computed.
 Statistical comparison can be performed in a paired and unpaired manner.
 }

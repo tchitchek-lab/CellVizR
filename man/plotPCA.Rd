@@ -21,7 +21,7 @@ plotPCA(
 \arguments{
 \item{UMAPdata}{a UMAPdata object}
 
-\item{levels}{a character value containing the variable to be displayed. Possible values are: 'clusters' or 'samples'}
+\item{levels}{a character value containing the variable to be displayed. Possible values are: 'both', 'clusters' or 'samples'}
 
 \item{clusters}{a character vector containing the identifier of the cluster to use. By default, all clusters are used}
 
@@ -29,17 +29,17 @@ plotPCA(
 
 \item{components}{a numeric vector providing the components to display}
 
-\item{condition.samples}{a character vector containing xxx}
+\item{condition.samples}{a character vector containing the variable to be studied for the samples. Possible values are: 'condition' or 'timepoint"}
 
-\item{cor.radius.th}{a numeric value containing}
+\item{cor.radius.th}{a numeric value specifing xxx}
 
-\item{cluster.label.size}{a numeric value containing xxx}
+\item{cluster.label.size}{a numeric value specifing the label size for clusters}
 
-\item{sample.label.size}{a numeric value containing xxx}
+\item{sample.label.size}{a numeric value specifing the label size for the samples}
 
-\item{cluster.dot.size}{a numeric value containing xxx}
+\item{cluster.dot.size}{a numeric value specifing the dot size for the clusters}
 
-\item{sample.dot.size}{a numeric value containing xxx}
+\item{sample.dot.size}{a numeric value specifing the dot size for the samples}
 }
 \value{
 a ggplot2 object
