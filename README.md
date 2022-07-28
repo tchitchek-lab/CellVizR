@@ -177,26 +177,26 @@ UMAPV <- generateManifold(UMAPV,
 
     ## Manifold markers are: TCRgd, NKP44, HLADR, NKp30, NKp46, NKG2D, CD3, CD16, CD56, CD8
 
-    ## 11:48:56 UMAP embedding parameters a = 1.896 b = 0.8006
+    ## 12:01:11 UMAP embedding parameters a = 1.896 b = 0.8006
 
-    ## 11:48:56 Read 42000 rows and found 10 numeric columns
+    ## 12:01:11 Read 42000 rows and found 10 numeric columns
 
-    ## 11:48:56 Using Annoy for neighbor search, n_neighbors = 15
+    ## 12:01:11 Using Annoy for neighbor search, n_neighbors = 15
 
-    ## 11:48:57 Building Annoy index with metric = euclidean, n_trees = 50
+    ## 12:01:12 Building Annoy index with metric = euclidean, n_trees = 50
 
     ## 0%   10   20   30   40   50   60   70   80   90   100%
 
     ## [----|----|----|----|----|----|----|----|----|----|
 
     ## **************************************************|
-    ## 11:49:00 Writing NN index file to temp file C:\Users\GWMA\AppData\Local\Temp\RtmpcZRMOu\file15d875f17ee2
-    ## 11:49:00 Searching Annoy index using 40 threads, search_k = 1500
-    ## 11:49:02 Annoy recall = 100%
-    ## 11:49:02 Commencing smooth kNN distance calibration using 40 threads
-    ## 11:49:03 Initializing from normalized Laplacian + noise
-    ## 11:49:03 Commencing optimization for 200 epochs, with 843812 positive edges using 1 thread
-    ## 11:49:32 Optimization finished
+    ## 12:01:15 Writing NN index file to temp file C:\Users\GWMA\AppData\Local\Temp\RtmpGinXAy\file265c7ed242a7
+    ## 12:01:15 Searching Annoy index using 40 threads, search_k = 1500
+    ## 12:01:17 Annoy recall = 100%
+    ## 12:01:17 Commencing smooth kNN distance calibration using 40 threads
+    ## 12:01:18 Initializing from normalized Laplacian + noise
+    ## 12:01:19 Commencing optimization for 200 epochs, with 843812 positive edges using 1 thread
+    ## 12:01:47 Optimization finished
 
 The main arguments of the `generateManifold` function are:
 
