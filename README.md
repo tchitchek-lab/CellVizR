@@ -245,7 +245,7 @@ plotManifold(UMAPV,
              markers = "density")
 ```
 
-![](README_files/figure-markdown_github/PlotManifold-1.png)
+![](README/figure-markdown_github/PlotManifold-1.png)
 
 ``` r
 # Display manifold overlay by 'markers'  
@@ -253,7 +253,7 @@ plotManifold(UMAPV,
              markers = "NKP44")
 ```
 
-![](README_files/figure-markdown_github/PlotManifold-2.png)
+![](README/figure-markdown_github/PlotManifold-2.png)
 
 The main argument of the `plotManifold` function is `markers` which are
 used to specify the marker to be used for colouring. The `density` value
@@ -270,7 +270,7 @@ plotManifold(UMAPV,
              samples = "V1_10105LA")
 ```
 
-![](README_files/figure-markdown_github/PlotManifold2-1.png)
+![](README/figure-markdown_github/PlotManifold2-1.png)
 
 The second visualization shows a heatmap displaying the expression
 values of each marker for the dataset as below:
@@ -290,7 +290,7 @@ hm.exp <- plotHmExpressions(UMAPV)
 plot(hm.exp)
 ```
 
-![](README_files/figure-markdown_github/PlotHMExpressions-1.png)
+![](README/figure-markdown_github/PlotHMExpressions-1.png)
 
 This visualization can be customized with some parameters as below:
 
@@ -310,7 +310,7 @@ hm.exp <- plotHmExpressions(UMAPV,
 plot(hm.exp)
 ```
 
-![](README_files/figure-markdown_github/plotHmExpressions2-1.png)
+![](README/figure-markdown_github/plotHmExpressions2-1.png)
 
 The customization parameters of the `plotHmExpressions` are:
 
@@ -418,7 +418,7 @@ below:
 QCS <- QCSmallClusters(UMAPV)
 ```
 
-![](README_files/figure-markdown_github/QCSmallClusters-1.png)
+![](README/figure-markdown_github/QCSmallClusters-1.png)
 
     ##      V1_10105LA V1_10209HE V1_10306CG V1_10307BR V1_10503DC V1_10707BL
     ## [1,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
@@ -489,7 +489,7 @@ QCU <- QCUniformClusters(UMAPV)
     ## Using clusters as id variables
     ## Using clusters as id variables
 
-![](README_files/figure-markdown_github/QCUniformClusters-1.png)
+![](README/figure-markdown_github/QCUniformClusters-1.png)
 
     ##   clusters markers    pv_dip       IQR passed
     ## 1        1    CD16 0.8554493 0.3016465   TRUE
@@ -544,7 +544,7 @@ possibilities, either as a volcano plot as follows:
 plotVolcanoPlot(UMAPV, comparison = ("V7 vs. V1"))
 ```
 
-![](README_files/figure-markdown_github/plotVolcanoPlot-1.png)
+![](README/figure-markdown_github/plotVolcanoPlot-1.png)
 
 Either in the heatmap, as follows:
 
@@ -561,7 +561,7 @@ hm.stats <- plotHmStatistics(UMAPV, clusters = NULL,
 plot(hm.stats)
 ```
 
-![](README_files/figure-markdown_github/plotHmStatistics-1.png)
+![](README/figure-markdown_github/plotHmStatistics-1.png)
 
 For the `plotHmStatistics` function:
 
@@ -576,7 +576,7 @@ plotHmAbundances(UMAPV, clusters = NULL,
                  samples = NULL)
 ```
 
-![](README_files/figure-markdown_github/plotHmAbundances-1.png)
+![](README/figure-markdown_github/plotHmAbundances-1.png)
 
 For the `plotHmStatistics` function:
 
@@ -598,7 +598,7 @@ plotBoxplot(UMAPV,
             test.statistics = "wilcox.test")
 ```
 
-![](README_files/figure-markdown_github/plotBoxplot-1.png)
+![](README/figure-markdown_github/plotBoxplot-1.png)
 
 For the `plotBoxPlot` function:
 
@@ -632,7 +632,7 @@ plotMDS(UMAPV, levels = "samples", condition.samples = "timepoint", clusters = N
     ## Warning: ggrepel: 34 unlabeled data points (too many overlaps). Consider
     ## increasing max.overlaps
 
-![](README_files/figure-markdown_github/plotMDS-1.png)
+![](README/figure-markdown_github/plotMDS-1.png)
 
 ``` r
 plotMDS(UMAPV, levels = "clusters", clusters = NULL, samples = NULL)
@@ -653,26 +653,26 @@ plotMDS(UMAPV, levels = "clusters", clusters = NULL, samples = NULL)
     ## Warning: ggrepel: 106 unlabeled data points (too many overlaps). Consider
     ## increasing max.overlaps
 
-![](README_files/figure-markdown_github/plotMDS-2.png)
+![](README/figure-markdown_github/plotMDS-2.png)
 
 ``` r
 # PCA
 plotPCA(UMAPV, levels = "clusters", clusters = NULL, samples = NULL)
 ```
 
-![](README_files/figure-markdown_github/plotPCA-1.png)
+![](README/figure-markdown_github/plotPCA-1.png)
 
 ``` r
 plotPCA(UMAPV, levels = "samples", clusters = NULL, samples = NULL, condition.samples = "timepoint")
 ```
 
-![](README_files/figure-markdown_github/plotPCA-2.png)
+![](README/figure-markdown_github/plotPCA-2.png)
 
 ``` r
 plotPCA(UMAPV, clusters = NULL, samples = NULL)
 ```
 
-![](README_files/figure-markdown_github/plotPCA-3.png)
+![](README/figure-markdown_github/plotPCA-3.png)
 
 # 5. Advanced usage
 
