@@ -30,7 +30,7 @@ contain the main information of the files used. This stored information
 will allow realizing the statistics and visualization part of the
 dataset.
 
-<img src="workflow.png" width="90%" style="display: block; margin: auto;" />
+<img src="README/figures/workflow.png" width="90%" style="display: block; margin: auto;" />
 
 *Figure 1 : Workflow of UMAPVizR*
 
