@@ -177,26 +177,26 @@ UMAPV <- generateManifold(UMAPV,
 
     ## Manifold markers are: TCRgd, NKP44, HLADR, NKp30, NKp46, NKG2D, CD3, CD16, CD56, CD8
 
-    ## 12:01:11 UMAP embedding parameters a = 1.896 b = 0.8006
+    ## 12:27:19 UMAP embedding parameters a = 1.896 b = 0.8006
 
-    ## 12:01:11 Read 42000 rows and found 10 numeric columns
+    ## 12:27:19 Read 42000 rows and found 10 numeric columns
 
-    ## 12:01:11 Using Annoy for neighbor search, n_neighbors = 15
+    ## 12:27:19 Using Annoy for neighbor search, n_neighbors = 15
 
-    ## 12:01:12 Building Annoy index with metric = euclidean, n_trees = 50
+    ## 12:27:20 Building Annoy index with metric = euclidean, n_trees = 50
 
     ## 0%   10   20   30   40   50   60   70   80   90   100%
 
     ## [----|----|----|----|----|----|----|----|----|----|
 
     ## **************************************************|
-    ## 12:01:15 Writing NN index file to temp file C:\Users\GWMA\AppData\Local\Temp\RtmpGinXAy\file265c7ed242a7
-    ## 12:01:15 Searching Annoy index using 40 threads, search_k = 1500
-    ## 12:01:17 Annoy recall = 100%
-    ## 12:01:17 Commencing smooth kNN distance calibration using 40 threads
-    ## 12:01:18 Initializing from normalized Laplacian + noise
-    ## 12:01:19 Commencing optimization for 200 epochs, with 843812 positive edges using 1 thread
-    ## 12:01:47 Optimization finished
+    ## 12:27:23 Writing NN index file to temp file C:\Users\GWMA\AppData\Local\Temp\Rtmpqm4wTr\file2c987a2e71c0
+    ## 12:27:23 Searching Annoy index using 40 threads, search_k = 1500
+    ## 12:27:25 Annoy recall = 100%
+    ## 12:27:25 Commencing smooth kNN distance calibration using 40 threads
+    ## 12:27:26 Initializing from normalized Laplacian + noise
+    ## 12:27:27 Commencing optimization for 200 epochs, with 843812 positive edges using 1 thread
+    ## 12:27:55 Optimization finished
 
 The main arguments of the `generateManifold` function are:
 
@@ -245,7 +245,7 @@ plotManifold(UMAPV,
              markers = "density")
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-10-1.png)
+![](README_files/figure-markdown_github/PlotManifold-1.png)
 
 ``` r
 # Display manifold overlay by 'markers'  
@@ -253,7 +253,7 @@ plotManifold(UMAPV,
              markers = "NKP44")
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-10-2.png)
+![](README_files/figure-markdown_github/PlotManifold-2.png)
 
 The main argument of the `plotManifold` function is `markers` which are
 used to specify the marker to be used for colouring. The `density` value
@@ -270,7 +270,7 @@ plotManifold(UMAPV,
              samples = "V1_10105LA")
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-11-1.png)
+![](README_files/figure-markdown_github/PlotManifold2-1.png)
 
 The second visualization shows a heatmap displaying the expression
 values of each marker for the dataset as below:
@@ -290,7 +290,7 @@ hm.exp <- plotHmExpressions(UMAPV)
 plot(hm.exp)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-12-1.png)
+![](README_files/figure-markdown_github/PlotHMExpressions-1.png)
 
 This visualization can be customized with some parameters as below:
 
@@ -310,7 +310,7 @@ hm.exp <- plotHmExpressions(UMAPV,
 plot(hm.exp)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-13-1.png)
+![](README_files/figure-markdown_github/plotHmExpressions2-1.png)
 
 The customization parameters of the `plotHmExpressions` are:
 
@@ -418,7 +418,7 @@ below:
 QCS <- QCSmallClusters(UMAPV)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-18-1.png)
+![](README_files/figure-markdown_github/QCSmallClusters-1.png)
 
     ##      V1_10105LA V1_10209HE V1_10306CG V1_10307BR V1_10503DC V1_10707BL
     ## [1,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
@@ -489,7 +489,7 @@ QCU <- QCUniformClusters(UMAPV)
     ## Using clusters as id variables
     ## Using clusters as id variables
 
-![](README_files/figure-markdown_github/unnamed-chunk-20-1.png)
+![](README_files/figure-markdown_github/QCUniformClusters-1.png)
 
     ##   clusters markers    pv_dip       IQR passed
     ## 1        1    CD16 0.8554493 0.3016465   TRUE
@@ -544,7 +544,7 @@ possibilities, either as a volcano plot as follows:
 plotVolcanoPlot(UMAPV, comparison = ("V7 vs. V1"))
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-23-1.png)
+![](README_files/figure-markdown_github/plotVolcanoPlot-1.png)
 
 Either in the heatmap, as follows:
 
@@ -561,7 +561,7 @@ hm.stats <- plotHmStatistics(UMAPV, clusters = NULL,
 plot(hm.stats)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-24-1.png)
+![](README_files/figure-markdown_github/plotHmStatistics-1.png)
 
 For the `plotHmStatistics` function:
 
@@ -576,7 +576,7 @@ plotHmAbundances(UMAPV, clusters = NULL,
                  samples = NULL)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-25-1.png)
+![](README_files/figure-markdown_github/plotHmAbundances-1.png)
 
 For the `plotHmStatistics` function:
 
@@ -598,7 +598,7 @@ plotBoxplot(UMAPV,
             test.statistics = "wilcox.test")
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-26-1.png)
+![](README_files/figure-markdown_github/plotBoxplot-1.png)
 
 For the `plotBoxPlot` function:
 
@@ -632,7 +632,7 @@ plotMDS(UMAPV, levels = "samples", condition.samples = "timepoint", clusters = N
     ## Warning: ggrepel: 34 unlabeled data points (too many overlaps). Consider
     ## increasing max.overlaps
 
-![](README_files/figure-markdown_github/unnamed-chunk-27-1.png)
+![](README_files/figure-markdown_github/plotMDS-1.png)
 
 ``` r
 plotMDS(UMAPV, levels = "clusters", clusters = NULL, samples = NULL)
@@ -653,26 +653,26 @@ plotMDS(UMAPV, levels = "clusters", clusters = NULL, samples = NULL)
     ## Warning: ggrepel: 106 unlabeled data points (too many overlaps). Consider
     ## increasing max.overlaps
 
-![](README_files/figure-markdown_github/unnamed-chunk-27-2.png)
+![](README_files/figure-markdown_github/plotMDS-2.png)
 
 ``` r
 # PCA
 plotPCA(UMAPV, levels = "clusters", clusters = NULL, samples = NULL)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-28-1.png)
+![](README_files/figure-markdown_github/plotPCA-1.png)
 
 ``` r
 plotPCA(UMAPV, levels = "samples", clusters = NULL, samples = NULL, condition.samples = "timepoint")
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-28-2.png)
+![](README_files/figure-markdown_github/plotPCA-2.png)
 
 ``` r
 plotPCA(UMAPV, clusters = NULL, samples = NULL)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-28-3.png)
+![](README_files/figure-markdown_github/plotPCA-3.png)
 
 # 5. Advanced usage
 
