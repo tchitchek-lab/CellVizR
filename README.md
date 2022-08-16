@@ -29,7 +29,7 @@ In the `UMAPVizR` workflow, an S4 object is created to store data and
 sample information is implemented for analysis. This stored information
 will allow performing the statistics and visualization of the dataset.
 
-<img src="workflow.png" width="90%" style="display: block; margin: auto;" />
+<img src="README/figures/workflow.png" width="90%" style="display: block; margin: auto;" />
 
 *Figure 1: Workflow of UMAPVizR*
 
@@ -134,7 +134,7 @@ plot(plotCellCounts(UMAPV,
                     sort = TRUE))
 ```
 
-![](README_files/figure-markdown_github/plotCellCounts-1.png)
+![](README/figure-markdown_github/plotCellCounts-1.png)
 
 ## 2.3 Assigning meta-information of biological samples (assignMetadata)
 
@@ -274,7 +274,7 @@ plot(plotClustersCounts(UMAPV,
                         sort = TRUE))
 ```
 
-![](README_files/figure-markdown_github/plotClustersCounts-1.png)
+![](README/figure-markdown_github/plotClustersCounts-1.png)
 
 ## 2.5 Basic Visualization
 
@@ -299,7 +299,7 @@ plotManifold(UMAPV,
              markers = "density")
 ```
 
-![](README_files/figure-markdown_github/PlotManifold-1.png)
+![](README/figure-markdown_github/PlotManifold-1.png)
 
 If the name of the marker is used, then the intensity of marker
 expression, overlaid on the manifold (e.g. CD8), will be shown as below:
@@ -310,7 +310,7 @@ plotManifold(UMAPV,
              markers = "CD8")
 ```
 
-![](README_files/figure-markdown_github/PlotManifold2-1.png)
+![](README/figure-markdown_github/PlotManifold2-1.png)
 
 It is possible to specify the biological samples to be displayed in the
 representation using the `samples` argument as below:
@@ -322,7 +322,7 @@ plotManifold(UMAPV,
              samples = "V1_10105LA")
 ```
 
-![](README_files/figure-markdown_github/PlotManifold3-1.png)
+![](README/figure-markdown_github/PlotManifold3-1.png)
 
 ### 2.5.2 Heatmap of cell marker expressions (plotHmExpressions)
 
@@ -343,7 +343,7 @@ This function is used as below:
 hm.exp <- plotHmExpressions(UMAPV)
 ```
 
-![](README_files/figure-markdown_github/PlotHMExpressions-1.png) It is
+![](README/figure-markdown_github/PlotHMExpressions-1.png) It is
 possible to customize the `plotHmExpressions` with these parameters:
 
 -   the `markers` argument, which specifies the markers to be displayed
@@ -360,7 +360,7 @@ hm.exp <- plotHmExpressions(UMAPV,
                             clusters = c(1:50))
 ```
 
-![](README_files/figure-markdown_github/plotHmExpressions2-1.png)
+![](README/figure-markdown_github/plotHmExpressions2-1.png)
 
 # 3. Statistics and visualization
 
@@ -428,7 +428,7 @@ plotVolcanoPlot(UMAPV,
                 th.fc = 1.5)
 ```
 
-![](README_files/figure-markdown_github/plotVolcanoPlot-1.png)
+![](README/figure-markdown_github/plotVolcanoPlot-1.png)
 
 ### 3.2.2 Heatmap of statistical analysis results (plotHmStatistics)
 
@@ -453,7 +453,7 @@ hm.stats <- plotHmStatistics(UMAPV,
     ## Warning: `guides(<scale> = FALSE)` is deprecated. Please use `guides(<scale> =
     ## "none")` instead.
 
-![](README_files/figure-markdown_github/plotHmStatistics-1.png)
+![](README/figure-markdown_github/plotHmStatistics-1.png)
 
 ## 3.3 Visualisation of cell cluster abundances
 
@@ -485,7 +485,7 @@ plotHmAbundances(UMAPV,
                  rescale = TRUE)
 ```
 
-![](README_files/figure-markdown_github/plotHmAbundances-1.png)
+![](README/figure-markdown_github/plotHmAbundances-1.png)
 
 ### 3.3.2 Cell cluster abundances using a boxplot representation (plotBoxplot)
 
@@ -510,7 +510,7 @@ plotBoxplot(UMAPV,
             test.statistics = "wilcox.test")
 ```
 
-![](README_files/figure-markdown_github/plotBoxplot-1.png)
+![](README/figure-markdown_github/plotBoxplot-1.png)
 
 Other possible parameters to customize the `plotBoxPlot` are:
 
@@ -544,7 +544,7 @@ plotMDS(UMAPV,
     ## Warning: ggrepel: 29 unlabeled data points (too many overlaps). Consider
     ## increasing max.overlaps
 
-![](README_files/figure-markdown_github/plotMDS-1.png)
+![](README/figure-markdown_github/plotMDS-1.png)
 
 Other possible parameters to customize the `plotMDS` are:
 
@@ -571,7 +571,7 @@ plotPCA(UMAPV,
         condition.samples = "condition")
 ```
 
-![](README_files/figure-markdown_github/plotPCA-1.png)
+![](README/figure-markdown_github/plotPCA-1.png)
 
 Other possible parameters to customize the `plotPCA` are:
 
@@ -703,7 +703,7 @@ QCS <- QCSmallClusters(UMAPV,
                        plot.device = TRUE)
 ```
 
-![](README_files/figure-markdown_github/QCSmallClusters-1.png)
+![](README/figure-markdown_github/QCSmallClusters-1.png)
 
     ##      V1_10105LA V1_10209HE V1_10306CG V1_10307BR V1_10503DC V1_10707BL
     ## [1,]      FALSE       TRUE      FALSE       TRUE       TRUE      FALSE
@@ -798,7 +798,7 @@ QCU <- QCUniformClusters(UMAPV,
     ## Using clusters as id variables
     ## Using clusters as id variables
 
-![](README_files/figure-markdown_github/QCUniformClusters-1.png)
+![](README/figure-markdown_github/QCUniformClusters-1.png)
 
     ##   clusters markers    pv_dip       IQR passed
     ## 1        1    CD16 0.9936791 0.3635300   TRUE
