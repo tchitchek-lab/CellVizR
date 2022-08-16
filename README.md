@@ -29,7 +29,7 @@ In the `UMAPVizR` workflow, an S4 object is created to store data and
 sample information is implemented for analysis. This stored information
 will allow performing the statistics and visualization of the dataset.
 
-<img src="workflow.png" width="90%" style="display: block; margin: auto;" />
+<img src="README/figures/workflow.png" width="90%" style="display: block; margin: auto;" />
 
 *Figure 1: Workflow of UMAPVizR*
 
@@ -300,6 +300,12 @@ plotManifold(UMAPV,
 ```
 
 ![](README/figure-markdown_github/PlotManifold-1.png)
+<<<<<<< HEAD
+=======
+
+*The UMAP representation shows the distribution of cell density within
+the clusters (delimited by the black lines) for all samples.*
+>>>>>>> 7d526f0d8de40db34a99aa6f1305946c08614c9d
 
 If the name of the marker is used, then the intensity of marker
 expression, overlaid on the manifold (e.g. CD8), will be shown as below:
@@ -323,8 +329,11 @@ plotManifold(UMAPV,
 ```
 
 ![](README/figure-markdown_github/PlotManifold3-1.png)
+<<<<<<< HEAD
 
 ### 2.5.2 Heatmap of cell marker expressions (plotHmExpressions)
+=======
+>>>>>>> 7d526f0d8de40db34a99aa6f1305946c08614c9d
 
 The `plotHmExpressions` function shows marker median relative
 expressions for all clusters in the whole dataset.
@@ -346,9 +355,17 @@ hm.exp <- plotHmExpressions(UMAPV)
 ![](README/figure-markdown_github/PlotHMExpressions-1.png) It is
 possible to customize the `plotHmExpressions` with these parameters:
 
+<<<<<<< HEAD
 -   the `markers` argument, which specifies the markers to be displayed
 -   the `clusters` argument, which specifies the identifiers of the
     clusters to be displayed
+=======
+``` r
+plot(hm.exp)
+```
+
+![](README/figure-markdown_github/PlotHMExpressions-1.png)
+>>>>>>> 7d526f0d8de40db34a99aa6f1305946c08614c9d
 
 These parameters can be used independently of each other as in the
 following example:
@@ -571,7 +588,11 @@ plotPCA(UMAPV,
         condition.samples = "condition")
 ```
 
+<<<<<<< HEAD
 ![](README/figure-markdown_github/plotPCA-1.png)
+=======
+![](README/figure-markdown_github/plotHmExpressions2-1.png)
+>>>>>>> 7d526f0d8de40db34a99aa6f1305946c08614c9d
 
 Other possible parameters to customize the `plotPCA` are:
 
@@ -704,6 +725,18 @@ QCS <- QCSmallClusters(UMAPV,
 ```
 
 ![](README/figure-markdown_github/QCSmallClusters-1.png)
+<<<<<<< HEAD
+=======
+
+*Heatmap showing the results for the cell clusters with a number of
+associated cells less than the number of cells specified by the user. On
+the left are the contributions of each sample and on the right the
+contribution of the whole dataset.* *If the tile is red then the cluster
+is less than the specified number of cells, if the tile is green, the
+cluster is greater than or equal to the specified number of cells.* *The
+percentage of clusters with a small number of cells among all clusters
+is shown at the top of the heatmap.*
+>>>>>>> 7d526f0d8de40db34a99aa6f1305946c08614c9d
 
     ##      V1_10105LA V1_10209HE V1_10306CG V1_10307BR V1_10503DC V1_10707BL
     ## [1,]      FALSE       TRUE      FALSE       TRUE       TRUE      FALSE
@@ -766,8 +799,53 @@ The second method allows to identify the uniform clusters, i.e.those
 with unimodal expression and low dispersion of expression for all its
 markers.
 
+<<<<<<< HEAD
 The most important parameter of the `QCUniformClusters` function is
 `uniform.test`, three possibilities:
+=======
+``` r
+# QC for uniform clusters
+QCU <- QCUniformClusters(UMAPV)
+```
+
+    ## Using clusters as id variables
+    ## Using clusters as id variables
+
+![](README/figure-markdown_github/QCUniformClusters-1.png)
+
+*Heatmap showing the results for the cell clusters having uniform
+phenotypes* *The percentage of clusters having an uniform phenotype
+among all clusters is shown at the top of the heatmap. If the score is
+high, it indicates that the clustering is good.*
+
+    ##   clusters markers    pv_dip       IQR passed
+    ## 1        1    CD16 0.9941370 0.3805965   TRUE
+    ## 2        1     CD3 0.9975060 0.3220588   TRUE
+    ## 3        1    CD56 0.9913321 0.3781783   TRUE
+    ## 4        1     CD8 0.9938748 0.4152218   TRUE
+    ## 5        1   HLADR 0.9822374 0.4882654   TRUE
+    ## 6        1   NKG2D 0.9912756 0.2313864   TRUE
+
+# 4. Statistics and visualization
+
+## 4.1 Statistical analysis
+
+Once the whole template has been completed and the number of clusters
+has been quality controlled, it is possible to perform differential
+analysis on the dataset.
+
+The statistics are calculated as follows:
+
+``` r
+# Compute statistics 
+baseline = "V1"
+list.conditions <- c("V6", "V7", "V8")
+
+for (condition in list.conditions) {
+  UMAPV <- computeStatistics(UMAPV, paste0(condition), paste0(baseline))
+}
+```
+>>>>>>> 7d526f0d8de40db34a99aa6f1305946c08614c9d
 
 -   `uniform` corresponds to the verification of the unimodal
     distribution of markers with Hartigan’s test (`th.pvalue`
@@ -787,6 +865,7 @@ clustering is good.
 The function is as below:
 
 ``` r
+<<<<<<< HEAD
 # QC for uniform clusters
 QCU <- QCUniformClusters(UMAPV,
                          uniform.test = "both",
@@ -799,6 +878,67 @@ QCU <- QCUniformClusters(UMAPV,
     ## Using clusters as id variables
 
 ![](README/figure-markdown_github/QCUniformClusters-1.png)
+=======
+# Volcano plot for differential analysis 
+plotVolcanoPlot(UMAPV, comparison = ("V7 vs. V1"))
+```
+
+![](README/figure-markdown_github/plotVolcanoPlot-1.png)
+
+Either in the heatmap, as follows:
+
+``` r
+# Heatmap of statistics
+hm.stats <- plotHmStatistics(UMAPV, clusters = NULL,
+                             statistics = "pvalue")
+```
+
+    ## Warning: `guides(<scale> = FALSE)` is deprecated. Please use `guides(<scale> =
+    ## "none")` instead.
+
+``` r
+plot(hm.stats)
+```
+
+![](README/figure-markdown_github/plotHmStatistics-1.png)
+
+For the `plotHmStatistics` function:
+
+-   the `clusters` argument is used to specify the identifiers of the
+    clusters to be displayed for the heatmap,
+-   the `statistics` argument is used to specify the reference
+    condition.
+
+``` r
+# Heatmap of abundances
+plotHmAbundances(UMAPV, clusters = NULL,
+                 samples = NULL)
+```
+
+![](README/figure-markdown_github/plotHmAbundances-1.png)
+
+For the `plotHmStatistics` function:
+
+-   the `clusters` argument is used to specify the identifiers of the
+    clusters to be displayed for the heatmap,
+-   the `samples` argument is used to specify the biological samples to
+    be displayed for the heatmap,
+-   the `saturation` argument is used to xxx.
+
+It is possible to perform a differential analysis in the boxplot format
+as follows:
+
+``` r
+# Boxplot for differential analysis
+plotBoxplot(UMAPV, 
+            clusters = "8",
+            samples = NULL,
+            observation = "timepoint", 
+            test.statistics = "wilcox.test")
+```
+
+![](README/figure-markdown_github/plotBoxplot-1.png)
+>>>>>>> 7d526f0d8de40db34a99aa6f1305946c08614c9d
 
     ##   clusters markers    pv_dip       IQR passed
     ## 1        1    CD16 0.9936791 0.3635300   TRUE
@@ -820,22 +960,55 @@ This function is used after performing the manifold and clustering (Step
 implemented cells will be associated according to their expression
 similarity with the centroid.
 
+<<<<<<< HEAD
 The procedure is as follows:
+=======
+![](README/figure-markdown_github/plotMDS-1.png)
+>>>>>>> 7d526f0d8de40db34a99aa6f1305946c08614c9d
 
 ``` r
 UMAPV <- performUpsampling(UMAPV,
                            files = files)
 ```
 
+<<<<<<< HEAD
 ## 5.2 Export
 
 The `export` function allows extracting of the dataset in FCS or txt
 format with some parameters such as UMAP coordinates and clusters.
+=======
+    ## initial  value 34.721215 
+    ## iter   5 value 15.419858
+    ## iter  10 value 12.288058
+    ## iter  15 value 11.390489
+    ## iter  20 value 11.246439
+    ## iter  25 value 11.017206
+    ## iter  30 value 10.707776
+    ## iter  35 value 10.589177
+    ## final  value 10.562997 
+    ## converged
+
+    ## Warning: ggrepel: 113 unlabeled data points (too many overlaps). Consider
+    ## increasing max.overlaps
+
+![](README/figure-markdown_github/plotMDS-2.png)
+
+``` r
+# PCA
+plotPCA(UMAPV, levels = "clusters", clusters = NULL, samples = NULL)
+```
+
+![](README/figure-markdown_github/plotPCA-1.png)
+>>>>>>> 7d526f0d8de40db34a99aa6f1305946c08614c9d
 
 Please note that if downsampling and upsampling have been performed,
 only the downsampled cells will be extracted.
 
+<<<<<<< HEAD
 With the following method:
+=======
+![](README/figure-markdown_github/plotPCA-2.png)
+>>>>>>> 7d526f0d8de40db34a99aa6f1305946c08614c9d
 
 ``` r
 export(UMAPV,
@@ -844,4 +1017,14 @@ export(UMAPV,
        samples = NULL)
 ```
 
+<<<<<<< HEAD
     ## [1] "Analyses_NK_K100.fcs"
+=======
+![](README/figure-markdown_github/plotPCA-3.png)
+
+# 5. Advanced usage
+
+## 5.1 Upsampling
+
+## 5.2 Export
+>>>>>>> 7d526f0d8de40db34a99aa6f1305946c08614c9d
