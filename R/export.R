@@ -7,6 +7,9 @@
 # @return a flowframe object containing the marker expression
 #
 createFlowframe <- function(intensities) {
+  
+  # browser()
+  # while (TRUE) {}
 
   markers <- colnames(intensities)
   p <- c()
@@ -66,7 +69,10 @@ methods::setGeneric("export",function(UMAPdata,
 #' @rdname export-methods
 #' @export
 methods::setMethod("export",c("UMAPdata"),
-                   function(UMAPdata,filename,clusters=NULL,samples = NULL){
+                   function(UMAPdata,
+                            filename,
+                            clusters=NULL,
+                            samples = NULL){
 
                      checkmate::qassert(filename, c("0","S1"))
                      checkmate::qassert(clusters, c("0","S*"))
@@ -92,8 +98,9 @@ methods::setMethod("export",c("UMAPdata"),
                      }
 
                      exprs <- data.frame(exprs)
+                     exprs <- exprs[!is.na(exprs$dim1),]
 
-                     if(any(tools::file_ext(filename)%in% c("fcs","FCS"))){
+                     if(any(tools::file_ext(filename) %in% c("fcs","FCS"))){
 
                        exprs$samples <- as.numeric(factor(exprs$samples))
 

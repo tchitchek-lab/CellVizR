@@ -23,40 +23,50 @@ Cell clusters having abundances differently expressed between biological
 conditions can be identified using several statistical tests.
 Statistical results can be visualized using volcano plots or heatmaps.
 
-## 1.1 Overview of Workflow
+## 1.1 Workflow overview
 
-In `UMAPVizR` workflow, an S4 object in R to implement progressively to
-contain the main information of the files used. This stored information
-will allow realizing the statistics and visualization part of the
-dataset.
+In the `UMAPVizR` workflow, an S4 object is created to store data and
+sample information is implemented for analysis. This stored information
+will allow performing the statistics and visualization of the dataset.
 
 <img src="workflow.png" width="90%" style="display: block; margin: auto;" />
 
-*Figure 1: Workflow of UMAPVizR* *It consists of three main steps: (1)
-importing the data in FCS or txt format resulting in the creation of an
-S4 UMAPdata object, (2) adding the metadata to the UMAPdata object, (3)
-generating the manifold and clustering. The results can be (4)
-visualised in different ways and (5) differential analyses are
-possible.*
+*Figure 1: Workflow of UMAPVizR*
+
+*The analysis in UMAPVizR consists of 5 main steps: (1) importing the
+data in FCS or txt format resulting in the creation of an S4 UMAPdata
+object; (2) assigning the metadata (sample information) into the
+UMAPdata object; and (3) generating the manifold and clustering. The
+computed results can be (4) visualized in different manners and (5)
+analyzed using statistical approaches.*
 
 ## 1.2 Input data
 
-The following conditions must be respected to analyse the data with
+The following conditions must be respected to analyze data with
 `UMAPVizR`:
 
--   **Type and format of data**: The biological data that can be
-    explored and integrated with `UMAPVizR` are flow, mass or spectral
-    cytometry data. The input files can be in standard cytometry format
-    (FCS) or txt format.
--   **Compensation**: Before starting an analysis with `UMAPVizR` it is
-    necessary to perform the compensation steps for flow cytometry and
-    spectral data with conventional methods (FlowJo or Kaluza).
--   **Cleaning and gating**: It is recommended to perform data cleaning:
-    to remove debris, dead cells and doublets. You can then perform a
-    pre-gating on a large population of interest, e.g.lymphocytes, to
-    make the use of `UMAPVizR` more optimal.
+-   **Type and format of data**: The cytometry data that can be analyzed
+    and integrated with `UMAPVizR` are flow, mass or spectral cytometry
+    data. The input files can be in standard cytometry format (FCS) or
+    txt format.
+-   **Compensation**: Before starting an analysis with `UMAPVizR`,
+    performing the compensation steps for flow cytometry and spectral
+    data with conventional software (FlowJo, Kaluza, etc) is necessary.
+-   **Cleaning and gating**: It is recommended to remove debris, dead
+    cells and doublets before the analysis. A pre-gating on a cell
+    population of interest (e.g.lymphocytes, B cells, etc.) can be
+    performed.
 
 # 2. Quick start
+
+In this section, the main analysis steps of `UMAPVizR` are presented.
+
+These steps cover several aspects, such as:
+
+-   Installing the package
+-   Importing the data and creating an `UMAPdata` object
+-   Creating the manifold and clustering
+-   Generating basic visualization
 
 ## 2.1 Installation
 
@@ -81,22 +91,20 @@ Once installed, `UMAPVizR` can be loaded using the following command:
 library("UMAPVizR")
 ```
 
-## 2.2 Importing data
+## 2.2 Importing cell expression profiles (import)
 
-The first function of the package to use is the `import` function which
-allows importing the expression matrix of the files in the `UMAPdata`
-object.
+The `import` function allows importing the expression matrix of the
+cytometry files into a `UMAPdata` object.
 
-The files to be analysed must be in FCS or txt format. The function is
-used as below:
+The files to be loaded must be in FCS or txt format. The `import`
+function is used as below:
 
 ``` r
 # creation of a vector containing the names of the files 
-
 files <- list.files("C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/", 
                     pattern = "fcs", full.names = TRUE)
 
-# import the FCS files  
+# import the FCS files into a UMAPdata object 
 UMAPV <- import(files, 
                 filetype = "fcs", 
                 transform = "logicle", 
@@ -106,27 +114,41 @@ UMAPV <- import(files,
 
 The main arguments of the `import` function are:
 
--   the `filetype` argument allows you to define the type of format
-    which is used for the data,
--   the `transform` argument allows you to choose the type of
-    transformation to be used on the data. Advice: For flow cytometry,
-    data use a `logicle` transform and for mass cytometry data use an
-    `arcsinh` transform,
--   the `exclude_markers` argument is used to remove the channels not to
-    be used for the analysis.
+-   the `filetype` argument, which allows defining the data file type
+    (`fcs` or `txt`)
+-   the `transform` argument, which allows choosing the type of
+    transformation to apply to the data. Possible values are: `none`,
+    `logicle`, `arcsinh` and `logarithmic`. It is advised to use a
+    `logicle` transform for flow cytometry, and to use an `arcsinh`
+    transform for mass cytometry,
+-   the `exclude_markers` argument, which is used to remove the
+    irrelevant channels
 
-## 2.3 Assign metadata
+After importing the dataset, the `plotCellCounts` function allows you to
+see the number of cells in each sample to be displayed as follows:
 
-The metadata can be assigned to each sample in the dataset. The
-different viewers associate samples with specific biological conditions
-or individuals using this metadata. The metadata file must contain
-exclusively the following column names:
+``` r
+plot(plotCellCounts(UMAPV, 
+                    stats = c("min","median","mean","q75","max"),
+                    samples = NULL,
+                    sort = TRUE))
+```
+
+![](README/figure-markdown_github/plotCellCounts-1.png)
+
+## 2.3 Assigning meta-information of biological samples (assignMetadata)
+
+The metadata (information about the biological samples) can be assigned
+to each sample in the dataset. These metadata are then used by the
+different visualization methods to properly represent biological
+conditions, timepoints, and individuals. The metadata argument must be a
+dataframe that contains exclusively the following column names:
 
 -   individual: corresponds to the sample identifier,
 -   condition: corresponds to the biological condition of the sample,
 -   timepoint: corresponds to the timepoint of the sample (optional).
 
-To do this, follow the instructions below:
+Here is an example of a metadata assignment:
 
 ``` r
 # creation of the dataframe 
@@ -148,22 +170,27 @@ metadata <- data.frame("individual"= c("10105LA","10209HE","10306CG","10307BR","
 rownames(metadata) = paste0(metadata$timepoint,"_", metadata$individual)
 
 # assign the dataframe 
-UMAPV <- assignMetadata(UMAPV, metadata = metadata)
+UMAPV <- assignMetadata(UMAPV, 
+                        metadata = metadata)
 ```
 
 ## 2.4 Manifold construction and clustering
 
-If the marker names are not the same for each sample (refer to point 3
-to check), they can be corrected as below:
+This section consists in generating the manifold using different
+algorithms combined with cell cluster identification.
 
-``` r
-# Rename markers if necessary
-UMAPV <- renameMarkers(UMAPV, marker.names = c("TCRgd", "NKP44", "HLADR", "NKp30", "NKp46",
-                                               "NKG2D", "CD3", "CD16", "CD56", "CD8"))
-```
+Two methods are available, depending on the parameters selected:
 
-This part consists of two steps. The first step is to perform the
-manifold on the dataset by following the instructions below:
+-   The manifold is generated first, followed by cell cluster
+    identification
+-   Cell cluster identification is performed followed by the manifold
+
+In the example below, the first method has been performed.
+
+### 2.4.1 Generating a manifold of cell events (generateManifold)
+
+The first step is to compute the manifold on the dataset by following
+the instructions below:
 
 ``` r
 # Perform Manifold from the "UMAPdata" object
@@ -182,39 +209,45 @@ UMAPV <- generateManifold(UMAPV,
 
     ## Manifold markers are: TCRgd, NKP44, HLADR, NKp30, NKp46, NKG2D, CD3, CD16, CD56, CD8
 
-    ## 16:56:21 UMAP embedding parameters a = 1.896 b = 0.8006
+    ## 14:23:28 UMAP embedding parameters a = 1.896 b = 0.8006
 
-    ## 16:56:21 Read 193322 rows and found 10 numeric columns
+    ## 14:23:28 Read 193322 rows and found 10 numeric columns
 
-    ## 16:56:21 Using Annoy for neighbor search, n_neighbors = 15
+    ## 14:23:28 Using Annoy for neighbor search, n_neighbors = 15
 
-    ## 16:56:22 Building Annoy index with metric = euclidean, n_trees = 50
+    ## 14:23:28 Building Annoy index with metric = euclidean, n_trees = 50
 
     ## 0%   10   20   30   40   50   60   70   80   90   100%
 
     ## [----|----|----|----|----|----|----|----|----|----|
 
     ## **************************************************|
-    ## 16:56:37 Writing NN index file to temp file C:\Users\GWMA\AppData\Local\Temp\RtmpmIkY0J\file1cc0551d85c
-    ## 16:56:38 Searching Annoy index using 40 threads, search_k = 1500
-    ## 16:56:47 Annoy recall = 100%
-    ## 16:56:47 Commencing smooth kNN distance calibration using 40 threads
-    ## 16:56:51 Initializing from normalized Laplacian + noise
-    ## 16:56:57 Commencing optimization for 200 epochs, with 3859266 positive edges using 1 thread
-    ## 16:59:15 Optimization finished
+    ## 14:23:43 Writing NN index file to temp file C:\Users\GWMA\AppData\Local\Temp\Rtmp6ZjvPa\file2a606008fe9
+    ## 14:23:44 Searching Annoy index using 40 threads, search_k = 1500
+    ## 14:23:53 Annoy recall = 100%
+    ## 14:23:53 Commencing smooth kNN distance calibration using 40 threads
+    ## 14:23:58 Initializing from normalized Laplacian + noise
+    ## 14:24:03 Commencing optimization for 200 epochs, with 3859266 positive edges using 1 thread
+    ## 14:26:22 Optimization finished
 
 The main arguments of the `generateManifold` function are:
 
--   the `markers` argument is used to specify the markers to use for the
-    manifold generation,
--   the `type` argument is used to specify the clustering method to use.
+-   the `markers` argument, which specifies the markers to be used for
+    the manifold generation
+-   the `type` argument, which specifies the manifold method to use
 
-The second step allows the clustering to be performed from the manifold
-by following the instructions below:
+### 2.4.2 Identifying cell clusters having similar marker expression (identifyClusters)
+
+The second step is to identify cell clusters by following the
+instructions below:
 
 ``` r
 # Clustering computation from the manifold 
-UMAPV <- identifyClusters(UMAPV, space = "manifold", method = "kmeans", centers = 120, nstart = 3)
+UMAPV <- identifyClusters(UMAPV, 
+                          space = "manifold", 
+                          method = "kmeans", 
+                          centers = 120, 
+                          nstart = 3)
 ```
 
     ## Identifying cell clusters...
@@ -227,27 +260,38 @@ UMAPV <- identifyClusters(UMAPV, space = "manifold", method = "kmeans", centers 
 
 The main arguments of the `identifyClusters` function are:
 
--   the `space` argument is used to determine if clustering should be
-    done on the markers or the manifold,
--   the `method` argument is used to specify the method to use for the
-    clustering.
+-   the `space` argument, which determines if the clustering is done on
+    the markers or the manifold coordinates
+-   the `method` argument, which specifies the clustering algorithm to
+    use
 
-N.B: These two steps can be switched depending on the selected
-parameters.
+After clustering, the `plotClustersCounts` function allows to visualize
+the cells of each sample in the clusters as follows:
 
-## 2.5 Basic visualization
+``` r
+plot(plotClustersCounts(UMAPV, 
+                        clusters = NULL,
+                        sort = TRUE))
+```
 
-### 2.5.1 Plots a representation of a computed manifold (PlotManifold)
+![](README/figure-markdown_github/plotClustersCounts-1.png)
 
-Once the complete template has been generated, it is possible to perform
-quick visualization of the dataset.
+## 2.5 Basic Visualization
 
-The first visualization shows a computed manifold representation for a
-given analysis. The manifold can be coloured based on the local cell
-density or marker expression. The main argument of the `plotManifold`
-function is `markers` which are used to specify the marker to be used
-for colouring. The `density` value is used to colour based on the local
-density.
+Once the manifold has been generated and cell clusters have been
+identified, it is possible to perform different types of visualization
+which are detailed below.
+
+### 2.5.1 Representation of a computed manifold (PlotManifold)
+
+The `plotManifold` function displays a computed manifold representation
+for a given analysis. Cell clusters are delimited by black lines on the
+manifold.
+
+The main argument of the `plotManifold` function is the `markers`
+argument which is used to specify the colour of the cells. If the
+`density` value is used, then a UMAP representation showing the
+distribution of the cell density for all samples will be shown as below:
 
 ``` r
 # Display manifold overlay by 'density' 
@@ -255,27 +299,21 @@ plotManifold(UMAPV,
              markers = "density")
 ```
 
-![](README_files/figure-markdown_github/PlotManifold-1.png)
+![](README/figure-markdown_github/PlotManifold-1.png)
 
-*The UMAP representation shows the distribution of cell density within
-the clusters (delimited by the black lines) for all samples.*
-
-The name of the marker is used to colour based on its expression.
+If the name of the marker is used, then the intensity of marker
+expression, overlaid on the manifold (e.g. CD8), will be shown as below:
 
 ``` r
 # Display manifold overlay by 'markers'  
 plotManifold(UMAPV, 
-             markers = "NKP44")
+             markers = "CD8")
 ```
 
-![](README_files/figure-markdown_github/PlotManifold2-1.png)
+![](README/figure-markdown_github/PlotManifold2-1.png)
 
-*The UMAP representation shows the the expression of the NKP44 marker
-within the clusters (delimited by the black lines) for all samples.*
-
-It is possible to use an additional argument called `samples` which are
-used to specify the biological samples to be displayed during the
-representation as below:
+It is possible to specify the biological samples to be displayed in the
+representation using the `samples` argument as below:
 
 ``` r
 # Display manifold overlay by 'density' by sample 
@@ -284,38 +322,36 @@ plotManifold(UMAPV,
              samples = "V1_10105LA")
 ```
 
-![](README_files/figure-markdown_github/PlotManifold3-1.png)
+![](README/figure-markdown_github/PlotManifold3-1.png)
 
-*The same representation as the first UMAP but for a single sample.*
+### 2.5.2 Heatmap of cell marker expressions (plotHmExpressions)
 
-### 2.5.2 Plots an heatmap of cell marker expressions (plotHmExpressions)
+The `plotHmExpressions` function shows marker median relative
+expressions for all clusters in the whole dataset.
 
-The second visualization shows a heatmap displaying the expression
-values of each marker for the dataset as below:
+The mean of the median expression of each marker is classified into 4
+categories (the number of categories can be changed by users, `nb.cat`
+parameters). Hierarchical clustering is performed at both the marker and
+cluster levels and is represented using dendrograms (the hierarchical
+clustering parameters can be changed by users `method.hclust`
+parameters).
+
+This function is used as below:
 
 ``` r
 # Heatmap of expression markers 
 hm.exp <- plotHmExpressions(UMAPV)
 ```
 
-    ## initial  value 40.803864 
-    ## iter   5 value 30.625984
-    ## iter  10 value 28.366871
-    ## final  value 28.271998 
-    ## converged
+![](README/figure-markdown_github/PlotHMExpressions-1.png) It is
+possible to customize the `plotHmExpressions` with these parameters:
 
-``` r
-plot(hm.exp)
-```
+-   the `markers` argument, which specifies the markers to be displayed
+-   the `clusters` argument, which specifies the identifiers of the
+    clusters to be displayed
 
-![](README_files/figure-markdown_github/PlotHMExpressions-1.png)
-
-*Heatmap showing marker median relative expressions for all clusters.
-The mean of the median expression of each marker has been classified in
-4 categories. Hierarchical clustering has been performed at both the
-marker and cluster levels and are represented using dendograms.*
-
-This visualization can be customized with some parameters as below:
+These parameters can be used independently of each other as in the
+following example:
 
 ``` r
 # Heatmap of expression markers 
@@ -324,40 +360,244 @@ hm.exp <- plotHmExpressions(UMAPV,
                             clusters = c(1:50))
 ```
 
-    ## initial  value 20.946861 
-    ## iter   5 value 17.131285
-    ## final  value 17.059982 
-    ## converged
+![](README/figure-markdown_github/plotHmExpressions2-1.png)
+
+# 3. Statistics and visualization
+
+## 3.1 Compute differential abundance analyses
+
+Once the cell clustering performed, it is possible to do a differential
+analysis of cell cluster abundances to identify relevant cell clusters.
+
+The `computeStatistics` function allows to perform the such operation
+and several parameters must be taken into consideration:
+
+-   the `condition` argument, which specifies the biological condition
+    to be compared
+-   the `ref.condition` argument, which specifies the reference
+    biological condition
+-   the `test.statistics` argument, which specifies the name of the
+    statistical test to use
+-   the `paired` argument, which specifies if samples are paired in the
+    statistical comparison
+
+This function is used as follows:
 
 ``` r
-plot(hm.exp)
+# Compute statistics 
+baseline = "V1"
+list.conditions <- c("V6", "V7", "V8")
+
+for (condition in list.conditions) {
+  UMAPV <- computeStatistics(UMAPV, 
+                             condition = paste0(condition), 
+                             ref.condition = paste0(baseline),
+                             test.statistics = "wilcox.test",
+                             paired = FALSE)
+}
 ```
 
-![](README_files/figure-markdown_github/plotHmExpressions2-1.png)
+    ## Computing of the wilcox.test for: V6 vs. V1
 
-*The same representation but with marker and cluster defined.*
+    ## Computing of the wilcox.test for: V7 vs. V1
 
-The customization parameters of the `plotHmExpressions` are:
+    ## Computing of the wilcox.test for: V8 vs. V1
 
--   the `markers` argument is used to specify the markers to be used for
-    the heatmap,
--   the `clusters` argument is used to specify the identifiers of the
-    clusters to be displayed for the heatmap.
+## 3.2 Visualisation of statistical analysis
 
-These parameters can be used independently of each other.
+### 3.2.1 Volcano plot of statistical analysis (plotVolcanoPlot)
 
-# 3. Quality control
+The `plotVolcanoPlot` function shows the clusters whose number of
+associated cells is statistically different between two biological
+conditions and/or timepoints.
 
-The `UMAPVizR` package allows for a set of quality controls to be
-performed. The quality control can be performed on the input dataset to
-check the names and range expression of the markers of each sample, but
-also, after analysis, to check the quality of the clustering performed.
+For each cluster, the p-value (indicated by -log10(p-value)) is
+represented on the Y-axis and the cell abundance fold-change (indicated
+by log2(fold-change)) is represented on the X-axis. The thresholds for
+the p-value (`th.pv` parameter) and the fold-change (`th.fc` parameter)
+are shown as dotted lines. Cell clusters down-represented are shown in
+green and cell clusters up-represented are shown in red.
 
-## 3.1 Quality control of the dataset
+Here is an example for generating such representation:
 
-Quality control after the import of samples can be checked in two ways.
-The first method of quality control is to check the concordance of the
-markers between the different samples as below:
+``` r
+# Volcano plot for differential analysis 
+plotVolcanoPlot(UMAPV,
+                comparison = ("V7 vs. V1"),
+                th.pv = 1.3,
+                th.fc = 1.5)
+```
+
+![](README/figure-markdown_github/plotVolcanoPlot-1.png)
+
+### 3.2.2 Heatmap of statistical analysis results (plotHmStatistics)
+
+The `plotHmStatistics` function shows the differences in abundance
+between different conditions for each cluster.
+
+For each cluster, the p-value, the log2(fold-change) and the effect size
+(`statistics` parameters) can be represented. Down-represented clusters
+are represented in orange, and up-represented clusters are represented
+in blue. Furthermore, it is possible to choose the clusters to be
+represented with the `clusters` parameter.
+
+Here is an example for generating such representation:
+
+``` r
+# Heatmap of statistics
+hm.stats <- plotHmStatistics(UMAPV, 
+                             clusters = NULL,
+                             statistics = "pvalue")
+```
+
+    ## Warning: `guides(<scale> = FALSE)` is deprecated. Please use `guides(<scale> =
+    ## "none")` instead.
+
+![](README/figure-markdown_github/plotHmStatistics-1.png)
+
+## 3.3 Visualisation of cell cluster abundances
+
+### 3.3.1 Heatmap of cell cluster abundances (plotHmAbundances)
+
+The `plotHmAbundances` function shows the cellular distribution of
+samples within a given cluster.
+
+The more the sample is represented within the cluster, the redder the
+tile. If the sample is not represented in the cluster, then the tile
+will be black. The `plotHmAbundances` function can be interesting to
+visualize the abundance of statistically different clusters between two
+conditions, as in the following example:
+
+``` r
+#Samples to study
+V1 <- unique(UMAPV@samples)[grepl("V1", unique(UMAPV@samples))]
+V6 <- unique(UMAPV@samples)[grepl("V6", unique(UMAPV@samples))]
+samples = c(V1, V6)
+
+#Statistically different clusters
+stats <- UMAPV@statistic[UMAPV@statistic$comparison == "V6 vs. V1",]
+clusters = stats[stats$pvalue<=0.01 & abs(stats$lfc)>log(1.5)/log(2),]$clusters
+
+# Heatmap of abundances
+plotHmAbundances(UMAPV, 
+                 clusters = clusters,
+                 samples = samples,
+                 rescale = TRUE)
+```
+
+![](README/figure-markdown_github/plotHmAbundances-1.png)
+
+### 3.3.2 Cell cluster abundances using a boxplot representation (plotBoxplot)
+
+The `plotBoxPlot` function shows the cell distribution between several
+biological conditions and/or timepoints for a single cluster or for a
+combined set of clusters.
+
+This display shows the abundances of the user-defined cell clusters
+(`clusters` parameter). It is possible to observe the cell abundance as
+a function of the biological condition or timepoint (`obervation`
+parameter). In addition, statistical tests can be performed and
+displayed directly on the boxplot.
+
+Here is an example for generating such representation:
+
+``` r
+# Boxplot for differential analysis
+plotBoxplot(UMAPV, 
+            clusters = "31",
+            samples = NULL,
+            observation = "timepoint", 
+            test.statistics = "wilcox.test")
+```
+
+![](README/figure-markdown_github/plotBoxplot-1.png)
+
+Other possible parameters to customize the `plotBoxPlot` are:
+
+-   the `samples` argument, which specifies the biological samples to be
+    displayed
+-   the `paired` argument, which specifies if samples are paired in the
+    statistical comparison
+
+### 3.3.3 MDS representation based on cell cluster abundances (plotMDS)
+
+The `plotMDS` function shows similarities between samples or clusters
+based on cell cluster abundances.
+
+Each point represents a sample or a cluster (`levels` parameter) and the
+distance between the points is proportional to the Euclidean distance
+between these objects. It is possible to observe the cell abundance as a
+function of the biological condition or timepoint (`condition.samples`
+parameter)
+
+Here is an example for generating such representation:
+
+``` r
+# MDS
+plotMDS(UMAPV, 
+        levels = "samples", 
+        condition.samples = "timepoint", 
+        clusters = NULL, 
+        samples = NULL)
+```
+
+    ## Warning: ggrepel: 29 unlabeled data points (too many overlaps). Consider
+    ## increasing max.overlaps
+
+![](README/figure-markdown_github/plotMDS-1.png)
+
+Other possible parameters to customize the `plotMDS` are:
+
+-   the `clusters` argument, which specifies the identifiers of the
+    clusters to be displayed
+-   the `samples` argument, which specifies the biological samples to be
+    displayed
+
+### 3.3.4 PCA representation based on cell cluster abundances (plotPCA)
+
+The `plotPCA` function shows similarities between samples or clusters
+based on cell cluster abundances.
+
+Each point represents a sample or a cluster (`levels` parameter). It is
+possible to observe the cell abundance as a function of the biological
+condition or timepoint (`condition.samples` parameter)
+
+``` r
+# PCA
+plotPCA(UMAPV, 
+        levels = "clusters", 
+        clusters = NULL, 
+        samples = NULL, 
+        condition.samples = "condition")
+```
+
+![](README/figure-markdown_github/plotPCA-1.png)
+
+Other possible parameters to customize the `plotPCA` are:
+
+-   the `clusters` argument, which specifies the identifiers of the
+    clusters to be displayed
+-   the `samples` argument, which specifies the biological samples to be
+    displayed
+
+# 4. Quality control
+
+The `UMAPVizR` package allows to perform quality control of generated
+results.
+
+The quality control can be performed:
+
+-   on the input dataset to check the names and range expression of the
+    markers of each sample
+-   on the generated results, to check the quality of the cell
+    clustering.
+
+## 4.1 Quality control of the dataset
+
+The input dataset can be checked in two ways. The first method checks
+the concordance of the markers names between the different samples.
+
+Here is an example of generating such quality control:
 
 ``` r
 # Check for marker concordance
@@ -379,8 +619,17 @@ QCN <- QCMarkerNames(files)
     ## V1_10503DC NKp30-Pcy5 NKp46-Pcy7 NKG2D-APC CD3-A700 CD16-A750 CD56-BV421 CD8-KO
     ## V1_10707BL NKp30-Pcy5 NKp46-Pcy7 NKG2D-APC CD3-A700 CD16-A750 CD56-BV421 CD8-KO
 
-The second quality control method is to check the low (5%) and high
-(95%) expression values of each marker for each sample:
+If the marker names are not the same for each sample, they can be
+corrected using the `renameMarkers` as below:
+
+``` r
+# Rename markers if necessary
+UMAPV <- renameMarkers(UMAPV, marker.names = c("TCRgd", "NKP44", "HLADR", "NKp30", "NKp46",
+                                               "NKG2D", "CD3", "CD16", "CD56", "CD8"))
+```
+
+The second method computes the 5 centiles and 95 centiles expression
+values for each marker of each sample:
 
 ``` r
 # Check the expression values for markers
@@ -431,78 +680,80 @@ QCR <- QCMarkerRanges(files)
     ## V1_10503DC   4.264874 3.901291
     ## V1_10707BL   4.446657 3.906904
 
-## 3.2 Control quality of the cell clustering result
+## 4.2 Control quality of the cell clustering result
 
-The quality control of clustering can be checked in two ways. The first
-method allows the identification of small clusters, i.e. clusters whose
-number of cells is below a specific threshold. The method is shown
-below:
+The quality control of clustering can be checked in two ways.
+
+The first method allows the identification of small clusters,
+i.e.clusters whose number of cells is below a specific threshold. The
+results can be represented as a heatmap. On the left are the
+contributions of each sample and on the right are the contribution of
+the whole dataset. If the tile is red then the cluster is less than the
+specified number of cells, if the tile is green, the cluster is greater
+than or equal to the specified number of cells. The percentage of
+clusters with a small number of cells among all clusters is shown at the
+top of the heatmap.
+
+The function is as below:
 
 ``` r
 # QC for small clusters 
-QCS <- QCSmallClusters(UMAPV)
+QCS <- QCSmallClusters(UMAPV,
+                       th.size = 50, 
+                       plot.device = TRUE)
 ```
 
-![](README_files/figure-markdown_github/QCSmallClusters-1.png)
-
-*Heatmap showing the results for the cell clusters with a number of
-associated cells less than the number of cells specified by the user. On
-the left are the contributions of each sample and on the right the
-contribution of the whole dataset.* *If the tile is red then the cluster
-is less than the specified number of cells, if the tile is green, the
-cluster is greater than or equal to the specified number of cells.* *The
-percentage of clusters with a small number of cells among all clusters
-is shown at the top of the heatmap.*
+![](README/figure-markdown_github/QCSmallClusters-1.png)
 
     ##      V1_10105LA V1_10209HE V1_10306CG V1_10307BR V1_10503DC V1_10707BL
     ## [1,]      FALSE       TRUE      FALSE       TRUE       TRUE      FALSE
     ## [2,]       TRUE       TRUE       TRUE       TRUE      FALSE       TRUE
     ## [3,]       TRUE      FALSE      FALSE       TRUE       TRUE       TRUE
     ## [4,]       TRUE       TRUE       TRUE      FALSE       TRUE       TRUE
-    ## [5,]       TRUE      FALSE       TRUE      FALSE       TRUE       TRUE
+    ## [5,]       TRUE      FALSE       TRUE      FALSE      FALSE       TRUE
     ## [6,]      FALSE      FALSE       TRUE       TRUE      FALSE       TRUE
     ##      V1_11204CD V1_20208AA V1_20210RF V6_10105LA V6_10209HE V6_10304KJ
-    ## [1,]       TRUE       TRUE       TRUE      FALSE       TRUE       TRUE
-    ## [2,]      FALSE       TRUE      FALSE       TRUE       TRUE       TRUE
+    ## [1,]       TRUE       TRUE       TRUE      FALSE      FALSE       TRUE
+    ## [2,]      FALSE      FALSE      FALSE       TRUE      FALSE       TRUE
     ## [3,]       TRUE       TRUE      FALSE      FALSE      FALSE       TRUE
-    ## [4,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [5,]       TRUE      FALSE       TRUE       TRUE      FALSE       TRUE
-    ## [6,]      FALSE      FALSE       TRUE      FALSE      FALSE       TRUE
+    ## [4,]       TRUE       TRUE       TRUE       TRUE      FALSE       TRUE
+    ## [5,]       TRUE      FALSE      FALSE       TRUE      FALSE       TRUE
+    ## [6,]      FALSE      FALSE      FALSE      FALSE      FALSE       TRUE
     ##      V6_10306CG V6_10309BR V6_10503DC V6_11204CD V6_20208AA V6_20210RF
-    ## [1,]      FALSE       TRUE       TRUE       TRUE       TRUE      FALSE
-    ## [2,]      FALSE       TRUE       TRUE      FALSE       TRUE       TRUE
+    ## [1,]      FALSE       TRUE       TRUE       TRUE      FALSE      FALSE
+    ## [2,]      FALSE       TRUE      FALSE      FALSE      FALSE      FALSE
     ## [3,]       TRUE       TRUE       TRUE       TRUE       TRUE      FALSE
-    ## [4,]      FALSE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [5,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [4,]      FALSE       TRUE       TRUE      FALSE      FALSE      FALSE
+    ## [5,]       TRUE       TRUE       TRUE       TRUE      FALSE      FALSE
     ## [6,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
     ##      V6_21203AS V7_10105LA V7_10207BL V7_10209HE V7_10304KJ V7_10306CG
     ## [1,]      FALSE       TRUE      FALSE       TRUE       TRUE      FALSE
-    ## [2,]       TRUE       TRUE       TRUE      FALSE       TRUE       TRUE
+    ## [2,]       TRUE      FALSE       TRUE      FALSE      FALSE      FALSE
     ## [3,]       TRUE      FALSE       TRUE      FALSE       TRUE      FALSE
     ## [4,]       TRUE       TRUE       TRUE      FALSE      FALSE      FALSE
     ## [5,]       TRUE      FALSE       TRUE      FALSE      FALSE       TRUE
-    ## [6,]       TRUE       TRUE       TRUE      FALSE      FALSE       TRUE
+    ## [6,]       TRUE      FALSE       TRUE      FALSE      FALSE      FALSE
     ##      V7_10503DC V7_10807BR V7_10904VP V7_11204CD V7_20208AA V7_20210RF
-    ## [1,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [1,]       TRUE       TRUE       TRUE       TRUE       TRUE      FALSE
     ## [2,]      FALSE       TRUE       TRUE       TRUE      FALSE      FALSE
-    ## [3,]       TRUE       TRUE       TRUE       TRUE       TRUE      FALSE
-    ## [4,]       TRUE      FALSE       TRUE       TRUE       TRUE       TRUE
-    ## [5,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [6,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [3,]      FALSE       TRUE       TRUE       TRUE      FALSE      FALSE
+    ## [4,]       TRUE      FALSE       TRUE       TRUE      FALSE      FALSE
+    ## [5,]      FALSE       TRUE       TRUE       TRUE      FALSE       TRUE
+    ## [6,]      FALSE       TRUE       TRUE       TRUE       TRUE      FALSE
     ##      V8_10105LA V8_10207BL V8_10209HE V8_10304KJ V8_10306CG V8_10503DC
     ## [1,]       TRUE      FALSE       TRUE       TRUE      FALSE       TRUE
-    ## [2,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [3,]      FALSE       TRUE      FALSE       TRUE       TRUE       TRUE
+    ## [2,]      FALSE       TRUE       TRUE       TRUE       TRUE      FALSE
+    ## [3,]      FALSE       TRUE      FALSE       TRUE      FALSE      FALSE
     ## [4,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [5,]      FALSE       TRUE      FALSE       TRUE       TRUE       TRUE
+    ## [5,]      FALSE       TRUE      FALSE      FALSE       TRUE       TRUE
     ## [6,]      FALSE       TRUE      FALSE      FALSE       TRUE      FALSE
     ##      V8_10807BR V8_10904VP V8_11204CD V8_20208AA V8_20210RF V8_21203AS
-    ## [1,]       TRUE       TRUE       TRUE       TRUE       TRUE      FALSE
-    ## [2,]       TRUE       TRUE      FALSE       TRUE      FALSE       TRUE
-    ## [3,]       TRUE       TRUE       TRUE       TRUE      FALSE       TRUE
-    ## [4,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [5,]      FALSE       TRUE       TRUE      FALSE       TRUE       TRUE
-    ## [6,]      FALSE       TRUE       TRUE       TRUE       TRUE      FALSE
+    ## [1,]       TRUE       TRUE       TRUE       TRUE      FALSE      FALSE
+    ## [2,]       TRUE       TRUE      FALSE      FALSE      FALSE      FALSE
+    ## [3,]       TRUE       TRUE       TRUE       TRUE      FALSE      FALSE
+    ## [4,]       TRUE       TRUE       TRUE       TRUE       TRUE      FALSE
+    ## [5,]      FALSE       TRUE       TRUE      FALSE       TRUE      FALSE
+    ## [6,]      FALSE       TRUE       TRUE      FALSE       TRUE      FALSE
     ##      total.cells
     ## [1,]       FALSE
     ## [2,]       FALSE
@@ -511,212 +762,86 @@ is shown at the top of the heatmap.*
     ## [5,]       FALSE
     ## [6,]       FALSE
 
-The second method allows identifying the uniform clusters, i.e. those
+The second method allows to identify the uniform clusters, i.e.those
 with unimodal expression and low dispersion of expression for all its
-markers. The method is shown below:
+markers.
+
+The most important parameter of the `QCUniformClusters` function is
+`uniform.test`, three possibilities:
+
+-   `uniform` corresponds to the verification of the unimodal
+    distribution of markers with Hartigan’s test (`th.pvalue`
+    parameter),
+-   `IQR` corresponds to the verification of the distribution of markers
+    so that they are not below the IQR threshold (`th.IQR` parameter)
+-   `both` correspond to the combination of the two parameters: uniform
+    and IQR
+
+The results can be represented as a heatmap. If the tile is green then
+the cell clusters have the uniform phenotype, if the tile is red, the
+cell clusters have the phenotype that is not uniform. The percentage of
+clusters having a uniform phenotype among all clusters is shown at the
+top of the heatmap. If the score is high, it indicates that the
+clustering is good.
+
+The function is as below:
 
 ``` r
 # QC for uniform clusters
-QCU <- QCUniformClusters(UMAPV)
+QCU <- QCUniformClusters(UMAPV,
+                         uniform.test = "both",
+                         th.pvalue = 0.05,
+                         th.IQR = 2,
+                         plot.device = TRUE)
 ```
 
     ## Using clusters as id variables
     ## Using clusters as id variables
 
-![](README_files/figure-markdown_github/QCUniformClusters-1.png)
-
-*Heatmap showing the results for the cell clusters having uniform
-phenotypes* *The percentage of clusters having an uniform phenotype
-among all clusters is shown at the top of the heatmap. If the score is
-high, it indicates that the clustering is good.*
+![](README/figure-markdown_github/QCUniformClusters-1.png)
 
     ##   clusters markers    pv_dip       IQR passed
-    ## 1        1    CD16 0.9941370 0.3805965   TRUE
-    ## 2        1     CD3 0.9975060 0.3220588   TRUE
-    ## 3        1    CD56 0.9913321 0.3781783   TRUE
-    ## 4        1     CD8 0.9938748 0.4152218   TRUE
-    ## 5        1   HLADR 0.9822374 0.4882654   TRUE
-    ## 6        1   NKG2D 0.9912756 0.2313864   TRUE
-
-# 4. Statistics and visualization
-
-## 4.1 Statistical analysis
-
-Once the whole template has been completed and the number of clusters
-has been quality controlled, it is possible to perform differential
-analysis on the dataset.
-
-The statistics are calculated as follows:
-
-``` r
-# Compute statistics 
-baseline = "V1"
-list.conditions <- c("V6", "V7", "V8")
-
-for (condition in list.conditions) {
-  UMAPV <- computeStatistics(UMAPV, paste0(condition), paste0(baseline))
-}
-```
-
-    ## Computing of the wilcox.test for: V6 vs. V1
-
-    ## Computing of the wilcox.test for: V7 vs. V1
-
-    ## Computing of the wilcox.test for: V8 vs. V1
-
-For the `computeStatistics` function:
-
--   the `condition` argument is used to specify the condition to be
-    compared,
--   the `ref.condition` argument is used to specify the reference
-    condition,
--   the `test.statistics` argument is used to specify the method of
-    statistical test,
--   the `paired` argument is used to specify whether the paired or
-    unpaired comparison should be applied.
-
-The visualization of this differential analysis can be done in different
-possibilities, either as a volcano plot as follows:
-
-``` r
-# Volcano plot for differential analysis 
-plotVolcanoPlot(UMAPV, comparison = ("V7 vs. V1"))
-```
-
-![](README_files/figure-markdown_github/plotVolcanoPlot-1.png)
-
-Either in the heatmap, as follows:
-
-``` r
-# Heatmap of statistics
-hm.stats <- plotHmStatistics(UMAPV, clusters = NULL,
-                             statistics = "pvalue")
-```
-
-    ## Warning: `guides(<scale> = FALSE)` is deprecated. Please use `guides(<scale> =
-    ## "none")` instead.
-
-``` r
-plot(hm.stats)
-```
-
-![](README_files/figure-markdown_github/plotHmStatistics-1.png)
-
-For the `plotHmStatistics` function:
-
--   the `clusters` argument is used to specify the identifiers of the
-    clusters to be displayed for the heatmap,
--   the `statistics` argument is used to specify the reference
-    condition.
-
-``` r
-# Heatmap of abundances
-plotHmAbundances(UMAPV, clusters = NULL,
-                 samples = NULL)
-```
-
-![](README_files/figure-markdown_github/plotHmAbundances-1.png)
-
-For the `plotHmStatistics` function:
-
--   the `clusters` argument is used to specify the identifiers of the
-    clusters to be displayed for the heatmap,
--   the `samples` argument is used to specify the biological samples to
-    be displayed for the heatmap,
--   the `saturation` argument is used to xxx.
-
-It is possible to perform a differential analysis in the boxplot format
-as follows:
-
-``` r
-# Boxplot for differential analysis
-plotBoxplot(UMAPV, 
-            clusters = "8",
-            samples = NULL,
-            observation = "timepoint", 
-            test.statistics = "wilcox.test")
-```
-
-![](README_files/figure-markdown_github/plotBoxplot-1.png)
-
-For the `plotBoxPlot` function:
-
--   the `clusters` argument is used to specify the identifiers of the
-    clusters to be displayed,
--   the `samples` argument is used to specify the biological samples to
-    be displayed,
--   the `observation` argument is used to specify the xxx,
--   the `test.statistics` argument is used to specify the method of
-    statistical test,
--   the `paired` argument is used to specify whether the paired or
-    unpaired comparison should be applied.
-
-## 4.2 Visualization
-
-``` r
-# MDS
-plotMDS(UMAPV, levels = "samples", condition.samples = "timepoint", clusters = NULL, samples = NULL)
-```
-
-    ## initial  value 33.715896 
-    ## iter   5 value 15.595230
-    ## iter  10 value 13.403076
-    ## iter  15 value 12.786789
-    ## iter  20 value 12.452971
-    ## iter  25 value 11.953629
-    ## iter  30 value 11.676708
-    ## iter  35 value 11.566281
-    ## iter  35 value 11.557324
-    ## iter  35 value 11.553379
-    ## final  value 11.553379 
-    ## converged
-
-    ## Warning: ggrepel: 31 unlabeled data points (too many overlaps). Consider
-    ## increasing max.overlaps
-
-![](README_files/figure-markdown_github/plotMDS-1.png)
-
-``` r
-plotMDS(UMAPV, levels = "clusters", clusters = NULL, samples = NULL)
-```
-
-    ## initial  value 34.721215 
-    ## iter   5 value 15.419858
-    ## iter  10 value 12.288058
-    ## iter  15 value 11.390489
-    ## iter  20 value 11.246439
-    ## iter  25 value 11.017206
-    ## iter  30 value 10.707776
-    ## iter  35 value 10.589177
-    ## final  value 10.562997 
-    ## converged
-
-    ## Warning: ggrepel: 113 unlabeled data points (too many overlaps). Consider
-    ## increasing max.overlaps
-
-![](README_files/figure-markdown_github/plotMDS-2.png)
-
-``` r
-# PCA
-plotPCA(UMAPV, levels = "clusters", clusters = NULL, samples = NULL)
-```
-
-![](README_files/figure-markdown_github/plotPCA-1.png)
-
-``` r
-plotPCA(UMAPV, levels = "samples", clusters = NULL, samples = NULL, condition.samples = "timepoint")
-```
-
-![](README_files/figure-markdown_github/plotPCA-2.png)
-
-``` r
-plotPCA(UMAPV, clusters = NULL, samples = NULL)
-```
-
-![](README_files/figure-markdown_github/plotPCA-3.png)
+    ## 1        1    CD16 0.9936791 0.3635300   TRUE
+    ## 2        1     CD3 0.9988149 0.3031861   TRUE
+    ## 3        1    CD56 0.9927818 0.3802556   TRUE
+    ## 4        1     CD8 0.9924886 0.4070512   TRUE
+    ## 5        1   HLADR 0.9976176 0.4741935   TRUE
+    ## 6        1   NKG2D 0.9655686 0.2297570   TRUE
 
 # 5. Advanced usage
 
 ## 5.1 Upsampling
 
+The `performUpsampling` function allows the data set to be implemented
+if downsampling has been performed.
+
+This function is used after performing the manifold and clustering (Step
+2.4). After calculating the centroids from the existing clusters, the
+implemented cells will be associated according to their expression
+similarity with the centroid.
+
+The procedure is as follows:
+
+``` r
+UMAPV <- performUpsampling(UMAPV,
+                           files = files)
+```
+
 ## 5.2 Export
+
+The `export` function allows extracting of the dataset in FCS or txt
+format with some parameters such as UMAP coordinates and clusters.
+
+Please note that if downsampling and upsampling have been performed,
+only the downsampled cells will be extracted.
+
+With the following method:
+
+``` r
+export(UMAPV,
+       filename = "Analyses_NK_K100.fcs",
+       clusters = NULL,
+       samples = NULL)
+```
+
+    ## [1] "Analyses_NK_K100.fcs"

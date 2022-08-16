@@ -18,11 +18,12 @@ performUpsampling <- function(UMAPdata,
   sample_files <- gsub(".FCS","",sample_files)
   sample_files <- gsub(".txt","",sample_files)
   sample_files <- gsub(".TXT","",sample_files)
-  
+
   files = files[sample_files %in% unique(UMAPdata@samples)]
   UMAPdata_wodownsampling <- import(files)
   
   downsampled.exp <- UMAPdata@matrix.expression
+  rename.markers <- colnames(downsampled.exp)
   colnames(downsampled.exp) <- UMAPdata@raw.markers
   
   full.exp <- UMAPdata_wodownsampling@matrix.expression
@@ -48,6 +49,7 @@ performUpsampling <- function(UMAPdata,
   knn <- FNN::knnx.index(downsampled.centers, upsampled.exp, k=1, algorithm="kd_tree")
   
   UMAPdata@matrix.expression  <- rbind(downsampled.exp, upsampled.exp)
+  colnames(UMAPdata@matrix.expression) <- rename.markers
   UMAPdata@samples            <- c(UMAPdata@samples, upsampled.samples)
   UMAPdata@identify.clusters  <- c(UMAPdata@identify.clusters, knn)
   
@@ -56,9 +58,9 @@ performUpsampling <- function(UMAPdata,
   samples <- UMAPdata@samples
   
   message(paste0("computing cell cluster count matrix..."))
-  UMAPdata@matrix.cell.count <- computeCellCounts(samples <- UMAPdata@samples,
-                                                  proj <- UMAPdata@matrix.expression,
-                                                  clusters <- UMAPdata@identify.clusters)
+  UMAPdata@matrix.cell.count <- computeCellCounts(proj <- UMAPdata@matrix.expression,
+                                                  clusters <- UMAPdata@identify.clusters,
+                                                  samples <- UMAPdata@samples)
   
   message(paste0("computing cell cluster abundance matrix..."))
   UMAPdata@matrix.abundance <- computeClusterAbundances(count <- UMAPdata@matrix.cell.count)

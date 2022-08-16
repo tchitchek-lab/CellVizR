@@ -20,6 +20,7 @@ Imports:
 	checkmate,
 	cluster,
 	concaveman,
+	cowplot,
 	dbscan,
 	dendextend,
 	diptest,

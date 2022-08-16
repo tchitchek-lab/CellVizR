@@ -121,7 +121,7 @@ plotHmExpressions = function(UMAPdata,
   
   set.seed(seed)
   dist.col <- stats::dist(col.data)
-  isoMDS <- MASS::isoMDS(dist.col, k = 1)
+  isoMDS <- MASS::isoMDS(dist.col, k = 1, trace=FALSE)
   col.tsne <- isoMDS$points
   
   col.order <- rownames(col.tsne)[order(col.tsne)]
@@ -181,7 +181,7 @@ plotHmExpressions = function(UMAPdata,
   grob[["dendro.row"]] <- dendro.row
   grob[["label.col"]] <- label.col
   grob[["label.row"]] <- label.row
-  grob[["legend"]] <- ggpubr::get_legend(plot)
+  grob[["legend"]] <- cowplot::get_legend(plot)
   
   hm.exp <- gridExtra::arrangeGrob(
     grobs = grob,
@@ -225,6 +225,8 @@ plotHmExpressions = function(UMAPdata,
       c(NA,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,NA))
   )
   
+  hm.exp = gridExtra::grid.arrange(hm.exp)
+  
   hm.exp$order.clusters <- labels.col
   hm.exp$order.markers <- labels.row
   
@@ -262,6 +264,9 @@ plotHmAbundances = function(UMAPdata,
   checkmate::qassert(saturation, "N1")
   checkmate::qassert(rescale, "B1")
   
+  # browser()
+  # while(TRUE){}
+  
   abundances <- UMAPdata@matrix.abundance
   
   if (rescale == TRUE) {
@@ -278,7 +283,7 @@ plotHmAbundances = function(UMAPdata,
   abundances$clusters <- rownames(abundances)
   
   if (!is.null(clusters)) {
-    abundances$clusters <- abundances$clusters[abundances$clusters %in% clusters]
+    abundances <- abundances[abundances$clusters %in% clusters,]
     abundances$clusters <- factor(abundances$clusters, levels = clusters)
   } else {
     abundances$clusters <- factor(abundances$clusters, levels = gtools::mixedsort(unique(abundances$clusters)))
@@ -364,7 +369,7 @@ plotHmStatistics = function(UMAPdata,
   stats$clusters <- as.character(stats$clusters)
   
   if (!is.null(clusters)) {
-    stats$clusters <- stats$clusters[stats$clusters %in% clusters] 
+    stats <- stats[stats$clusters %in% clusters,] 
     stats$clusters <- factor(stats$clusters, levels = clusters)
   } else {
     stats$clusters <- factor(stats$clusters, levels = gtools::mixedsort(unique(stats$clusters)))
@@ -430,7 +435,7 @@ plotHmStatistics = function(UMAPdata,
   grob[["hm_stats"]] <- plot + ggplot2::theme(legend.position = "none")
   grob[["label.row"]] <- label.row
   grob[["label.col"]] <- label.col
-  grob[["legend"]] <- ggpubr::get_legend(plot)
+  grob[["legend"]] <- cowplot::get_legend(plot)
   
   hm.stats <- gridExtra::arrangeGrob(
     grobs = grob,
@@ -459,8 +464,8 @@ plotHmStatistics = function(UMAPdata,
       c(NA,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,NA))
   )
   
+  hm.stats = gridExtra::grid.arrange(hm.stats)
   invisible(hm.stats)
-  
 }
 
 #' @title Plots a combined expression and statistic heatmaps

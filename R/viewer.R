@@ -579,7 +579,7 @@ plotMDS <- function(UMAPdata,
     
     dist.clusters <- stats::dist(matrix.abundance)
     
-    fit1 <- MASS::isoMDS(dist.clusters, k=2) 
+    fit1 <- MASS::isoMDS(dist.clusters, k=2, trace = FALSE) 
     x1 <- fit1$points[,1]
     y1 <- fit1$points[,2]
     
@@ -625,7 +625,7 @@ plotMDS <- function(UMAPdata,
     
     dist.samples <- stats::dist(t(matrix.abundance))
     
-    fit2 <- MASS::isoMDS(dist.samples, k=2) 
+    fit2 <- MASS::isoMDS(dist.samples, k=2, trace = FALSE) 
     x2 <- fit2$points[,1]
     y2 <- fit2$points[,2]
     
@@ -716,13 +716,13 @@ plotBoxplot = function(UMAPdata,
   
   metadata <- UMAPdata@metadata
   
-  matrix.cell.count <- matrix.cell.count[rownames(matrix.cell.count) %in% clusters,] 
-  matrix.cell.count <- base::apply(matrix.cell.count, 2, sum)
-  matrix.cell.count <- matrix.cell.count/base::apply(UMAPdata@matrix.cell.count, 2, sum)*100
+  matrix.cell.count2 <- matrix.cell.count[rownames(matrix.cell.count) %in% clusters,] 
+  matrix.cell.count2 <- base::apply(matrix.cell.count2, 2, sum)
+  matrix.cell.count <- matrix.cell.count2/base::apply(matrix.cell.count, 2, sum)*100
   
   matrix.cell.count <- reshape::melt(matrix.cell.count)
   
-  matrix.cell.count <- merge(matrix.cell.count, metadata, by = "row.names")
+  matrix.cell.count <- base::merge(matrix.cell.count, metadata, by = "row.names")
   
   position_jitter <- ggplot2::position_jitter(seed=42,width=0.15)
   
@@ -733,11 +733,16 @@ plotBoxplot = function(UMAPdata,
   
   plot <- ggplot2::ggplot() +
     ggplot2::ggtitle(paste0("abundance of cluster: ", paste0(clusters, collapse = ", "))) +
-    ggplot2::geom_boxplot(data=matrix.cell.count,ggplot2::aes_string(x=observation,y="value", fill=observation),
-                          outlier.shape=NA,size=0.2,fatten = 1) +
-    ggplot2::geom_jitter(data=matrix.cell.count,ggplot2::aes_string(x=observation,y="value"),
-                         fill="black",shape=21,size=0.1,position=position_jitter) +
-    ggpubr::stat_pvalue_manual(stat.test,label = "p.signif",color = "purple",size=5,hide.ns=hide.ns)
+    ggplot2::geom_boxplot(data = matrix.cell.count, 
+                          ggplot2::aes_string(x = observation, y = "value",
+                                              fill = observation),
+                          outlier.shape = NA, size = 0.2, fatten = 1) +
+    ggplot2::geom_jitter(data=matrix.cell.count,
+                         ggplot2::aes_string(x = observation, y = "value"),
+                         fill = "black", shape = 21, size = 0.1,
+                         position = position_jitter) +
+    ggpubr::stat_pvalue_manual(stat.test,label = "p.signif", color = "#424242",
+                               size = 5, hide.ns = hide.ns)
   
   
   plot <- plot +
@@ -785,21 +790,21 @@ plotVolcanoPlot = function(UMAPdata,
   stats$log10.pvalue <- -log10(stats$pvalue)
   max.fc <- max(abs(stats$lfc))
   
-  stats$dir <- "none"
-  stats$dir[stats$log10.pvalue > th.pv & stats$lfc > th.fc] <- "red"
-  stats$dir[stats$log10.pvalue > th.pv & stats$lfc < th.fc] <- "green"
+  stats$dir <- "ns"
+  stats$dir[stats$log10.pvalue > th.pv & stats$lfc > th.fc] <- "up" #red
+  stats$dir[stats$log10.pvalue > th.pv & stats$lfc < th.fc] <- "down" #green
   
   plot <- ggplot2::ggplot() +
+    ggplot2::ggtitle(comparison) + 
     ggplot2::geom_point(data=stats, ggplot2::aes_string(x="lfc",y="log10.pvalue",fill="dir"),
                         shape=21,color="black") + 
     ggplot2::geom_hline(yintercept= th.pv, linetype = "dashed") + 
-    ggplot2::geom_vline(xintercept=log2(th.fc), linetype = "dashed") + 
-    ggplot2::geom_vline(xintercept=-log2(th.fc), linetype = "dashed")
+    ggplot2::geom_vline(xintercept= c(log2(th.fc),-log2(th.fc)) , linetype = "dashed")  
+    # ggplot2::geom_vline(xintercept=-log2(th.fc), linetype = "dashed")
   
   plot <- plot + 
-    ggplot2::scale_fill_manual(guide= ggplot2::guide_legend(title = "NA", nrow = 1),
-                               # limits = c("down-regulated", "upp-regulated"),
-                               values=c("none"="gray","green"="green","red"="red")) + 
+    ggplot2::scale_fill_manual(guide=ggplot2::guide_legend(title=""),
+      values=c("down"="green","up"="red")) + 
     # scale_fill_manual(guide=guide_legend(title=NA,nrow=1),
     #                   limits = c(paste0("down-regulated",addlegend), paste0("up-regulated",addlegend)),values = values) +
     ggplot2::scale_x_continuous(limits=c(-max.fc,max.fc),breaks=seq(-10,10,1)) +
@@ -808,8 +813,9 @@ plotVolcanoPlot = function(UMAPdata,
     ggplot2::ylab("-log10(p-value)")
   
   plot <- plot + 
-    ggplot2::theme_bw() 
-  # ggplot2::theme(legend.position = "none")
+    ggplot2::theme_bw() + 
+    ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5),
+                   legend.position = "bottom")
   
   return(plot) 
   
