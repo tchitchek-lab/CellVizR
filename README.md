@@ -265,26 +265,26 @@ UMAPV <- generateManifold(UMAPV,
 
     ## Manifold method is: UMAP
 
-    ## 16:23:25 UMAP embedding parameters a = 1.896 b = 0.8006
+    ## 17:32:02 UMAP embedding parameters a = 1.896 b = 0.8006
 
-    ## 16:23:25 Read 26155 rows and found 10 numeric columns
+    ## 17:32:02 Read 26682 rows and found 10 numeric columns
 
-    ## 16:23:25 Using Annoy for neighbor search, n_neighbors = 15
+    ## 17:32:02 Using Annoy for neighbor search, n_neighbors = 15
 
-    ## 16:23:26 Building Annoy index with metric = euclidean, n_trees = 50
+    ## 17:32:02 Building Annoy index with metric = euclidean, n_trees = 50
 
     ## 0%   10   20   30   40   50   60   70   80   90   100%
 
     ## [----|----|----|----|----|----|----|----|----|----|
 
     ## **************************************************|
-    ## 16:23:27 Writing NN index file to temp file C:\Users\GWMA\AppData\Local\Temp\Rtmpaa3Npb\file163423901a11
-    ## 16:23:27 Searching Annoy index using 40 threads, search_k = 1500
-    ## 16:23:28 Annoy recall = 100%
-    ## 16:23:29 Commencing smooth kNN distance calibration using 40 threads
-    ## 16:23:29 Initializing from normalized Laplacian + noise
-    ## 16:23:30 Commencing optimization for 200 epochs, with 526288 positive edges using 1 thread
-    ## 16:23:47 Optimization finished
+    ## 17:32:04 Writing NN index file to temp file C:\Users\GWMA\AppData\Local\Temp\RtmpclyopB\file46ac4de77d1d
+    ## 17:32:04 Searching Annoy index using 40 threads, search_k = 1500
+    ## 17:32:05 Annoy recall = 100%
+    ## 17:32:05 Commencing smooth kNN distance calibration using 40 threads
+    ## 17:32:06 Initializing from normalized Laplacian + noise
+    ## 17:32:07 Commencing optimization for 200 epochs, with 535980 positive edges using 1 thread
+    ## 17:32:25 Optimization finished
 
 The main arguments of the `generateManifold` function are:
 
@@ -408,10 +408,11 @@ This function is used as below:
 ``` r
 # Heatmap of expression markers 
 hm.exp <- plotHmExpressions(UMAPV)
+gridExtra::grid.arrange(hm.exp)
 ```
 
-It is possible to customize the `plotHmExpressions` with these
-parameters:
+![](README_files/figure-markdown_github/PlotHMExpressions-1.png) It is
+possible to customize the `plotHmExpressions` with these parameters:
 
 -   the `markers` argument, which specifies the markers to be displayed
 -   the `clusters` argument, which specifies the identifiers of the
@@ -425,7 +426,10 @@ following example:
 hm.exp <- plotHmExpressions(UMAPV, 
                             markers = c("NKP44", "NKp30", "NKp46", "NKG2D"), 
                             clusters = c(1:50))
+gridExtra::grid.arrange(hm.exp)
 ```
+
+![](README_files/figure-markdown_github/plotHmExpressions2-1.png)
 
 # 3. Statistics and visualization
 
@@ -513,7 +517,11 @@ Here is an example for generating such representation:
 hm.stats <- plotHmStatistics(UMAPV, 
                              clusters = NULL,
                              statistics = "pvalue")
+
+gridExtra::grid.arrange(hm.stats)
 ```
+
+![](README_files/figure-markdown_github/plotHmStatistics-1.png)
 
 ## 3.3 Visualisation of cell cluster abundances
 
@@ -536,7 +544,7 @@ samples = c(V1, V6)
 
 #Statistically different clusters
 stats <- UMAPV@statistic[UMAPV@statistic$comparison == "V6 vs. V1",]
-clusters = stats[stats$pvalue<=0.01 & abs(stats$lfc)>log(1.5)/log(2),]$clusters
+clusters = stats[stats$pvalue<=0.05 & abs(stats$lfc)>log(1.2)/log(2),]$clusters
 
 # Heatmap of abundances
 plotHmAbundances(UMAPV, 
@@ -564,7 +572,7 @@ Here is an example for generating such representation:
 ``` r
 # Boxplot for differential analysis
 plotBoxplot(UMAPV, 
-            clusters = "31",
+            clusters = clusters,
             samples = NULL,
             observation = "timepoint", 
             test.statistics = "wilcox.test")
@@ -763,40 +771,40 @@ QCS <- QCSmallClusters(UMAPV,
 ![](README_files/figure-markdown_github/QCSmallClusters-1.png)
 
     ##      V1_10105LA V1_10209HE V1_10306CG V1_10503DC V1_11204CD V1_20208AA
-    ## [1,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [2,]      FALSE       TRUE       TRUE      FALSE       TRUE      FALSE
+    ## [1,]      FALSE      FALSE      FALSE       TRUE       TRUE      FALSE
+    ## [2,]       TRUE       TRUE       TRUE      FALSE      FALSE      FALSE
     ## [3,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [4,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [4,]      FALSE      FALSE       TRUE      FALSE      FALSE      FALSE
     ## [5,]       TRUE      FALSE      FALSE      FALSE      FALSE      FALSE
-    ## [6,]      FALSE      FALSE       TRUE      FALSE       TRUE      FALSE
+    ## [6,]      FALSE      FALSE       TRUE      FALSE       TRUE       TRUE
     ##      V1_20210RF V6_10105LA V6_10209HE V6_10306CG V6_10503DC V6_11204CD
-    ## [1,]       TRUE       TRUE      FALSE      FALSE      FALSE      FALSE
-    ## [2,]      FALSE       TRUE       TRUE      FALSE      FALSE       TRUE
+    ## [1,]      FALSE      FALSE      FALSE      FALSE      FALSE       TRUE
+    ## [2,]      FALSE       TRUE      FALSE      FALSE      FALSE      FALSE
     ## [3,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [4,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [4,]      FALSE      FALSE      FALSE       TRUE      FALSE      FALSE
     ## [5,]      FALSE      FALSE      FALSE      FALSE      FALSE      FALSE
-    ## [6,]      FALSE      FALSE      FALSE       TRUE      FALSE       TRUE
+    ## [6,]      FALSE      FALSE      FALSE       TRUE       TRUE      FALSE
     ##      V6_20208AA V6_20210RF V7_10105LA V7_10209HE V7_10306CG V7_10503DC
-    ## [1,]       TRUE      FALSE       TRUE      FALSE       TRUE       TRUE
-    ## [2,]      FALSE      FALSE       TRUE       TRUE       TRUE       TRUE
+    ## [1,]      FALSE      FALSE      FALSE       TRUE      FALSE      FALSE
+    ## [2,]      FALSE      FALSE      FALSE      FALSE      FALSE      FALSE
     ## [3,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [4,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [4,]      FALSE      FALSE      FALSE      FALSE       TRUE      FALSE
     ## [5,]      FALSE      FALSE      FALSE      FALSE      FALSE      FALSE
-    ## [6,]      FALSE      FALSE      FALSE      FALSE       TRUE      FALSE
+    ## [6,]      FALSE      FALSE      FALSE      FALSE      FALSE      FALSE
     ##      V7_11204CD V7_20208AA V7_20210RF V8_10105LA V8_10209HE V8_10306CG
-    ## [1,]      FALSE       TRUE      FALSE      FALSE       TRUE       TRUE
-    ## [2,]       TRUE       TRUE      FALSE       TRUE       TRUE      FALSE
+    ## [1,]       TRUE      FALSE      FALSE       TRUE      FALSE      FALSE
+    ## [2,]      FALSE      FALSE      FALSE      FALSE       TRUE       TRUE
     ## [3,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [4,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [5,]       TRUE      FALSE      FALSE       TRUE      FALSE      FALSE
-    ## [6,]       TRUE      FALSE      FALSE       TRUE      FALSE      FALSE
+    ## [4,]       TRUE      FALSE      FALSE       TRUE      FALSE      FALSE
+    ## [5,]       TRUE      FALSE      FALSE      FALSE      FALSE      FALSE
+    ## [6,]       TRUE      FALSE      FALSE      FALSE      FALSE       TRUE
     ##      V8_10503DC V8_11204CD V8_20208AA V8_20210RF total.cells
-    ## [1,]       TRUE       TRUE       TRUE       TRUE       FALSE
-    ## [2,]       TRUE       TRUE      FALSE      FALSE       FALSE
+    ## [1,]      FALSE       TRUE      FALSE      FALSE       FALSE
+    ## [2,]      FALSE      FALSE      FALSE      FALSE       FALSE
     ## [3,]       TRUE       TRUE       TRUE       TRUE       FALSE
-    ## [4,]       TRUE       TRUE       TRUE       TRUE       FALSE
+    ## [4,]      FALSE      FALSE      FALSE      FALSE       FALSE
     ## [5,]      FALSE      FALSE      FALSE      FALSE       FALSE
-    ## [6,]      FALSE      FALSE      FALSE      FALSE       FALSE
+    ## [6,]      FALSE       TRUE      FALSE      FALSE       FALSE
 
 The second method allows to identify the uniform clusters, i.e.those
 with unimodal expression and low dispersion of expression for all its
@@ -837,12 +845,12 @@ QCU <- QCUniformClusters(UMAPV,
 ![](README_files/figure-markdown_github/QCUniformClusters-1.png)
 
     ##   clusters markers    pv_dip       IQR passed
-    ## 1        1    CD16 0.9493038 0.4799740   TRUE
-    ## 2        1     CD3 0.9550213 0.6609962   TRUE
-    ## 3        1    CD56 0.9957443 0.3544730   TRUE
-    ## 4        1     CD8 0.9925132 0.6298361   TRUE
-    ## 5        1   HLADR 0.9145862 0.6932121   TRUE
-    ## 6        1   NKG2D 0.6872337 0.3771434   TRUE
+    ## 1        1    CD16 0.9840834 0.3861998   TRUE
+    ## 2        1     CD3 0.9909752 0.3403437   TRUE
+    ## 3        1    CD56 0.9608222 0.3313725   TRUE
+    ## 4        1     CD8 0.9204992 0.3471428   TRUE
+    ## 5        1   HLADR 0.9886411 0.2666003   TRUE
+    ## 6        1   NKG2D 0.9414757 0.2208474   TRUE
 
 # 5. Advanced usage
 
