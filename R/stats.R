@@ -30,7 +30,7 @@ computeStatistics = function(UMAPdata,
   checkmate::qassert(test.statistics, "S1")
   checkmate::qassert(paired, "B1")
 
-  message(paste0("Computing of the ", test.statistics," for: ", condition, " vs. ", ref.condition))
+  message("Computing of the ", test.statistics," for: ", condition, " vs. ", ref.condition)
 
   comparison = paste0(condition," vs. ", ref.condition)
   if(comparison %in% unique(UMAPdata@statistic$comparison)){

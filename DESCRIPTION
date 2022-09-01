@@ -46,12 +46,14 @@ Imports:
 	rstatix,
 	Rtsne,
 	scales,
+	spade,
 	stats,
 	stringr,
-	uwot
+	uwot,
+	viridis
 Suggests: 
 	knitr
 License: GPL-3 | file LICENSE
 VignetteBuilder: knitr
-biocViews: FlowCytometry, Visualization, StatisticalMethod, Clustering, Software
-RoxygenNote: 7.1.2
+biocViews: Clustering, DataImport, FlowCytometry, Normalization, StatisticalMethod, Software, Visualization
+RoxygenNote: 7.2.1

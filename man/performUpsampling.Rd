@@ -4,12 +4,18 @@
 \alias{performUpsampling}
 \title{Performs the upsampling of downsampled events}
 \usage{
-performUpsampling(UMAPdata, files)
+performUpsampling(
+  UMAPdata,
+  files,
+  transform = c("logicle", "arcsinh", "logarithmic", "none")
+)
 }
 \arguments{
 \item{UMAPdata}{a UMAPdata object}
 
 \item{files}{a character vector providing the path of the tab-separated or FCS files}
+
+\item{transform}{a character value containing the type of the transformation to apply. Possible values are: 'logicle', 'arcsinh', 'logarithmic' or 'none'}
 }
 \value{
 a S4 object of class 'UMAPdata'

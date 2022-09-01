@@ -39,6 +39,7 @@ setMethod("print", "UMAPdata",
             cat("\n")
             if (length(x@manifold) == 0) {
               cat("No manifold")
+              cat("\n")
             } else {
               # cat(paste0("Manifold markers are: ", paste0(unlist(manifold.markers), collapse = ", ")))
               cat(paste0("Parameters: ", paste0(names(x@manifold.params), "=", x@manifold.params, collapse = ", " )))
@@ -48,6 +49,7 @@ setMethod("print", "UMAPdata",
             cat("\n")
             if (length(x@identify.clusters) == 0) {
               cat("No clustering")
+              cat("\n")
             } else {
               cat(paste0("Numbers of clusters: ", length(unique(x@identify.clusters))))
               cat("\n")

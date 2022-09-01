@@ -4,7 +4,12 @@
 \alias{plotClustersCounts}
 \title{Plots the numbers of cells for each clusters}
 \usage{
-plotClustersCounts(UMAPdata, clusters = NULL, sort = TRUE)
+plotClustersCounts(
+  UMAPdata,
+  clusters = NULL,
+  sort = TRUE,
+  legend.max.samples = 10
+)
 }
 \arguments{
 \item{UMAPdata}{a UMAPdata object}
@@ -12,6 +17,8 @@ plotClustersCounts(UMAPdata, clusters = NULL, sort = TRUE)
 \item{clusters}{a character vector containing the identifiers of the clusters to use. By default, all clusters are used}
 
 \item{sort}{a boolean value indicating if clusters must be sorted by the number associated cluster}
+
+\item{legend.max.samples}{xxx}
 }
 \value{
 a ggplot2 object

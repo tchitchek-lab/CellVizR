@@ -24,6 +24,7 @@ QCSmallClusters = function(UMAPdata,
     plot <- plotSmallClusters(values.small)
     plot(plot)
   }
+  
   return(values.small)
   
 }
@@ -74,7 +75,7 @@ plotSmallClusters = function(values.small) {
   colnames(data.melted) <- c("clusters", "samples", "small")
   data.melted$clusters <- factor(data.melted$clusters, levels = rev(gtools::mixedsort(unique(data.melted$clusters))))
   
-  title <- paste0("small clusters quality control")
+  title <- paste("small clusters quality control")
   subtitle <- paste0("percentage of clusters having a small number of cells = ",
                      format(round(perc, 2), nsmall = 2), "%")
   
@@ -244,7 +245,7 @@ plotUniformClusters <- function(values_uniform){
   res <- values_uniform$res
   perc <- values_uniform$perc
   
-  title <- paste0("Uniform clusters quality control")
+  title <- paste("Uniform clusters quality control")
   subtitle <- paste0("percentage of clusters having a uniform phenotype = ",
                      format(round(perc, 2), nsmall = 2), "%")
   

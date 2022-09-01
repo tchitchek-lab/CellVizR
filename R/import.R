@@ -10,19 +10,21 @@
 #' @param files a character vector specifying the path of the tab-separated or FCS files to load 
 #' @param filetype a character vector specifying the format of the loaded files. By default, FCS is used
 #' @param transform a character value containing the type of the transformation to apply. Possible values are: 'logicle', 'arcsinh', 'logarithmic' or 'none' 
-#' @param downsampling a numeric value providing the number of cells to downsample for each sample
-#' @param d.method a character value containing the type of the downsampling to apply. Possible values are: 'uniform' or 'density'
+#' @param d.method a character value containing the type of the downsampling to apply. Possible values are: 'none', 'uniform' or 'density'
+#' @param parameters.method a list value containing the parameters to use for downsampling
 #' @param exclude.markers a character vector providing the marker names to be excluded during the import
 #' @param seed a numeric value providing the random seed to use during stochastic operations 
 #' 
 #' @return a S4 object of class 'UMAPdata'
 #' 
 #' @export
+#' @import methods
 import = function(files, 
                   filetype="fcs",
                   transform = c("logicle","arcsinh", "logarithmic", "none"), 
-                  downsampling = NULL,
-                  d.method = c("uniform","density"), 
+                  d.method = c("none", "uniform","density"),
+                  parameters.method = list("exclude.pctile" = 0.01, "target.pctile" = 0.05,
+                                           "target.number" = NULL,"target.percent" = 0.1),
                   exclude.markers = NULL,
                   seed = 42) {
   
@@ -31,17 +33,31 @@ import = function(files,
   
   checkmate::qassert(filetype, "S1")
   checkmate::qassert(transform, "S1")
-  checkmate::qassert(downsampling, c("0", "N1"))
-  # checkmate::qassert(d.method, "S1")
+  if(d.method == "uniform" | d.method == "density") {
+    checkmate::qassert(parameters.method, "L+")
+  }
+  checkmate::qassert(d.method, "S1")
   checkmate::qassert(exclude.markers, c("0", "S*"))
   checkmate::qassert(seed, "N1")
   
+  exprs.r <- data.frame()
   exprs <- data.frame()
+  samples.r <- c()
   samples <- c()
+  
+  message("Transformation method is: ", transform)
+  if(d.method == "uniform" | d.method == "density") {
+    message("Downsampling method is: ", d.method, " and parameters method are: ", paste0(parameters.method, collapse = ", "))
+    cat("\n")
+  } else { 
+    message("Downsampling method is: ", d.method)
+    cat("\n")
+  }
+
   
   for(file in files) {
     
-    message(paste0("importing ",basename(file)," file"))
+    message("importing ",basename(file)," file")
     
     if(filetype == "fcs"){
       fcs <- flowCore::read.FCS(file)
@@ -50,6 +66,9 @@ import = function(files,
       exprs <- exprs[,!colnames(exprs) %in% exclude.markers]
       fcs <- suppressWarnings(createFlowframe(exprs))
     }
+    
+    exprs.raw <- flowCore::exprs(fcs) ##
+    exprs.raw <- exprs.raw[,colnames(exprs.raw) %in% names(flowCore::markernames(fcs))] ##
     
     switch(transform, 
            logicle = {
@@ -75,31 +94,182 @@ import = function(files,
     exprs.sub <- flowCore::exprs(fcs)
     exprs.sub <- exprs.sub[,colnames(exprs.sub) %in% names(flowCore::markernames(fcs))]
     
-    if(!is.null(downsampling)){
-      set.seed(seed)
-      exprs.sub <- exprs.sub[sample(nrow(exprs.sub),min(downsampling,nrow(exprs.sub))),]
+    if (d.method == "none") {
+      exprs.sub <- exprs.sub
+      
+    } else if(d.method == "uniform"){
+      sampled <- downsamplingUniform(file = file, 
+                                     exprs.raw = exprs.raw,
+                                     target.percent = parameters.method$target.percent,
+                                     target.number = parameters.method$target.number,
+                                     seed = seed)
+      
+      exprs.raw <- exprs.raw[sampled,] ##
+      exprs.sub <- exprs.sub[sampled,]
+      
+    } else if (d.method == "density") {
+      all.exprs <- downsamplingDensity(file = file,
+                                       fcs = fcs,
+                                       exprs.raw = exprs.raw,
+                                       exprs.sub = exprs.sub,
+                                       exclude.pctile = parameters.method$exclude.pctile,
+                                       target.pctile = parameters.method$target.pctile,
+                                       target.percent = parameters.method$target.percent,
+                                       target.number = parameters.method$target.number) 
+      
+      exprs.raw <- all.exprs$exprs.raw
+      exprs.sub <- all.exprs$exprs.sub
+    } 
+    
+    if(file==files[1]){
+      colnames(exprs.raw) <- flowCore::markernames(fcs) ##
+      colnames(exprs.sub) <- flowCore::markernames(fcs)
+    } else {
+      colnames(exprs.raw) <- colnames(exprs.r) ##
+      colnames(exprs.sub) <- colnames(exprs)
     }
     
-    colnames(exprs.sub) <- flowCore::markernames(fcs)
-    
+    exprs.r <- rbind(exprs.r, exprs.raw) ##
     exprs <- rbind(exprs, exprs.sub)
     
     sample <- gsub(".fcs", "", basename(file))
+    samples.r <- c(samples.r, rep(sample, nrow(exprs.raw))) ##
     samples <- c(samples, rep(sample, nrow(exprs.sub)))
     
   }
   
+  exprs.r = data.frame(exprs.r)
+  exprs   = data.frame(exprs)
+  
   if(!is.null(exclude.markers)){
-    exprs <- exprs[,!colnames(exprs) %in% exclude.markers]
+    exprs.r <- exprs.r[,!colnames(exprs.r) %in% exclude.markers] ##
+    exprs   <- exprs[,!colnames(exprs) %in% exclude.markers]
   }
   
   res <- methods::new("UMAPdata",
+                      matrix.expression.r = exprs.r, ##
                       matrix.expression = exprs,
                       samples = samples,
                       raw.markers = colnames(exprs),
                       matrix.abundance = data.frame())
   
   return(res)
+}
+
+# @title Internal - Computes the downsampling uniformly-based 
+#
+# @description This function aims to perform a downsampling uniformly-based cells
+#  
+# @param file a character vector specifying the path of the tab-separated or FCS files to load 
+# @param exprs.raw a data.frame providing the raw marker expressions
+# @param target.percent a numeric value providing the percentage of cells to downsample for each sample
+# @param target.number a numeric value providing the number of cells to downsample for each sample
+# @param seed a numeric value providing the random seed to use during stochastic operations 
+#  
+# @return an index vector for the downsampling 
+# 
+# @export
+# 
+downsamplingUniform = function(file,
+                               exprs.raw,
+                               target.percent,
+                               target.number,
+                               seed){
+  
+  do.call("set.seed",list(seed))
+  
+  if(!is.null(target.percent) & is.null(target.number)){
+    target.number <- round(target.percent * nrow(exprs.raw))
+    message("Number of cells: ", target.number," for ", basename(file))
+    sampled = sample(nrow(exprs.raw), min(target.number, nrow(exprs.raw)))
+    
+  } else if (is.null(target.percent) & !is.null(target.number)) {
+    sampled = sample(nrow(exprs.raw), min(target.number, nrow(exprs.raw)))
+    
+  } else if (is.null(target.percent) & is.null(target.number))  {
+    stop("Parameters are null")
+    
+  } else if (!is.null(target.percent) & !is.null(target.number))  {
+    stop("Specify only one parameter")
+  }
+  
+  return(sampled)
+}
+
+# @title Internal - Computes the downsampling density-based
+#
+# @description This function aims to perform a downsampling density-based cells 
+#  
+# @param file a character vector specifying the path of the tab-separated or FCS files to load
+# @param fcs
+# @param exprs.raw a data.frame providing the raw marker expressions
+# @param exprs.sub a data.frame providing the marker expressions
+# @param exclude.pctile a numeric value specifying the density threshold to be excluded 
+# @param target.pctile a numeric value specifying the density threshold to be maintained 
+# @param target.percent a numeric value providing the percentage of cells to downsample for each sample
+# @param target.number a numeric value providing the number of cells to downsample for each sample
+#  
+# @return a list containing the two dowsampled expression data.frame
+# 
+# @export
+# 
+downsamplingDensity = function(file,
+                               fcs,
+                               exprs.raw,
+                               exprs.sub,
+                               exclude.pctile,
+                               target.pctile,
+                               target.percent,
+                               target.number){
+  
+  idxs <- names(flowCore::markernames(fcs))
+  density <- spade::SPADE.density(exprs.sub[,idxs])
+  
+  ### from spade
+  exprs.sub <- cbind(exprs.sub, "density" = density)
+  
+  d.idxs <- match("density", colnames(exprs.sub))
+  boundary <- stats::quantile(exprs.sub[,d.idxs], c(exclude.pctile, target.pctile), names=FALSE)
+  
+  # exprs.sub <- subset(exprs.sub, exprs.sub[,d.idxs] > boundary[1]) # Exclusion spade
+  idx.e <- exprs.sub[,d.idxs] > boundary[1]
+  exprs.sub <- exprs.sub[idx.e,] # Exclusion
+  exprs.raw <- exprs.raw[idx.e,]
+  
+  if(!is.null(target.percent) & is.null(target.number)) {
+    target.number <- round(target.percent * nrow(exprs.sub))
+    message("Number of cells: ", target.number," for ", basename(file))
+  }
+  
+  density <- exprs.sub[,d.idxs]
+  if (is.null(target.number) & is.null(target.percent)) {
+    boundary <- boundary[2]
+    # exprs.sub <- subset(exprs.sub, boundary/density > stats::runif(nrow(exprs.sub1)))
+    idx.c <- boundary/density > stats::runif(nrow(exprs.sub))
+    exprs.sub <- exprs.sub[idx.c,]
+    exprs.raw <- exprs.raw[idx.c,]
+    
+  } else if (target.number < nrow(exprs.sub)) {
+    density.s <- sort(density)
+    cdf <- rev(cumsum(1/rev(density.s)))
+    boundary <- target.number/cdf[1]
+    if (boundary > density.s[1]) {
+      targets <- (target.number-seq(1,length(density.s))) / cdf
+      boundary <- targets[which.min(targets-density.s > 0)]
+    }
+    # exprs.sub <- subset(exprs.sub, boundary/density > stats::runif(length(density)))
+    idx.c <- boundary/density > stats::runif(length(density))
+    exprs.sub <- exprs.sub[idx.c,]
+    exprs.raw <- exprs.raw[idx.c,]
+    
+  } else if (target.number > nrow(exprs.sub)) {
+    stop("Number of events is too high")
+  } 
+  ### from spade
+  
+  exprs.sub <- subset(exprs.sub, select = -c(get("density")))
+  
+  return(list("exprs.raw" = exprs.raw, "exprs.sub" = exprs.sub))
 }
 
 #' @title Renames markers within a UMAPdata object 
@@ -118,9 +288,7 @@ import = function(files,
 renameMarkers = function(UMAPdata,
                          marker.names){
   
-  checkmate::qassert(marker.names, "S*")
-  
-  # Ne permet pas d'afficher la bonne erreur 
+  # Ne permet pas d'afficher la bonne erreur
   if(all(marker.names != unique(marker.names))){
     stop("xxx")
   }

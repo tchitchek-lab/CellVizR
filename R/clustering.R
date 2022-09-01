@@ -42,7 +42,9 @@ identifyClusters <- function(UMAPdata,
   proj  <- UMAPdata@manifold
   exprs <- UMAPdata@matrix.expression
   
-  message(paste0("Identifying cell clusters..."))
+  message("Clustering method is: ", method)
+  cat("\n")
+  message("Identifying cell clusters...")
   
   if(space=="manifold"){
     data <- proj
@@ -50,7 +52,7 @@ identifyClusters <- function(UMAPdata,
     data <- exprs
   }
   
-  set.seed(seed)
+  do.call("set.seed",list(seed))
   switch(method,
          kmeans = {
            clusters <- stats::kmeans(data, ...)$cluster
@@ -79,7 +81,7 @@ identifyClusters <- function(UMAPdata,
   UMAPdata@identify.clusters.params <- identify.Clusters.params
   
   if (space == "manifold") {
-    message(paste0("computing cell clusters boundaries..."))
+    message("computing cell clusters boundaries...")
     UMAPdata@concave.hulls <- computeConcaveHulls(proj = proj,
                                                   clusters = clusters,
                                                   concavity = concavity,
@@ -88,12 +90,12 @@ identifyClusters <- function(UMAPdata,
   
   samples <- UMAPdata@samples
   
-  message(paste0("computing cell cluster count matrix..."))
+  message("computing cell cluster count matrix...")
   UMAPdata@matrix.cell.count <- computeCellCounts(proj = data,
                                                   samples = samples,
                                                   clusters = clusters)
   
-  message(paste0("computing cell cluster abundance matrix..."))
+  message("computing cell cluster abundance matrix...")
   count <- UMAPdata@matrix.cell.count
   UMAPdata@matrix.abundance <- computeClusterAbundances(count = count)
   

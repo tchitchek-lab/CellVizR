@@ -39,7 +39,9 @@ generateManifold = function(UMAPdata,
   matrix.exprs.subset <- matrix.exprs[ , names(matrix.exprs)
                                        %in% markers] 
   
-  message(paste0("Manifold markers are: ", paste0(unlist(markers), collapse = ", ")))
+  message("Manifold markers are: ", paste0(unlist(markers), collapse = ", "))
+  message("Manifold method is: ", type)
+  cat("\n")
   
   switch(type,
          UMAP = {
@@ -96,7 +98,7 @@ generateManifoldUMAP = function(exprs,
                                 verbose,
                                 ...) {
   
-  set.seed(seed)
+  do.call("set.seed",list(seed))
   umap <- uwot::umap(exprs, 
                      verbose = verbose,
                      ...)
@@ -129,7 +131,7 @@ generateManifoldtSNE = function(exprs,
                                 verbose,
                                 ...) {
   
-  set.seed(seed)
+  do.call("set.seed",list(seed))
   tSNE <- Rtsne::Rtsne(exprs,
                        verbose = verbose,
                        ...)
@@ -166,7 +168,7 @@ generateManifoldlvish = function(exprs,
                                  verbose,
                                  ...) {
   
-  set.seed(seed)
+  do.call("set.seed",list(seed))
   lvish <- uwot::lvish(exprs, 
                        verbose = verbose,
                        ...)

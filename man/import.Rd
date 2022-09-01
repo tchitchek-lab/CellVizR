@@ -8,8 +8,9 @@ import(
   files,
   filetype = "fcs",
   transform = c("logicle", "arcsinh", "logarithmic", "none"),
-  downsampling = NULL,
-  d.method = c("uniform", "density"),
+  d.method = c("none", "uniform", "density"),
+  parameters.method = list(exclude.pctile = 0.01, target.pctile = 0.05, target.number =
+    NULL, target.percent = 0.1),
   exclude.markers = NULL,
   seed = 42
 )
@@ -21,9 +22,9 @@ import(
 
 \item{transform}{a character value containing the type of the transformation to apply. Possible values are: 'logicle', 'arcsinh', 'logarithmic' or 'none'}
 
-\item{downsampling}{a numeric value providing the number of cells to downsample for each sample}
+\item{d.method}{a character value containing the type of the downsampling to apply. Possible values are: 'none', 'uniform' or 'density'}
 
-\item{d.method}{a character value containing the type of the downsampling to apply. Possible values are: 'uniform' or 'density'}
+\item{parameters.method}{a list value containing the parameters to use for downsampling}
 
 \item{exclude.markers}{a character vector providing the marker names to be excluded during the import}
 

@@ -23,7 +23,7 @@ setMethod("plot", "UMAPdata",
             if (length(x@manifold) == 0 & length(x@identify.clusters) == 0) {
               plot(plotCellCounts(x))
             } else if (length(x@manifold) != 0 & length(x@identify.clusters) == 0) {
-              plot(plotUMAPProjections(x))
+              plot(plotManifold(x))
             } else if (length(x@manifold) != 0 & length(x@identify.clusters) != 0) {
               plot(plotHmExpressions(x, markers = colnames(x@matrix.expression))$hm)
             }

@@ -6,63 +6,57 @@
 #'  
 #' @param UMAPdata a UMAPdata object
 #' @param files a character vector providing the path of the tab-separated or FCS files
+#' @param transform a character value containing the type of the transformation to apply. Possible values are: 'logicle', 'arcsinh', 'logarithmic' or 'none' 
 #'  
 #' @return a S4 object of class 'UMAPdata'
-performUpsampling <- function(UMAPdata, 
-                              files) {
+performUpsampling <- function(UMAPdata,
+                              files,
+                              transform = c("logicle","arcsinh", "logarithmic", "none")) {
   
   checkmate::qassert(files, "S*")
   
-  sample_files <- basename(files)
-  sample_files <- gsub(".fcs","",sample_files)
-  sample_files <- gsub(".FCS","",sample_files)
-  sample_files <- gsub(".txt","",sample_files)
-  sample_files <- gsub(".TXT","",sample_files)
-
+  sample_files = sub(pattern = "(.*)\\..*$", replacement = "\\1", basename(files))
   files = files[sample_files %in% unique(UMAPdata@samples)]
-  UMAPdata_wodownsampling <- import(files)
   
-  downsampled.exp <- UMAPdata@matrix.expression
-  rename.markers <- colnames(downsampled.exp)
+  UMAPdata.reload           <- import(files, transform = transform)
+  
+  downsampled.exp           <- UMAPdata@matrix.expression
+  newmarkersnames           <- colnames(downsampled.exp)
   colnames(downsampled.exp) <- UMAPdata@raw.markers
   
-  full.exp <- UMAPdata_wodownsampling@matrix.expression
-  full.exp <- full.exp[,colnames(full.exp) %in% colnames(downsampled.exp)]
+  reload.exp                <- UMAPdata.reload@matrix.expression
+  reload.exp                <- reload.exp[,colnames(reload.exp) %in% colnames(downsampled.exp)]
   
-  chk.downsampled <- apply(downsampled.exp,1,sum)
-  chk.upsampled  <- apply(full.exp,1,sum)
+  chk.downsampled           <- apply(downsampled.exp,1,sum)
+  chk.reload                <- apply(reload.exp,1,sum)
   
-  upsampled.exp <- full.exp[!chk.upsampled %in% chk.downsampled,]
-  upsampled.samples <- UMAPdata_wodownsampling@samples[!chk.upsampled %in% chk.downsampled]
-  upsampled.clusters <- UMAPdata_wodownsampling@identify.clusters[!chk.upsampled %in% chk.downsampled]
+  upsampled.exp             <- reload.exp[!chk.reload %in% chk.downsampled,]
+  upsampled.samples         <- UMAPdata.reload@samples[!chk.reload %in% chk.downsampled]
   
-  downsampled.exp$cluster <- as.numeric(UMAPdata@identify.clusters) ######
+  downsampled.exp$cluster   <- UMAPdata@identify.clusters
   downsampled.centers <- plyr::ddply(downsampled.exp,"cluster",function(x){
     x$cluster <- NULL
     centers <- apply(x,2,stats::median,rm.na=TRUE)
     return(centers)
   })
-  downsampled.centers <- downsampled.centers[order(downsampled.centers$cluster),]
   downsampled.centers$cluster <- NULL
   downsampled.exp$cluster <- NULL
   
   knn <- FNN::knnx.index(downsampled.centers, upsampled.exp, k=1, algorithm="kd_tree")
   
   UMAPdata@matrix.expression  <- rbind(downsampled.exp, upsampled.exp)
-  colnames(UMAPdata@matrix.expression) <- rename.markers
-  UMAPdata@samples            <- c(UMAPdata@samples, upsampled.samples)
-  UMAPdata@identify.clusters  <- c(UMAPdata@identify.clusters, knn)
+  colnames(UMAPdata@matrix.expression) <- newmarkersnames
   
-  tofill <- data.frame(dim1 = rep(NA,nrow(upsampled.exp)), dim2 = rep(NA,nrow(upsampled.exp)))
-  UMAPdata@manifold <- rbind(UMAPdata@manifold, tofill)
-  samples <- UMAPdata@samples
+  UMAPdata@matrix.expression.r <- UMAPdata.reload@matrix.expression.r
+  UMAPdata@samples             <- c(UMAPdata@samples, upsampled.samples)
+  UMAPdata@identify.clusters   <- c(UMAPdata@identify.clusters, knn)
   
-  message(paste0("computing cell cluster count matrix..."))
+  message("computing cell cluster count matrix...")
   UMAPdata@matrix.cell.count <- computeCellCounts(proj <- UMAPdata@matrix.expression,
                                                   clusters <- UMAPdata@identify.clusters,
                                                   samples <- UMAPdata@samples)
   
-  message(paste0("computing cell cluster abundance matrix..."))
+  message("computing cell cluster abundance matrix...")
   UMAPdata@matrix.abundance <- computeClusterAbundances(count <- UMAPdata@matrix.cell.count)
   
   return(UMAPdata)

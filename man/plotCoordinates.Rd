@@ -4,10 +4,14 @@
 \alias{plotCoordinates}
 \title{Plots parallel coordinates}
 \usage{
-plotCoordinates(UMAPdata)
+plotCoordinates(UMAPdata, samples = NULL, clusters)
 }
 \arguments{
 \item{UMAPdata}{a UMAPdata object}
+
+\item{samples}{a character vector containing the names of biological samples to use. By default, all samples are used}
+
+\item{clusters}{a character vector containing the identifiers of the clusters to use}
 }
 \value{
 xx

@@ -119,7 +119,7 @@ plotHmExpressions = function(UMAPdata,
   col.data$clusters <- NULL
   hclust.col <- stats::hclust(stats::dist(col.data), method = method.hclust)
   
-  set.seed(seed)
+  do.call("set.seed",list(seed))
   dist.col <- stats::dist(col.data)
   isoMDS <- MASS::isoMDS(dist.col, k = 1, trace=FALSE)
   col.tsne <- isoMDS$points
@@ -183,6 +183,9 @@ plotHmExpressions = function(UMAPdata,
   grob[["label.row"]] <- label.row
   grob[["legend"]] <- cowplot::get_legend(plot)
   
+  # browser()
+  # while (TRUE) {}
+  
   hm.exp <- gridExtra::arrangeGrob(
     grobs = grob,
     layout_matrix = rbind(
@@ -225,7 +228,7 @@ plotHmExpressions = function(UMAPdata,
       c(NA,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,NA))
   )
   
-  hm.exp = gridExtra::grid.arrange(hm.exp)
+  # hm.exp = gridExtra::grid.arrange(hm.exp)
   
   hm.exp$order.clusters <- labels.col
   hm.exp$order.markers <- labels.row
@@ -395,7 +398,7 @@ plotHmStatistics = function(UMAPdata,
   
   plot <- plot +     
     ggplot2::labs(fill = statistics) + 
-    ggplot2::guides(color = FALSE) + 
+    ggplot2::guides(color = "none") + 
     ggplot2::scale_fill_gradientn(limits = c(-saturation, saturation), colours = c("orange", "gray", "blue"),
                                   breaks = c(-saturation, 0, saturation),
                                   na.value = "gray", labels = function(x){format(round(x, 1), nsmall = 1)}) + 
@@ -464,7 +467,7 @@ plotHmStatistics = function(UMAPdata,
       c(NA,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,NA))
   )
   
-  hm.stats = gridExtra::grid.arrange(hm.stats)
+  # hm.stats = gridExtra::grid.arrange(hm.stats)
   invisible(hm.stats)
 }
 

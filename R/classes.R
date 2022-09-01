@@ -4,11 +4,12 @@
 #'
 #' @slot samples a character vector containing the names of the biological samples
 #' @slot raw.markers a character vector containing the names of the raw markers
+#' @slot matrix.expression.r a data.frame containing the raw marker expressions of each cell
 #' @slot matrix.expression a data.frame containing the marker expressions of each cell
 #' @slot manifold a data.frame containing the manifold coordinates
 #' @slot manifold.params a list containing the parameters used for manifold creation
-#' @slot recognize.clusters a vector containing the identifiers of cell clusters
-#' @slot recognize.clusters.params a vector containing the parameters used for the identification of the cell clusters
+#' @slot identify.clusters a vector containing the identifiers of cell clusters
+#' @slot identify.clusters.params a vector containing the parameters used for the identification of the cell clusters
 #' @slot concave.hulls a data.frame containing the coordinates of the cell cluster of the concave hulls for each cluster
 #' @slot matrix.cell.count a data.frame containing the number of cells associated to each cluster for each sample
 #' @slot matrix.abundance a data.frame containing the percentage of cells associated to each cluster for each sample
@@ -23,6 +24,7 @@
 UMAPdata <- methods::setClass("UMAPdata",
                               slots = c(samples = "vector",
                                         raw.markers = "vector",
+                                        matrix.expression.r = "data.frame",
                                         matrix.expression = "data.frame",
                                         manifold = "data.frame",
                                         manifold.params = "list",
