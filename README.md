@@ -265,26 +265,26 @@ UMAPV <- generateManifold(UMAPV,
 
     ## Manifold method is: UMAP
 
-    ## 17:32:02 UMAP embedding parameters a = 1.896 b = 0.8006
+    ## 11:52:32 UMAP embedding parameters a = 1.896 b = 0.8006
 
-    ## 17:32:02 Read 26682 rows and found 10 numeric columns
+    ## 11:52:32 Read 26677 rows and found 10 numeric columns
 
-    ## 17:32:02 Using Annoy for neighbor search, n_neighbors = 15
+    ## 11:52:32 Using Annoy for neighbor search, n_neighbors = 15
 
-    ## 17:32:02 Building Annoy index with metric = euclidean, n_trees = 50
+    ## 11:52:33 Building Annoy index with metric = euclidean, n_trees = 50
 
     ## 0%   10   20   30   40   50   60   70   80   90   100%
 
     ## [----|----|----|----|----|----|----|----|----|----|
 
     ## **************************************************|
-    ## 17:32:04 Writing NN index file to temp file C:\Users\GWMA\AppData\Local\Temp\RtmpclyopB\file46ac4de77d1d
-    ## 17:32:04 Searching Annoy index using 40 threads, search_k = 1500
-    ## 17:32:05 Annoy recall = 100%
-    ## 17:32:05 Commencing smooth kNN distance calibration using 40 threads
-    ## 17:32:06 Initializing from normalized Laplacian + noise
-    ## 17:32:07 Commencing optimization for 200 epochs, with 535980 positive edges using 1 thread
-    ## 17:32:25 Optimization finished
+    ## 11:52:34 Writing NN index file to temp file C:\Users\GWMA\AppData\Local\Temp\Rtmp0QWqgt\file2ce034ed2398
+    ## 11:52:34 Searching Annoy index using 40 threads, search_k = 1500
+    ## 11:52:35 Annoy recall = 100%
+    ## 11:52:36 Commencing smooth kNN distance calibration using 40 threads
+    ## 11:52:37 Initializing from normalized Laplacian + noise
+    ## 11:52:37 Commencing optimization for 200 epochs, with 535996 positive edges using 1 thread
+    ## 11:52:55 Optimization finished
 
 The main arguments of the `generateManifold` function are:
 
@@ -390,8 +390,9 @@ plotManifold(UMAPV,
              markers = "clusters")
 ```
 
-![](README/figure-markdown_github/PlotManifold4-1.png) \### 2.5.2
-Heatmap of cell marker expressions (plotHmExpressions)
+![](README/figure-markdown_github/PlotManifold4-1.png)
+
+### 2.5.2 Heatmap of cell marker expressions (plotHmExpressions)
 
 The `plotHmExpressions` function shows marker median relative
 expressions for all clusters in the whole dataset.
@@ -771,40 +772,40 @@ QCS <- QCSmallClusters(UMAPV,
 ![](README/figure-markdown_github/QCSmallClusters-1.png)
 
     ##      V1_10105LA V1_10209HE V1_10306CG V1_10503DC V1_11204CD V1_20208AA
-    ## [1,]      FALSE      FALSE      FALSE       TRUE       TRUE      FALSE
-    ## [2,]       TRUE       TRUE       TRUE      FALSE      FALSE      FALSE
-    ## [3,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [4,]      FALSE      FALSE       TRUE      FALSE      FALSE      FALSE
-    ## [5,]       TRUE      FALSE      FALSE      FALSE      FALSE      FALSE
-    ## [6,]      FALSE      FALSE       TRUE      FALSE       TRUE       TRUE
-    ##      V1_20210RF V6_10105LA V6_10209HE V6_10306CG V6_10503DC V6_11204CD
-    ## [1,]      FALSE      FALSE      FALSE      FALSE      FALSE       TRUE
-    ## [2,]      FALSE       TRUE      FALSE      FALSE      FALSE      FALSE
-    ## [3,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [4,]      FALSE      FALSE      FALSE       TRUE      FALSE      FALSE
-    ## [5,]      FALSE      FALSE      FALSE      FALSE      FALSE      FALSE
-    ## [6,]      FALSE      FALSE      FALSE       TRUE       TRUE      FALSE
-    ##      V6_20208AA V6_20210RF V7_10105LA V7_10209HE V7_10306CG V7_10503DC
-    ## [1,]      FALSE      FALSE      FALSE       TRUE      FALSE      FALSE
+    ## [1,]       TRUE       TRUE      FALSE       TRUE       TRUE       TRUE
     ## [2,]      FALSE      FALSE      FALSE      FALSE      FALSE      FALSE
-    ## [3,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [4,]      FALSE      FALSE      FALSE      FALSE       TRUE      FALSE
-    ## [5,]      FALSE      FALSE      FALSE      FALSE      FALSE      FALSE
-    ## [6,]      FALSE      FALSE      FALSE      FALSE      FALSE      FALSE
+    ## [3,]       TRUE       TRUE      FALSE       TRUE       TRUE       TRUE
+    ## [4,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [5,]       TRUE       TRUE       TRUE       TRUE      FALSE       TRUE
+    ## [6,]       TRUE       TRUE      FALSE       TRUE       TRUE      FALSE
+    ##      V1_20210RF V6_10105LA V6_10209HE V6_10306CG V6_10503DC V6_11204CD
+    ## [1,]       TRUE       TRUE      FALSE      FALSE       TRUE       TRUE
+    ## [2,]      FALSE      FALSE      FALSE      FALSE      FALSE      FALSE
+    ## [3,]      FALSE      FALSE       TRUE       TRUE      FALSE      FALSE
+    ## [4,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [5,]       TRUE       TRUE      FALSE       TRUE       TRUE      FALSE
+    ## [6,]       TRUE      FALSE      FALSE      FALSE      FALSE      FALSE
+    ##      V6_20208AA V6_20210RF V7_10105LA V7_10209HE V7_10306CG V7_10503DC
+    ## [1,]      FALSE      FALSE      FALSE      FALSE      FALSE      FALSE
+    ## [2,]      FALSE      FALSE      FALSE      FALSE      FALSE      FALSE
+    ## [3,]      FALSE      FALSE      FALSE       TRUE       TRUE      FALSE
+    ## [4,]      FALSE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [5,]       TRUE       TRUE      FALSE      FALSE      FALSE      FALSE
+    ## [6,]      FALSE      FALSE      FALSE      FALSE      FALSE       TRUE
     ##      V7_11204CD V7_20208AA V7_20210RF V8_10105LA V8_10209HE V8_10306CG
-    ## [1,]       TRUE      FALSE      FALSE       TRUE      FALSE      FALSE
-    ## [2,]      FALSE      FALSE      FALSE      FALSE       TRUE       TRUE
-    ## [3,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [4,]       TRUE      FALSE      FALSE       TRUE      FALSE      FALSE
-    ## [5,]       TRUE      FALSE      FALSE      FALSE      FALSE      FALSE
-    ## [6,]       TRUE      FALSE      FALSE      FALSE      FALSE       TRUE
+    ## [1,]       TRUE      FALSE      FALSE      FALSE      FALSE      FALSE
+    ## [2,]       TRUE      FALSE      FALSE      FALSE      FALSE      FALSE
+    ## [3,]       TRUE      FALSE      FALSE       TRUE       TRUE      FALSE
+    ## [4,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [5,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [6,]       TRUE      FALSE      FALSE       TRUE      FALSE      FALSE
     ##      V8_10503DC V8_11204CD V8_20208AA V8_20210RF total.cells
-    ## [1,]      FALSE       TRUE      FALSE      FALSE       FALSE
+    ## [1,]       TRUE       TRUE       TRUE      FALSE       FALSE
     ## [2,]      FALSE      FALSE      FALSE      FALSE       FALSE
-    ## [3,]       TRUE       TRUE       TRUE       TRUE       FALSE
-    ## [4,]      FALSE      FALSE      FALSE      FALSE       FALSE
-    ## [5,]      FALSE      FALSE      FALSE      FALSE       FALSE
-    ## [6,]      FALSE       TRUE      FALSE      FALSE       FALSE
+    ## [3,]      FALSE      FALSE      FALSE      FALSE       FALSE
+    ## [4,]       TRUE       TRUE       TRUE       TRUE       FALSE
+    ## [5,]      FALSE       TRUE      FALSE       TRUE       FALSE
+    ## [6,]       TRUE       TRUE       TRUE      FALSE       FALSE
 
 The second method allows to identify the uniform clusters, i.e.those
 with unimodal expression and low dispersion of expression for all its
@@ -845,12 +846,12 @@ QCU <- QCUniformClusters(UMAPV,
 ![](README/figure-markdown_github/QCUniformClusters-1.png)
 
     ##   clusters markers    pv_dip       IQR passed
-    ## 1        1    CD16 0.9840834 0.3861998   TRUE
-    ## 2        1     CD3 0.9909752 0.3403437   TRUE
-    ## 3        1    CD56 0.9608222 0.3313725   TRUE
-    ## 4        1     CD8 0.9204992 0.3471428   TRUE
-    ## 5        1   HLADR 0.9886411 0.2666003   TRUE
-    ## 6        1   NKG2D 0.9414757 0.2208474   TRUE
+    ## 1        1    CD16 1.0000000 0.4233934   TRUE
+    ## 2        1     CD3 0.9932586 0.3453512   TRUE
+    ## 3        1    CD56 0.9955952 0.3693838   TRUE
+    ## 4        1     CD8 0.9932251 0.3904407   TRUE
+    ## 5        1   HLADR 0.9901313 0.4710684   TRUE
+    ## 6        1   NKG2D 0.9955082 0.3027702   TRUE
 
 # 5. Advanced usage
 
