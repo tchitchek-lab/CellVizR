@@ -29,7 +29,7 @@ In the `UMAPVizR` workflow, an S4 object is created to store data and
 sample information is implemented for analysis. This stored information
 will allow performing the statistics and visualization of the dataset.
 
-<img src="README/figures/workflow.png" width="90%" style="display: block; margin: auto;" />
+<img src="sources_doc/workflow.png" width="90%" style="display: block; margin: auto;" />
 
 *Figure 1: Workflow of UMAPVizR*
 
@@ -110,69 +110,9 @@ UMAPV <- import(files,
                 transform = "logicle", 
                 exclude.markers = c("FS-H", "FS-A", "FS-W", "SS-H", 
                                     "SS-A", "SS-W", "Time"), 
-                d.method = "density",
-                parameters.method = list("exclude.pctile" = 0.01, 
-                                         "target.pctile" = 0.05, 
-                                         "target.percent" = 0.1))
+                d.method = "uniform",
+                parameters.method = list("target.percent" = 0.1))
 ```
-
-    ## 
-    ##   Estimated downsampling-I progress:  0% ...
-    ##   Estimated downsampling-I progress: 100% ...
-    ##   Estimated downsampling-I progress:  0% ...
-    ##   Estimated downsampling-I progress: 100% ...
-    ##   Estimated downsampling-I progress:  0% ...
-    ##   Estimated downsampling-I progress: 100% ...
-    ##   Estimated downsampling-I progress:  0% ...
-    ##   Estimated downsampling-I progress: 100% ...
-    ##   Estimated downsampling-I progress:  0% ...
-    ##   Estimated downsampling-I progress: 100% ...
-    ##   Estimated downsampling-I progress:  0% ...
-    ##   Estimated downsampling-I progress: 100% ...
-    ##   Estimated downsampling-I progress:  0% ...
-    ##   Estimated downsampling-I progress: 100% ...
-    ##   Estimated downsampling-I progress:  0% ...
-    ##   Estimated downsampling-I progress: 100% ...
-    ##   Estimated downsampling-I progress:  0% ...
-    ##   Estimated downsampling-I progress: 100% ...
-    ##   Estimated downsampling-I progress:  0% ...
-    ##   Estimated downsampling-I progress: 100% ...
-    ##   Estimated downsampling-I progress:  0% ...
-    ##   Estimated downsampling-I progress: 100% ...
-    ##   Estimated downsampling-I progress:  0% ...
-    ##   Estimated downsampling-I progress: 100% ...
-    ##   Estimated downsampling-I progress:  0% ...
-    ##   Estimated downsampling-I progress: 100% ...
-    ##   Estimated downsampling-I progress:  0% ...
-    ##   Estimated downsampling-I progress: 100% ...
-    ##   Estimated downsampling-I progress:  0% ...
-    ##   Estimated downsampling-I progress: 100% ...
-    ##   Estimated downsampling-I progress:  0% ...
-    ##   Estimated downsampling-I progress: 100% ...
-    ##   Estimated downsampling-I progress:  0% ...
-    ##   Estimated downsampling-I progress: 100% ...
-    ##   Estimated downsampling-I progress:  0% ...
-    ##   Estimated downsampling-I progress: 100% ...
-    ##   Estimated downsampling-I progress:  0% ...
-    ##   Estimated downsampling-I progress: 100% ...
-    ##   Estimated downsampling-I progress:  0% ...
-    ##   Estimated downsampling-I progress: 100% ...
-    ##   Estimated downsampling-I progress:  0% ...
-    ##   Estimated downsampling-I progress: 100% ...
-    ##   Estimated downsampling-I progress:  0% ...
-    ##   Estimated downsampling-I progress: 100% ...
-    ##   Estimated downsampling-I progress:  0% ...
-    ##   Estimated downsampling-I progress: 100% ...
-    ##   Estimated downsampling-I progress:  0% ...
-    ##   Estimated downsampling-I progress: 100% ...
-    ##   Estimated downsampling-I progress:  0% ...
-    ##   Estimated downsampling-I progress: 100% ...
-    ##   Estimated downsampling-I progress:  0% ...
-    ##   Estimated downsampling-I progress: 100% ...
-    ##   Estimated downsampling-I progress:  0% ...
-    ##   Estimated downsampling-I progress: 100% ...
-    ##   Estimated downsampling-I progress:  0% ...
-    ##   Estimated downsampling-I progress: 100% ...
 
 The main arguments of the `import` function are:
 
@@ -190,13 +130,17 @@ After importing the dataset, the `plotCellCounts` function allows you to
 see the number of cells in each sample to be displayed as follows:
 
 ``` r
-plot(plotCellCounts(UMAPV, 
-                    stats = c("min","median","mean","q75","max"),
-                    samples = NULL,
-                    sort = TRUE))
+plotCellCounts(UMAPV, 
+               stats = c("min","median","mean","q75","max"),
+               samples = NULL,
+               sort = TRUE)
 ```
 
-![](README/figure-markdown_github/plotCellCounts-1.png)
+![](README_files/figure-markdown_github/plotCellCounts-1.png)
+
+``` r
+# Possible to make it interactive
+```
 
 ## 2.3 Assigning meta-information of biological samples (assignMetadata)
 
@@ -214,12 +158,12 @@ Here is an example of a metadata assignment:
 
 ``` r
 # creation of the dataframe 
-  metadata <- data.frame("individual"= rep(c("10105LA","10209HE","10306CG",
-                                             "10503DC","11204CD","20208AA",
-                                             "20210RF"), 4),
-                         "condition"= rep(c("PR","SPA","PSO","B7","SJ","SPA","SPA"),4),
-                         "timepoint"= c(rep("V1", 7), rep("V6", 7), rep("V7", 7), rep("V8", 7))
-  )
+metadata <- data.frame("individual"= rep(c("10105LA","10209HE","10306CG",
+                                           "10503DC","11204CD","20208AA",
+                                           "20210RF"), 4),
+                       "condition"= rep(c("PR","SPA","PSO","B7","SJ","SPA","SPA"),4),
+                       "timepoint"= c(rep("V1", 7), rep("V6", 7), rep("V7", 7), rep("V8", 7))
+)
 
 rownames(metadata) = paste0(metadata$timepoint,"_", metadata$individual)
 
@@ -265,26 +209,28 @@ UMAPV <- generateManifold(UMAPV,
 
     ## Manifold method is: UMAP
 
-    ## 11:52:32 UMAP embedding parameters a = 1.896 b = 0.8006
+    ## 11:12:18 UMAP embedding parameters a = 1.896 b = 0.8006
 
-    ## 11:52:32 Read 26677 rows and found 10 numeric columns
+    ## 11:12:18 Converting dataframe to numerical matrix
 
-    ## 11:52:32 Using Annoy for neighbor search, n_neighbors = 15
+    ## 11:12:18 Read 26722 rows and found 10 numeric columns
 
-    ## 11:52:33 Building Annoy index with metric = euclidean, n_trees = 50
+    ## 11:12:18 Using Annoy for neighbor search, n_neighbors = 15
+
+    ## 11:12:19 Building Annoy index with metric = euclidean, n_trees = 50
 
     ## 0%   10   20   30   40   50   60   70   80   90   100%
 
     ## [----|----|----|----|----|----|----|----|----|----|
 
     ## **************************************************|
-    ## 11:52:34 Writing NN index file to temp file C:\Users\GWMA\AppData\Local\Temp\Rtmp0QWqgt\file2ce034ed2398
-    ## 11:52:34 Searching Annoy index using 40 threads, search_k = 1500
-    ## 11:52:35 Annoy recall = 100%
-    ## 11:52:36 Commencing smooth kNN distance calibration using 40 threads
-    ## 11:52:37 Initializing from normalized Laplacian + noise
-    ## 11:52:37 Commencing optimization for 200 epochs, with 535996 positive edges using 1 thread
-    ## 11:52:55 Optimization finished
+    ## 11:12:21 Writing NN index file to temp file C:\Users\GWMA\AppData\Local\Temp\RtmpaWJfgG\file2d245d30793a
+    ## 11:12:21 Searching Annoy index using 40 threads, search_k = 1500
+    ## 11:12:22 Annoy recall = 100%
+    ## 11:12:22 Commencing smooth kNN distance calibration using 40 threads with target n_neighbors = 15
+    ## 11:12:23 Initializing from normalized Laplacian + noise (using irlba)
+    ## 11:12:23 Commencing optimization for 200 epochs, with 537220 positive edges using 1 thread
+    ## 11:12:41 Optimization finished
 
 The main arguments of the `generateManifold` function are:
 
@@ -327,12 +273,16 @@ After clustering, the `plotClustersCounts` function allows to visualize
 the cells of each sample in the clusters as follows:
 
 ``` r
-plot(plotClustersCounts(UMAPV, 
-                        clusters = NULL,
-                        sort = TRUE))
+plotClustersCounts(UMAPV, 
+                   clusters = NULL,
+                   sort = TRUE)
 ```
 
-![](README/figure-markdown_github/plotClustersCounts-1.png)
+![](README_files/figure-markdown_github/plotClustersCounts-1.png)
+
+``` r
+# Possible to make it interactive
+```
 
 ## 2.5 Basic Visualization
 
@@ -357,7 +307,7 @@ plotManifold(UMAPV,
              markers = "density")
 ```
 
-![](README/figure-markdown_github/PlotManifold-1.png)
+![](README_files/figure-markdown_github/PlotManifold-1.png)
 
 If the name of the marker is used, then the intensity of marker
 expression, overlaid on the manifold (e.g. CD8), will be shown as below:
@@ -368,7 +318,7 @@ plotManifold(UMAPV,
              markers = "CD8")
 ```
 
-![](README/figure-markdown_github/PlotManifold2-1.png)
+![](README_files/figure-markdown_github/PlotManifold2-1.png)
 
 It is possible to specify the biological samples to be displayed in the
 representation using the `samples` argument as below:
@@ -380,9 +330,10 @@ plotManifold(UMAPV,
              samples = "V1_10105LA")
 ```
 
-![](README/figure-markdown_github/PlotManifold3-1.png)
+![](README_files/figure-markdown_github/PlotManifold3-1.png)
 
-\[Add text\]
+If the name of the clusters is used, the the clusters number will be
+shown as below:
 
 ``` r
 # Display manifold overlay by 'cluster' 
@@ -390,7 +341,7 @@ plotManifold(UMAPV,
              markers = "clusters")
 ```
 
-![](README/figure-markdown_github/PlotManifold4-1.png)
+![](README_files/figure-markdown_github/PlotManifold4-1.png)
 
 ### 2.5.2 Heatmap of cell marker expressions (plotHmExpressions)
 
@@ -412,7 +363,7 @@ hm.exp <- plotHmExpressions(UMAPV)
 gridExtra::grid.arrange(hm.exp)
 ```
 
-![](README/figure-markdown_github/PlotHMExpressions-1.png) It is
+![](README_files/figure-markdown_github/PlotHMExpressions-1.png) It is
 possible to customize the `plotHmExpressions` with these parameters:
 
 -   the `markers` argument, which specifies the markers to be displayed
@@ -430,7 +381,66 @@ hm.exp <- plotHmExpressions(UMAPV,
 gridExtra::grid.arrange(hm.exp)
 ```
 
-![](README/figure-markdown_github/plotHmExpressions2-1.png)
+![](README_files/figure-markdown_github/plotHmExpressions2-1.png)
+
+### 2.5.3 Representation of phenotype of identified cell clusters (plotPhenoClusters)
+
+The `plotPhenoClusters` function shows marker expression densities for
+one given cluster.
+
+For each marker distribution, the median expression is represented by a
+black dashed line. In addition, the Hartigan’s Dip test p-value, which
+indicates whether the distribution is non-unimodal, is indicated by a
+green curve or red if it is non-unimodal.
+
+``` r
+# PhenoClusters plot for specific cluster 
+plotPhenoClusters(UMAPV, 
+                  clusters = 58)
+```
+
+    ## Picking joint bandwidth of 0.0161
+
+    ## Picking joint bandwidth of 0.0321
+
+    ## Picking joint bandwidth of 0.0404
+
+    ## Picking joint bandwidth of 0.0519
+
+    ## Picking joint bandwidth of 0.0403
+
+    ## Picking joint bandwidth of 0.0202
+
+    ## Picking joint bandwidth of 0.0447
+
+    ## Picking joint bandwidth of 0.0256
+
+    ## Picking joint bandwidth of 0.0277
+
+    ## Picking joint bandwidth of 0.0476
+
+![](README_files/figure-markdown_github/plotPhenoClusters-1.png)
+
+### 2.5.4 Representation of phenotype of cell clusters using parallels coordinates (plotCoordinates)
+
+The `plotCoordinates` function shows the phenotype of specific cluster
+or a set of combined clusters.
+
+The median marker expression of each sample is represented using
+parallel coordinates. The X-axis represents the cellular markers and the
+Y-axis represents the marker expressions.
+
+``` r
+# Coordinates plot for specific cluster 
+plotCoordinates(UMAPV, 
+                clusters = "58")
+```
+
+![](README_files/figure-markdown_github/plotCoordinates-1.png)
+
+``` r
+# Possible to make it interactive
+```
 
 # 3. Statistics and visualization
 
@@ -475,11 +485,11 @@ for (condition in list.conditions) {
 
 ## 3.2 Visualisation of statistical analysis
 
-### 3.2.1 Volcano plot of statistical analysis (plotVolcanoPlot)
+### 3.2.1 Volcano plot of statistical analysis (plotVolcano)
 
-The `plotVolcanoPlot` function shows the clusters whose number of
-associated cells is statistically different between two biological
-conditions and/or timepoints.
+The `plotVolcano` function shows the clusters whose number of associated
+cells is statistically different between two biological conditions
+and/or timepoints.
 
 For each cluster, the p-value (indicated by -log10(p-value)) is
 represented on the Y-axis and the cell abundance fold-change (indicated
@@ -492,13 +502,18 @@ Here is an example for generating such representation:
 
 ``` r
 # Volcano plot for differential analysis 
-plotVolcanoPlot(UMAPV,
-                comparison = ("V7 vs. V1"),
-                th.pv = 1.3,
-                th.fc = 1.5)
+plotVolcano(UMAPV,
+            comparison = ("V7 vs. V1"),
+            th.pv = 1.3,
+            th.fc = 1.5,
+            plot.text = TRUE)
 ```
 
-![](README/figure-markdown_github/plotVolcanoPlot-1.png)
+![](README_files/figure-markdown_github/plotVolcano-1.png)
+
+``` r
+# Possible to make it interactive
+```
 
 ### 3.2.2 Heatmap of statistical analysis results (plotHmStatistics)
 
@@ -522,7 +537,7 @@ hm.stats <- plotHmStatistics(UMAPV,
 gridExtra::grid.arrange(hm.stats)
 ```
 
-![](README/figure-markdown_github/plotHmStatistics-1.png)
+![](README_files/figure-markdown_github/plotHmStatistics-1.png)
 
 ## 3.3 Visualisation of cell cluster abundances
 
@@ -548,13 +563,15 @@ stats <- UMAPV@statistic[UMAPV@statistic$comparison == "V6 vs. V1",]
 clusters = stats[stats$pvalue<=0.05 & abs(stats$lfc)>log(1.2)/log(2),]$clusters
 
 # Heatmap of abundances
-plotHmAbundances(UMAPV, 
-                 clusters = clusters,
-                 samples = samples,
-                 rescale = TRUE)
+hm.abun <- plotHmAbundances(UMAPV, 
+                            clusters = clusters,
+                            samples = samples,
+                            rescale = TRUE)
+
+gridExtra::grid.arrange(hm.abun)
 ```
 
-![](README/figure-markdown_github/plotHmAbundances-1.png)
+![](README_files/figure-markdown_github/plotHmAbundances-1.png)
 
 ### 3.3.2 Cell cluster abundances using a boxplot representation (plotBoxplot)
 
@@ -579,7 +596,11 @@ plotBoxplot(UMAPV,
             test.statistics = "wilcox.test")
 ```
 
-![](README/figure-markdown_github/plotBoxplot-1.png)
+![](README_files/figure-markdown_github/plotBoxplot-1.png)
+
+``` r
+# Possible to make it interactive
+```
 
 Other possible parameters to customize the `plotBoxPlot` are:
 
@@ -607,10 +628,15 @@ plotMDS(UMAPV,
         levels = "samples", 
         condition.samples = "timepoint", 
         clusters = NULL, 
-        samples = NULL)
+        samples = NULL,
+        plot.text = TRUE)
 ```
 
-![](README/figure-markdown_github/plotMDS-1.png)
+![](README_files/figure-markdown_github/plotMDS-1.png)
+
+``` r
+# Possible to make it interactive
+```
 
 Other possible parameters to customize the `plotMDS` are:
 
@@ -634,10 +660,15 @@ plotPCA(UMAPV,
         levels = "clusters", 
         clusters = NULL, 
         samples = NULL, 
-        condition.samples = "condition")
+        condition.samples = "condition",
+        plot.text = TRUE)
 ```
 
-![](README/figure-markdown_github/plotPCA-1.png)
+![](README_files/figure-markdown_github/plotPCA-1.png)
+
+``` r
+# Possible to make it interactive
+```
 
 Other possible parameters to customize the `plotPCA` are:
 
@@ -769,43 +800,43 @@ QCS <- QCSmallClusters(UMAPV,
                        plot.device = TRUE)
 ```
 
-![](README/figure-markdown_github/QCSmallClusters-1.png)
+![](README_files/figure-markdown_github/QCSmallClusters-1.png)
 
     ##      V1_10105LA V1_10209HE V1_10306CG V1_10503DC V1_11204CD V1_20208AA
-    ## [1,]       TRUE       TRUE      FALSE       TRUE       TRUE       TRUE
-    ## [2,]      FALSE      FALSE      FALSE      FALSE      FALSE      FALSE
-    ## [3,]       TRUE       TRUE      FALSE       TRUE       TRUE       TRUE
-    ## [4,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [5,]       TRUE       TRUE       TRUE       TRUE      FALSE       TRUE
-    ## [6,]       TRUE       TRUE      FALSE       TRUE       TRUE      FALSE
-    ##      V1_20210RF V6_10105LA V6_10209HE V6_10306CG V6_10503DC V6_11204CD
-    ## [1,]       TRUE       TRUE      FALSE      FALSE       TRUE       TRUE
-    ## [2,]      FALSE      FALSE      FALSE      FALSE      FALSE      FALSE
-    ## [3,]      FALSE      FALSE       TRUE       TRUE      FALSE      FALSE
-    ## [4,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [5,]       TRUE       TRUE      FALSE       TRUE       TRUE      FALSE
-    ## [6,]       TRUE      FALSE      FALSE      FALSE      FALSE      FALSE
-    ##      V6_20208AA V6_20210RF V7_10105LA V7_10209HE V7_10306CG V7_10503DC
-    ## [1,]      FALSE      FALSE      FALSE      FALSE      FALSE      FALSE
-    ## [2,]      FALSE      FALSE      FALSE      FALSE      FALSE      FALSE
-    ## [3,]      FALSE      FALSE      FALSE       TRUE       TRUE      FALSE
-    ## [4,]      FALSE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [5,]       TRUE       TRUE      FALSE      FALSE      FALSE      FALSE
-    ## [6,]      FALSE      FALSE      FALSE      FALSE      FALSE       TRUE
-    ##      V7_11204CD V7_20208AA V7_20210RF V8_10105LA V8_10209HE V8_10306CG
-    ## [1,]       TRUE      FALSE      FALSE      FALSE      FALSE      FALSE
-    ## [2,]       TRUE      FALSE      FALSE      FALSE      FALSE      FALSE
-    ## [3,]       TRUE      FALSE      FALSE       TRUE       TRUE      FALSE
-    ## [4,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [1,]      FALSE       TRUE      FALSE       TRUE       TRUE       TRUE
+    ## [2,]       TRUE      FALSE       TRUE       TRUE       TRUE      FALSE
+    ## [3,]       TRUE       TRUE       TRUE      FALSE      FALSE       TRUE
+    ## [4,]      FALSE       TRUE      FALSE       TRUE       TRUE      FALSE
     ## [5,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [6,]       TRUE      FALSE      FALSE       TRUE      FALSE      FALSE
+    ## [6,]       TRUE       TRUE      FALSE      FALSE      FALSE      FALSE
+    ##      V1_20210RF V6_10105LA V6_10209HE V6_10306CG V6_10503DC V6_11204CD
+    ## [1,]      FALSE      FALSE      FALSE       TRUE       TRUE       TRUE
+    ## [2,]      FALSE       TRUE      FALSE      FALSE      FALSE      FALSE
+    ## [3,]      FALSE      FALSE       TRUE       TRUE      FALSE      FALSE
+    ## [4,]      FALSE      FALSE      FALSE       TRUE      FALSE       TRUE
+    ## [5,]       TRUE      FALSE      FALSE      FALSE      FALSE      FALSE
+    ## [6,]      FALSE       TRUE       TRUE       TRUE      FALSE      FALSE
+    ##      V6_20208AA V6_20210RF V7_10105LA V7_10209HE V7_10306CG V7_10503DC
+    ## [1,]       TRUE      FALSE      FALSE       TRUE       TRUE       TRUE
+    ## [2,]      FALSE      FALSE      FALSE      FALSE       TRUE      FALSE
+    ## [3,]      FALSE      FALSE      FALSE       TRUE       TRUE      FALSE
+    ## [4,]      FALSE      FALSE      FALSE      FALSE      FALSE       TRUE
+    ## [5,]       TRUE      FALSE      FALSE      FALSE      FALSE       TRUE
+    ## [6,]      FALSE      FALSE      FALSE       TRUE       TRUE      FALSE
+    ##      V7_11204CD V7_20208AA V7_20210RF V8_10105LA V8_10209HE V8_10306CG
+    ## [1,]       TRUE       TRUE      FALSE      FALSE      FALSE      FALSE
+    ## [2,]      FALSE      FALSE      FALSE      FALSE      FALSE       TRUE
+    ## [3,]       TRUE      FALSE      FALSE       TRUE       TRUE       TRUE
+    ## [4,]       TRUE      FALSE      FALSE       TRUE      FALSE      FALSE
+    ## [5,]      FALSE      FALSE      FALSE      FALSE      FALSE       TRUE
+    ## [6,]       TRUE      FALSE      FALSE       TRUE       TRUE      FALSE
     ##      V8_10503DC V8_11204CD V8_20208AA V8_20210RF total.cells
     ## [1,]       TRUE       TRUE       TRUE      FALSE       FALSE
-    ## [2,]      FALSE      FALSE      FALSE      FALSE       FALSE
-    ## [3,]      FALSE      FALSE      FALSE      FALSE       FALSE
-    ## [4,]       TRUE       TRUE       TRUE       TRUE       FALSE
-    ## [5,]      FALSE       TRUE      FALSE       TRUE       FALSE
-    ## [6,]       TRUE       TRUE       TRUE      FALSE       FALSE
+    ## [2,]       TRUE       TRUE       TRUE      FALSE       FALSE
+    ## [3,]      FALSE      FALSE       TRUE      FALSE       FALSE
+    ## [4,]      FALSE       TRUE      FALSE      FALSE       FALSE
+    ## [5,]       TRUE       TRUE       TRUE      FALSE       FALSE
+    ## [6,]      FALSE      FALSE      FALSE      FALSE       FALSE
 
 The second method allows to identify the uniform clusters, i.e.those
 with unimodal expression and low dispersion of expression for all its
@@ -840,18 +871,15 @@ QCU <- QCUniformClusters(UMAPV,
                          plot.device = TRUE)
 ```
 
-    ## Using clusters as id variables
-    ## Using clusters as id variables
-
-![](README/figure-markdown_github/QCUniformClusters-1.png)
+![](README_files/figure-markdown_github/QCUniformClusters-1.png)
 
     ##   clusters markers    pv_dip       IQR passed
-    ## 1        1    CD16 1.0000000 0.4233934   TRUE
-    ## 2        1     CD3 0.9932586 0.3453512   TRUE
-    ## 3        1    CD56 0.9955952 0.3693838   TRUE
-    ## 4        1     CD8 0.9932251 0.3904407   TRUE
-    ## 5        1   HLADR 0.9901313 0.4710684   TRUE
-    ## 6        1   NKG2D 0.9955082 0.3027702   TRUE
+    ## 1        1    CD16 0.9919784 0.2570690   TRUE
+    ## 2        1     CD3 0.9792357 0.3189988   TRUE
+    ## 3        1    CD56 0.9883049 0.4140749   TRUE
+    ## 4        1     CD8 0.9901155 0.3437514   TRUE
+    ## 5        1   HLADR 0.9981569 0.3546891   TRUE
+    ## 6        1   NKG2D 0.9560423 0.2187926   TRUE
 
 # 5. Advanced usage
 

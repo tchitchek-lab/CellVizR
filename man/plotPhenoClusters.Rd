@@ -6,7 +6,7 @@
 \usage{
 plotPhenoClusters(
   UMAPdata,
-  cluster,
+  clusters,
   quant.low = 0.05,
   quant.high = 0.95,
   dip.th = 0.01
@@ -15,7 +15,7 @@ plotPhenoClusters(
 \arguments{
 \item{UMAPdata}{a UMAPdata object}
 
-\item{cluster}{a character vector containing the identifier of the cluster to use}
+\item{clusters}{a character vector containing the identifier of the cluster to use}
 
 \item{quant.low}{a numeric value providing the number of first quantile}
 

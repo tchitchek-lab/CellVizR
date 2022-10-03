@@ -14,5 +14,5 @@
 none
 }
 \description{
-Shows a preview for a UMAPdata object.
+Shows a preview for a UMAPdata object
 }

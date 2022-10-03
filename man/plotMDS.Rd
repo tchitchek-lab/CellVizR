@@ -9,7 +9,8 @@ plotMDS(
   levels = c("clusters", "samples"),
   condition.samples = c("condition", "timepoint"),
   clusters = NULL,
-  samples = NULL
+  samples = NULL,
+  plot.interactive = TRUE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ plotMDS(
 \item{clusters}{a character vector containing the identifiers of the clusters to use. By default, all clusters are used}
 
 \item{samples}{a character vector containing the names of biological samples to use. By default, all samples are used}
+
+\item{plot.interactive}{xxx}
 }
 \value{
 a ggplot2 object

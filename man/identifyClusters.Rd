@@ -7,6 +7,7 @@
 identifyClusters(
   UMAPdata,
   space = c("manifold", "markers"),
+  markers = NULL,
   method = c("kmeans", "kmedian", "clara", "DBSCAN", "SOM"),
   concavity = 2,
   length.threshold = 0,
@@ -18,6 +19,8 @@ identifyClusters(
 \item{UMAPdata}{a UMAPdata object}
 
 \item{space}{a character value containing the space of clustering method to use. Possible values are: 'manifold' or 'markers'}
+
+\item{markers}{a character vector providing the cell markers to use for the manifold generation}
 
 \item{method}{a character value containing the name of the clustering method to use. Possible values are: 'kmeans', 'kmedian', 'clara', 'DBSCAN' and 'SOM'}
 

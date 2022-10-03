@@ -15,7 +15,7 @@ assignMetadata(UMAPdata, metadata)
 a S4 object of class 'UMAPdata'
 }
 \description{
-This function aims to attach meta-information to each biological sample. 
+This function aims to attach meta-information to each biological sample.
 
 Especially, the biological individual, the biological condition and the time point of each sample can be specified for subsequent analyses.
 }

@@ -27,10 +27,10 @@ plotHmAbundances(
 a ggplot2 object
 }
 \description{
-This function aims to visualize the abundances of cell clusters using an heatmap representation.
+This function aims to visualize the abundances of cell clusters using an heatmap representation
 
-In such heatmap each column corresponds a cell cluster and he row corresponds the different samples.
-The heatmap can be restricted to specific cell clusters and samples. 
-The levels of abundance of each sample in each cluster is represented using a color gradient scale.
+In such heatmap each column corresponds a cell cluster and he row corresponds the different samples
+The heatmap can be restricted to specific cell clusters and samples.
+The levels of abundance of each sample in each cluster is represented using a color gradient scale
 Abundance values can be centered and reduced.
 }

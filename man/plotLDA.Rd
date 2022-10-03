@@ -4,14 +4,28 @@
 \alias{plotLDA}
 \title{Plots a LDA representation based cell cluster abundances}
 \usage{
-plotLDA(UMAPdata)
+plotLDA(
+  UMAPdata,
+  levels = c("predictions", "coefficients"),
+  ref.condition,
+  condition,
+  clusters = NULL
+)
 }
 \arguments{
 \item{UMAPdata}{a UMAPdata object}
+
+\item{levels}{a character value containing the variable to be displayed. Possible values are: 'clusters' or 'samples'}
+
+\item{ref.condition}{a character value providing the name of reference condition}
+
+\item{condition}{a character value providing the name of the condition to be compared}
+
+\item{clusters}{a character vector containing the identifiers of the clusters to use. By default, all clusters are used}
 }
 \value{
 xx
 }
 \description{
-This function aims to represent a Linear Discriminant Analysis representation based on cell cluster abundances.
+This function aims to represent a Linear Discriminant Analysis representation based on cell cluster abundances
 }

@@ -8,7 +8,8 @@ plotCellCounts(
   UMAPdata,
   stats = c("min", "median", "mean", "q75", "max"),
   samples = NULL,
-  sort = TRUE
+  sort = TRUE,
+  plot.interactive = TRUE
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ plotCellCounts(
 \item{samples}{a character vector containing the names of biological samples to use. By default, all samples are used}
 
 \item{sort}{a boolean value indicating if clusters must be sorted by the number associated sample}
+
+\item{plot.interactive}{xxx}
 }
 \value{
 a ggplot2 object
@@ -31,14 +34,14 @@ Several statistics can be computed and shown.
 }
 \details{
 The following statistic can be computed:
- 
+
 -'min' corresponds to the lowest number of cells within a data set
 
 -'median' corresponds to the number of cells separates the lower half from the upper half within data set
 
 -'mean' corresponds to the number of cells quantity shared within data set
 
--'q75' corresponds to the number of cells separates the quantiles 75% within data set  
+-'q75' corresponds to the number of cells separates the quantiles 75% within data set
 
 -'max' corresponds to the largest number of cells within a data set
 }

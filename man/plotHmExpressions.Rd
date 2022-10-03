@@ -31,9 +31,9 @@ plotHmExpressions(
 a ggplot2 object
 }
 \description{
-This function aims to visualize the cell marker expressions for selected markers and clusters.
+This function aims to visualize the cell marker expressions for selected markers and clusters
 
-The mean of median marker expressions is computed for each cluster, and marker expressions displayed using a categorical heatmap (5 categories are defined by default).
-The range expression of each cell marker is discretized into several categories between bounds of marker expressions.
-To hierarchical clustering, shown using dendrogramm, can be computed on both marker and cluster levels.
+The mean of median marker expressions is computed for each cluster, and marker expressions displayed using a categorical heatmap (5 categories are defined by default)
+The range expression of each cell marker is discretized into several categories between bounds of marker expressions
+To hierarchical clustering, shown using dendrogramm, can be computed on both marker and cluster levels
 }

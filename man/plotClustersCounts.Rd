@@ -8,7 +8,8 @@ plotClustersCounts(
   UMAPdata,
   clusters = NULL,
   sort = TRUE,
-  legend.max.samples = 10
+  legend.max.samples = 10,
+  plot.interactive = TRUE
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ plotClustersCounts(
 \item{sort}{a boolean value indicating if clusters must be sorted by the number associated cluster}
 
 \item{legend.max.samples}{xxx}
+
+\item{plot.interactive}{xxx}
 }
 \value{
 a ggplot2 object

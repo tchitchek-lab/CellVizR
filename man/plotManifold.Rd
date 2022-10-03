@@ -35,6 +35,6 @@ This function aims to visualize a computed manifold representation for given ana
 This representation can be used on a UMAPdata object for which a manifold analysis has been performed.
 
 If a cell clustering has been performed, then the clusters are delineated using concave hulls.
-Additionnaly, the manifold can be colored based on the local cell density or marker expressions. 
+Additionnaly, the manifold can be colored based on the local cell density or marker expressions.
 It is possible to centred ans reduce the values of expressions.
 }

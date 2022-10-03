@@ -16,12 +16,13 @@
 #' @return a S4 object of class 'UMAPdata'
 #'
 #' @export
+#' @import rstatix
 #'
-computeStatistics = function(UMAPdata,
-                             condition,
-                             ref.condition,
-                             test.statistics = c("wilcox.test", "t.test"),
-                             paired = FALSE) {
+computeStatistics <- function(UMAPdata,
+                              condition,
+                              ref.condition,
+                              test.statistics = c("wilcox.test", "t.test"),
+                              paired = FALSE) {
 
   test.statistics <- match.arg(test.statistics)
 
@@ -30,59 +31,62 @@ computeStatistics = function(UMAPdata,
   checkmate::qassert(test.statistics, "S1")
   checkmate::qassert(paired, "B1")
 
-  message("Computing of the ", test.statistics," for: ", condition, " vs. ", ref.condition)
+  message("Computing of the ", test.statistics, " for: ", condition, " vs. ", ref.condition)
 
-  comparison = paste0(condition," vs. ", ref.condition)
-  if(comparison %in% unique(UMAPdata@statistic$comparison)){
-    stop("!!!")
+  comparison <- paste0(condition, " vs. ", ref.condition)
+  if (comparison %in% unique(UMAPdata@statistic$comparison)) {
+    stop("The statistic slot already exists")
   }
 
-  cmp_effsize <- function(test.statistics, paired, x, y){
-    data           <- rbind(cbind(x, "x"), cbind(y, "y"))
-    data           <- data.frame(data)
+  cmp_effsize <- function(test.statistics, paired, x, y) {
+    data <- rbind(cbind(x, "x"), cbind(y, "y"))
+    data <- data.frame(data)
     colnames(data) <- c("value", "grp")
-    data$value     <- as.numeric(data$value)
+    data$value <- as.numeric(data$value)
 
-    test.eff       <- ifelse(test.statistics=="t.test","rstatix::cohens_d","rstatix::wilcox_effsize")
-    effsize        <- do.call(eval(parse(text=test.eff)),list(data = data, stats::as.formula("value~grp"), ci=FALSE, paired=paired))
-    statistic      <- effsize$effsize
-    statistic      <- as.numeric(statistic)
+    test.eff <- ifelse(test.statistics == "t.test", "rstatix::cohens_d", "rstatix::wilcox_effsize")
+    effsize <- do.call(eval(parse(text = test.eff)), list(data = data,
+                                                          stats::as.formula("value~grp"),
+                                                          ci = FALSE, paired = paired))
+    statistic <- effsize$effsize
+    statistic <- as.numeric(statistic)
 
     return(statistic)
   }
 
-  abundances = UMAPdata@matrix.abundance
-  abundances = data.matrix(abundances)
+  abundances <- UMAPdata@matrix.abundance
+  abundances <- data.matrix(abundances)
 
-  stats = data.frame()
-  for(cluster in as.character(rownames(abundances))) {
+  stats <- data.frame()
+  for (cluster in as.character(rownames(abundances))) {
+    values.condition <- abundances[cluster, grepl(condition, colnames(abundances)), drop = TRUE]
+    values.ref.condition <- abundances[cluster, grepl(ref.condition, colnames(abundances)), drop = TRUE]
 
-    values.condition     = abundances[cluster, grepl(condition, colnames(abundances)), drop = TRUE]
-    values.ref.condition = abundances[cluster, grepl(ref.condition, colnames(abundances)), drop = TRUE]
+    pv <- do.call(test.statistics, list(x = values.condition,
+                                        y = values.ref.condition,
+                                        exact = FALSE, paired = paired))$p.value
+    effsize <- cmp_effsize(test.statistics, paired = paired,
+                           x = values.condition, y = values.ref.condition)
 
-    pv = do.call(test.statistics, list(x=values.condition, y=values.ref.condition, exact = FALSE, paired=paired))$p.value
-    effsize = cmp_effsize(test.statistics, paired=paired, x=values.condition, y=values.ref.condition)
+    lfc <- log(mean(values.condition) / mean(values.ref.condition)) / log(2)
+    effsize <- effsize * sign(lfc)
 
-    lfc = log(mean(values.condition)/mean(values.ref.condition))/log(2)
-    effsize = effsize*sign(lfc)
-
-    stats = rbind(stats, cbind(cluster=cluster, pv=pv, lfc=lfc, effsize=effsize))
+    stats <- rbind(stats, cbind(cluster = cluster, pv = pv,
+                               lfc = lfc, effsize = effsize))
   }
 
-  stats = data.frame(stats)
-  colnames(stats) = c("clusters", "pvalue", "lfc", "effsize")
-  stats$pvalue    = as.numeric(stats$pvalue)
-  stats$lfc       = as.numeric(stats$lfc)
-  stats$effsize   = as.numeric(stats$effsize)
+  stats <- data.frame(stats)
+  colnames(stats) <- c("clusters", "pvalue", "lfc", "effsize")
+  stats$pvalue <- as.numeric(stats$pvalue)
+  stats$lfc <- as.numeric(stats$lfc)
+  stats$effsize <- as.numeric(stats$effsize)
 
-  if(nrow(UMAPdata@statistic)==0){
-    UMAPdata@statistic = cbind(comparison,stats)
-  }else{
-    UMAPdata@statistic = rbind(UMAPdata@statistic,cbind(comparison,stats))
+  if (nrow(UMAPdata@statistic) == 0) {
+    UMAPdata@statistic <- cbind(comparison, stats)
+  } else {
+    UMAPdata@statistic <- rbind(UMAPdata@statistic, cbind(comparison, stats))
   }
 
+  validObject(UMAPdata)
   return(UMAPdata)
-
 }
-
-

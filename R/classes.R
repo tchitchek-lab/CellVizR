@@ -20,7 +20,6 @@
 #' @rdname UMAPdata-class
 #' @exportClass UMAPdata
 #'
-
 UMAPdata <- methods::setClass("UMAPdata",
                               slots = c(samples = "vector",
                                         raw.markers = "vector",
@@ -35,13 +34,36 @@ UMAPdata <- methods::setClass("UMAPdata",
                                         matrix.abundance = "data.frame",
                                         statistic = "data.frame",
                                         metadata = "data.frame"),
+
                               validity = function(object) {
-                                # if (nrow(matrix.cell.count) != length(unique(samples))) {
-                                #        stop("...")
-                                # }
-                                # if (nrow(matrix.abundance) != length(unique(samples))) {
-                                #        stop("...")
-                                # }
+                                if (ncol(object@matrix.abundance) != 0 && ncol(object@matrix.abundance) != length(unique(object@samples))) {
+                                  return("Error in UMAPdata object: The number of columns in the abundance matrix: ", ncol(object@matrix.abundance),
+                                         ", is inconsistent with the number of samples: ", length(unique(object@samples)))
+                                }
+                                if (ncol(object@matrix.cell.count) != 0 && ncol(object@matrix.cell.count) != length(unique(object@samples))) {
+                                  return("Error in UMAPdata object: The number of columns in the cell count matrix: ", ncol(object@matrix.cell.count),
+                                         ", is inconsistent with the number of samples: ", length(unique(object@samples)))
+                                }
+                                if (nrow(object@matrix.abundance) != 0 && nrow(object@matrix.abundance) != length(unique(object@identify.clusters))) {
+                                  return("Error in UMAPdata object: The number of row in the abundance matrix: ", nrow(object@matrix.abundance),
+                                         ", is inconsistent with the number of clusters: ", length(unique(object@identify.clusters)))
+                                }
+                                if (nrow(object@matrix.cell.count) != 0 && nrow(object@matrix.cell.count) != length(unique(object@identify.clusters))) {
+                                  return("Error in UMAPdata object: The number of row in the cell count matrix: ", nrow(object@matrix.cell.count),
+                                         ", is inconsistent with the number of clusters: ", length(unique(object@identify.clusters)))
+                                }
+                                if (nrow(object@metadata) != 0 && nrow(object@metadata) != length(unique(object@samples))) {
+                                  return("Error in UMAPdata object: The number of row in the metadata: ", nrow(object@metadata),
+                                         ", is inconsistent with the number of samples: ", length(unique(object@samples)))
+                                }
+                                if (ncol(object@matrix.expression.r) != length(object@raw.markers)) {
+                                  return("Error in UMAPdata object: The number of columns in the expression raw matrix: ", ncol(object@matrix.expression.r),
+                                         ", is inconsistent with the number of markers: ", length(object@raw.markers))
+                                }
+                                if (ncol(object@matrix.expression) != length(object@raw.markers)) {
+                                  return("Error in UMAPdata object: The number of columns in the expression matrix: ", ncol(object@matrix.expression),
+                                         ", is inconsistent with the number of markers: ", length(object@raw.markers))
+                                }
                                 return(TRUE)
                               }
 )

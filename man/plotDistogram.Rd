@@ -16,8 +16,8 @@ a ggplot2 object
 }
 \description{
 This function aims to visualize the pairwise co-expression between all markers using a distogram representation.
-Each tile corresponds to the co-expression between two markers and is gradient-colored based on the Pearson correlation.
+Each tile corresponds to the co-expression between two markers and is gradient-colored based on the Pearson correlation
 }
 \details{
-The Pearson correlation is computed based on the marker expressions.
+The Pearson correlation is computed based on the marker expressions
 }

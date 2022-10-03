@@ -1,18 +1,17 @@
 #' @title Identify cell cluster of having similar marker expressions
 #'
 #' @description This function aims to identify cell clusters, which are groups of cells having similar expressions for selected markers, using different unsupervised clustering methods.
-#' 
+#'
 #' Several clustering method are available such as kmeans, kmedian, clara, DBSCAN, HDBSCAN and SOM.
-#' The cell clustering can be performed on the manifold representation or based on marker expression. 
-#' 
-#' @details 
+#' The cell clustering can be performed on the manifold representation or based on marker expression.
+#'
+#' @details
 #' For each identify cell cluster, the boundaries of cells belonging to this cluster are delineated using a concave hull
 #'
 #' @param UMAPdata a UMAPdata object
 #' @param space a character value containing the space of clustering method to use. Possible values are: 'manifold' or 'markers'
+#' @param markers a character vector providing the cell markers to use for the manifold generation
 #' @param method a character value containing the name of the clustering method to use. Possible values are: 'kmeans', 'kmedian', 'clara', 'DBSCAN' and 'SOM'
-# @param k a numeric value providing the number of clusters to identify
-# @param nstart a numeric value providing the number of random sets that should be chosen (please refer to the function 'kmeans' of the 'stats' package)
 #' @param concavity a numeric value providing a relative measure of concavity for the computation of the concave hulls (please refer to the function 'concaveman' of the 'concaveman' package)
 #' @param length.threshold a numeric value providing a threshold of the segment length for the computation of the concave hulls (please refer to the function 'concaveman' of the concaveman package)
 #' @param seed a numeric value providing the random seed to use during stochastic operations
@@ -24,62 +23,71 @@
 #'
 identifyClusters <- function(UMAPdata,
                              space = c("manifold", "markers"),
+                             markers = NULL,
                              method = c("kmeans", "kmedian", "clara", "DBSCAN", "SOM"),
                              concavity = 2,
                              length.threshold = 0,
                              seed = 42,
                              ...) {
-  
+
   space <- match.arg(space)
   method <- match.arg(method)
-  
+
   checkmate::qassert(space, "S1")
+  checkmate::qassert(markers, c("0", "S*"))
   checkmate::qassert(method, "S1")
   checkmate::qassert(concavity, "N1")
   checkmate::qassert(length.threshold, "N1")
   checkmate::qassert(seed, "N1")
-  
+
   proj  <- UMAPdata@manifold
   exprs <- UMAPdata@matrix.expression
-  
+
   message("Clustering method is: ", method)
   cat("\n")
   message("Identifying cell clusters...")
-  
-  if(space=="manifold"){
+
+  if (space == "manifold") {
     data <- proj
-  }else if (space == "markers") {
-    data <- exprs
+    clustering.markers <- UMAPdata@manifold.params$markers
+  } else if (space == "markers") {
+    if (is.null(markers)) {
+      markers <- names(exprs)
+    }
+    data <- exprs[, names(exprs)
+                  %in% markers]
+    clustering.markers <- markers
   }
-  
-  do.call("set.seed",list(seed))
+
+  do.call("set.seed", list(seed))
   switch(method,
          kmeans = {
            clusters <- stats::kmeans(data, ...)$cluster
          },
          kmedian = {
-           clusters = Gmedian::kGmedian(data, ...)$cluster[,1]
+           clusters <- Gmedian::kGmedian(data, ...)$cluster[, 1]
          },
          clara = {
            clusters <- cluster::clara(data, ...)$clustering
          },
          DBSCAN = {
-           clusters <- dbscan::dbscan(data, ...)$cluster 
+           clusters <- dbscan::dbscan(data, ...)$cluster
          },
          SOM = {
-           clusters <- kohonen::som(as.matrix(data), ...)$unit.classif # grid(5*5, hexagonal)
+           clusters <- kohonen::som(as.matrix(data), ...)$unit.classif
          })
-  
+
   clusters <- as.vector(clusters)
   clusters <- as.character(clusters)
-  
+
   UMAPdata@identify.clusters <- clusters
-  
+
   identify.Clusters.params <- list(...,
                                    concavity = concavity,
-                                   length.threshold = length.threshold)
+                                   length.threshold = length.threshold,
+                                   clustering.markers = clustering.markers)
   UMAPdata@identify.clusters.params <- identify.Clusters.params
-  
+
   if (space == "manifold") {
     message("computing cell clusters boundaries...")
     UMAPdata@concave.hulls <- computeConcaveHulls(proj = proj,
@@ -87,21 +95,21 @@ identifyClusters <- function(UMAPdata,
                                                   concavity = concavity,
                                                   length.threshold = length.threshold)
   }
-  
+
   samples <- UMAPdata@samples
-  
+
   message("computing cell cluster count matrix...")
   UMAPdata@matrix.cell.count <- computeCellCounts(proj = data,
                                                   samples = samples,
                                                   clusters = clusters)
-  
+
   message("computing cell cluster abundance matrix...")
   count <- UMAPdata@matrix.cell.count
   UMAPdata@matrix.abundance <- computeClusterAbundances(count = count)
-  
-  
+
+  validObject(UMAPdata)
+
   return(UMAPdata)
-  
 }
 
 # @title Internal - Computes the concave hulls for identified cell clusters
@@ -120,10 +128,10 @@ computeConcaveHulls <- function(proj,
                                 clusters,
                                 concavity = 2,
                                 length.threshold = 0) {
-  
+
   proj <- cbind(proj, clusters)
   colnames(proj) <- c("dim1", "dim2", "clusters")
-  
+
   concave.hulls <- data.frame()
   for (k in sort(unique(proj$clusters))) {
     sub.exprs <- proj[proj$clusters == k, ]
@@ -132,16 +140,16 @@ computeConcaveHulls <- function(proj,
     lines.sub <- concaveman::concaveman(cbind(xcoord, ycoord),
                                         concavity = concavity,
                                         length_threshold = length.threshold)
-    
+
     concave.hulls <- rbind(concave.hulls, cbind(lines.sub, k = k))
   }
-  
+
   concave.hulls <- data.frame(concave.hulls)
   colnames(concave.hulls) <- c("dim1", "dim2", "clusters")
-  
+
   concave.hulls$dim1 <- as.numeric(concave.hulls$dim1)
   concave.hulls$dim2 <- as.numeric(concave.hulls$dim2)
-  
+
   return(concave.hulls)
 }
 
@@ -158,34 +166,33 @@ computeConcaveHulls <- function(proj,
 computeCellCounts <- function(proj,
                               clusters,
                               samples) {
-  
-  
+
   data <- cbind(proj, clusters, samples)
-  
+
   cell.count <- plyr::ddply(data, c("clusters", "samples"), nrow)
   colnames(cell.count) <- c("clusters", "samples", "number")
-  cell.count <- reshape::cast(cell.count, clusters~samples, value = "number")
+  cell.count <- reshape::cast(cell.count, clusters ~ samples, value = "number")
   cell.count[is.na(cell.count)] <- 0
   rownames(cell.count) <- cell.count$clusters
   cell.count$clusters <- NULL
   cell.count <- data.frame(cell.count)
-  
+
   return(cell.count)
 }
 
 # @title Internal - Computes the abundances for each cell cluster
 #
-# @description This function is used internally to computes the abundance of each cluster for each sample.
+# @description This function is used internally to computes the abundance of each cluster for each sample
 #
 # @param count a data.frame providing the numbers of cells associated to each cluster for each sample
 #
 # @return a data.frame containing the abundance of cells to each clusters for each sample
 #
 computeClusterAbundances <- function(count) {
-  
-  matrix.abundance <- apply(count, 2, function(df){df / sum(df)}) * 100
+
+  matrix.abundance <- apply(count, 2, function(df) {
+    df / sum(df) }) * 100
   matrix.abundance <- data.frame(matrix.abundance)
-  
+
   return(matrix.abundance)
-  
 }

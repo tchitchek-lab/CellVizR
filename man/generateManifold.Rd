@@ -30,8 +30,8 @@ generateManifold(
 a S4 object of class 'UMAPdata'
 }
 \description{
-This function aims to generate a manifold representation for cell events stored in a UMAPdata object.
+This function aims to generate a manifold representation for cell events stored in a UMAPdata object
 
-This function allows the use of several non-linear dimension reduction techniques such as UMAP, t-SNE or LargeVis.
-The whole set of cell markers or specific cell markers can be used during the dimensionality reduction process.
+This function allows the use of several non-linear dimension reduction techniques such as UMAP, t-SNE or LargeVis
+The whole set of cell markers or specific cell markers can be used during the dimensionality reduction process
 }

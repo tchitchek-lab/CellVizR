@@ -2,16 +2,26 @@
 % Please edit documentation in R/viewer.R
 \name{plotCoordinates}
 \alias{plotCoordinates}
-\title{Plots parallel coordinates}
+\title{Plots of phenotype of cell clusters using parallels coordinates}
 \usage{
-plotCoordinates(UMAPdata, samples = NULL, clusters)
+plotCoordinates(
+  UMAPdata,
+  condition.samples = c("condition", "timepoint"),
+  samples = NULL,
+  clusters,
+  plot.interactive = TRUE
+)
 }
 \arguments{
 \item{UMAPdata}{a UMAPdata object}
 
+\item{condition.samples}{a character vector containing the variable to be studied for the samples. Possible values are: 'condition' or 'timepoint"}
+
 \item{samples}{a character vector containing the names of biological samples to use. By default, all samples are used}
 
 \item{clusters}{a character vector containing the identifiers of the clusters to use}
+
+\item{plot.interactive}{xxx}
 }
 \value{
 xx

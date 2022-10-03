@@ -22,7 +22,7 @@ export(UMAPdata, filename, clusters = NULL, samples = NULL)
 none
 }
 \description{
-Exports cell expresion profiles from a UMAPdata object to a tab-separated or FCS files.
+Exports cell expresion profiles from a UMAPdata object to a tab-separated or FCS files
 
-Cell expression profiles can be exported for a set of given samples and for a set of given cell clusters.
+Cell expression profiles can be exported for a set of given samples and for a set of given cell clusters
 }

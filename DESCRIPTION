@@ -1,6 +1,6 @@
 Encoding: UTF-8
 Package: UMAPVizR
-Version: 1.0-1
+Version: 1.0-0
 Type: Package
 Title: Visualization and statistical analysis of high dimensional cytometry data using manifold representations
 Description: Cytometry data are now classically analyzed using non linear dimensionality reduction approaches, but it is still challenging to easily handle the whole pipeline of computational analyses. 
@@ -13,7 +13,7 @@ Description: Cytometry data are now classically analyzed using non linear dimens
 	Additionally, UMAPVizR provides a workflow for asserting the quality of identified cell clusters using statistical approaches.
 Author: Gwendolyn MARGUERIT, Nicolas TCHITCHEK
 Authors@R: c(person("Gwendolyn", "Marguerit", role = c("aut", "cre"),
-            email = "gwendolyn.marguerit@sorbonne-universite.fr"),
+            email = "gmarguerit@gmail.com"),
             person("Nicolas", "Tchitchek", role = c("aut"),
             email = "nicolas.tchitchek@sorbonne-universite.fr"))
 Imports:
@@ -27,14 +27,14 @@ Imports:
 	FactoMineR,
 	flowCore,
 	FNN,
-	fpc,
 	ggdendro,
-	Gmedian,
+	ggiraph,
 	ggnewscale,
 	ggplot2,
 	ggpubr,
 	ggrepel,
 	ggridges,
+	Gmedian,
 	gridExtra,
 	gtools,
 	kohonen,
@@ -56,4 +56,4 @@ Suggests:
 License: GPL-3 | file LICENSE
 VignetteBuilder: knitr
 biocViews: Clustering, DataImport, FlowCytometry, Normalization, StatisticalMethod, Software, Visualization
-RoxygenNote: 7.2.1
+RoxygenNote: 7.1.2

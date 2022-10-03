@@ -28,7 +28,7 @@ a numerical value corresponding to the percentage of cell cluster with unimodal 
 }
 \description{
 This function aims to identify and show cell clusters having a uniform phenotype
- 
+
 A uniform cluster corresponds to a cluster that have a unimodal expression and a low spread of expression for all its markers
 }
 \details{

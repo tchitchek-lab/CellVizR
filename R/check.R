@@ -11,25 +11,26 @@
 #' @export
 #'
 QCMarkerNames <- function(files) {
-  
+
   checkmate::qassert(files, "S*")
-  
+
   table.check <- data.frame()
-  
+
   for (file in files) {
     fcs <- flowCore::read.FCS(file)
     data.expr <- flowCore::exprs(fcs)
-    
+
     nbr.cells <- nrow(data.expr)
     markernames <- flowCore::markernames(fcs)
+    markernames[grepl("FS|SS", markernames)] <- names(markernames)[grepl("FS|SS", markernames)]
     
     table.check <- rbind(table.check, c(nbr.cells, markernames))
-    
+
   }
-  
+
   colnames(table.check) <- c("nb_cells", names(markernames))
   rownames(table.check) <- gsub(".fcs", "", basename(files))
-  
+
   return(table.check)
 }
 
@@ -47,18 +48,17 @@ QCMarkerNames <- function(files) {
 #' @export
 #'
 QCMarkerRanges <- function(files,
-                           probs=c(0.05, 0.95)) {
-  
+                           probs = c(0.05, 0.95)) {
+
   checkmate::qassert(files, "S*")
   checkmate::qassert(probs, "N2")
-  
+
   table.check.min <- data.frame()
   table.check.max <- data.frame()
-  
+
   for (file in files) {
-    
+
     fcs <- flowCore::read.FCS(file)
-    
     trans <- flowCore::estimateLogicle(fcs,
                                        channels = flowCore::colnames(fcs),
                                        m = 5.5)
@@ -66,27 +66,25 @@ QCMarkerRanges <- function(files,
     data.expr <- flowCore::exprs(fcs)
     data.expr <- data.expr[, colnames(data.expr) %in%
                              names(flowCore::markernames(fcs))]
-    
+
     ranges <- apply(data.expr, 2, stats::quantile, probs = probs)
-    
+
     table.check.min <- rbind(table.check.min, ranges[1, ])
     table.check.max <- rbind(table.check.max, ranges[2, ])
-    
+
   }
-  
+
   markernames <- flowCore::markernames(fcs)
-  
+
   colnames(table.check.min) <-  markernames
   colnames(table.check.max) <-  markernames
-  
   rownames(table.check.min) <- gsub(".fcs", "", basename(files))
   rownames(table.check.max) <- gsub(".fcs", "", basename(files))
-  
+
   res <- list(table.check.min, table.check.max)
-  
+
   names(res)[1] <- paste0("quantiles_", probs[1])
   names(res)[2] <- paste0("quantiles_", probs[2])
-  
+
   return(res)
-  
 }

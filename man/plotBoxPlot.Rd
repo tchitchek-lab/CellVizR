@@ -11,7 +11,8 @@ plotBoxplot(
   observation = c("individual", "condition", "timepoint"),
   test.statistics = c("wilcox.test", "t.test"),
   paired = FALSE,
-  hide.ns = TRUE
+  hide.ns = TRUE,
+  plot.interactive = TRUE
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ plotBoxplot(
 \item{paired}{a boolean value indicating if a paired or unpaired comparison should be applied}
 
 \item{hide.ns}{a boolean value indicating xxx}
+
+\item{plot.interactive}{xxx}
 }
 \value{
 a ggplot2 object
@@ -35,8 +38,8 @@ a ggplot2 object
 \description{
 This function aims to visualize and compare the cell cluster abundances for each biological condition using boxplot and jitter representations.
 
-The abundance of a specific cell cluster or a set of cell clusters can be displayed. 
-The representation can be resticted to a specific set of samples. 
-Moreover boxplot can be constructed based on sample meta information. 
+The abundance of a specific cell cluster or a set of cell clusters can be displayed.
+The representation can be resticted to a specific set of samples.
+Moreover boxplot can be constructed based on sample meta information.
 Statistic can be computed for all comparisons.
 }

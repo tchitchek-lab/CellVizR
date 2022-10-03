@@ -12,10 +12,7 @@ plotPCA(
   components = c(1, 2),
   condition.samples = c("condition", "timepoint"),
   cor.radius.th = 0.6,
-  cluster.label.size = 3,
-  sample.label.size = 3,
-  cluster.dot.size = 2,
-  sample.dot.size = 3
+  plot.interactive = TRUE
 )
 }
 \arguments{
@@ -33,20 +30,14 @@ plotPCA(
 
 \item{cor.radius.th}{a numeric value specifing xxx}
 
-\item{cluster.label.size}{a numeric value specifing the label size for clusters}
-
-\item{sample.label.size}{a numeric value specifing the label size for the samples}
-
-\item{cluster.dot.size}{a numeric value specifing the dot size for the clusters}
-
-\item{sample.dot.size}{a numeric value specifing the dot size for the samples}
+\item{plot.interactive}{xxx}
 }
 \value{
 a ggplot2 object
 }
 \description{
 This function aims to represent a Principal Component Analysis representation based on cell cluster abundances.
-In such representation, clusters or samples are positioned based on computed principal components. 
-The representation can be displayed based on specific principal components. 
+In such representation, clusters or samples are positioned based on computed principal components.
+The representation can be displayed based on specific principal components.
 The representation can be restricted to specific cell clusters and samples. In addition, it is possible to choose the levels displayed, clusters or samples.
 }
