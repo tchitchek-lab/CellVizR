@@ -5,7 +5,7 @@
 \title{Plots a representation of a computed manifold}
 \usage{
 plotManifold(
-  UMAPdata,
+  Celldata,
   markers = "density",
   samples = NULL,
   scale = FALSE,
@@ -14,7 +14,7 @@ plotManifold(
 )
 }
 \arguments{
-\item{UMAPdata}{a UMAPdata object}
+\item{Celldata}{a Celldata object}
 
 \item{markers}{a character value providing the name of the marker to use for the colouring. By default, cells are colored based on their local density}
 
@@ -32,7 +32,7 @@ a ggplot2 object
 \description{
 This function aims to visualize a computed manifold representation for given analysis.
 
-This representation can be used on a UMAPdata object for which a manifold analysis has been performed.
+This representation can be used on a Celldata object for which a manifold analysis has been performed.
 
 If a cell clustering has been performed, then the clusters are delineated using concave hulls.
 Additionnaly, the manifold can be colored based on the local cell density or marker expressions.

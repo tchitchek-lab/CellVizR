@@ -18,29 +18,26 @@
 #'
 #' -'max' corresponds to the largest number of cells within a data set
 #'
-#' @param UMAPdata a UMAPdata object
+#' @param Celldata a Celldata object
 #' @param stats a character vector providing the statistics to display. Possible values are: 'min', 'median', 'mean', 'q75', 'max'
 #' @param samples a character vector containing the names of biological samples to use. By default, all samples are used
 #' @param sort a boolean value indicating if clusters must be sorted by the number associated sample
-#' @param plot.interactive xxx
 #'
 #' @return a ggplot2 object
 #'
 #' @export
 #'
-plotCellCounts <- function(UMAPdata,
+plotCellCounts <- function(Celldata,
                            stats = c("min", "median", "mean", "q75", "max"),
                            samples = NULL,
-                           sort = TRUE,
-                           plot.interactive = TRUE) {
+                           sort = TRUE) {
 
   checkmate::qassert(stats, "S*")
   checkmate::qassert(samples, c("0", "S*"))
   checkmate::qassert(sort, "B1")
-  checkmate::qassert(plot.interactive, "B1")
 
-  nb.cells <- UMAPdata@matrix.expression
-  nb.cells$samples <- UMAPdata@samples
+  nb.cells <- Celldata@matrix.expression
+  nb.cells$samples <- Celldata@samples
 
   if (!is.null(samples)) {
     nb.cells <- nb.cells[nb.cells$samples %in% samples, ]
@@ -151,11 +148,6 @@ plotCellCounts <- function(UMAPdata,
                    panel.grid.major = ggplot2::element_blank(),
                    legend.position = "none")
 
-  if (plot.interactive == TRUE) {
-    plot <- ggiraph::girafe(ggobj = plot,
-                            options = list(ggiraph::opts_sizing(width = .9)))
-  }
-
   return(plot)
 }
 
@@ -165,33 +157,30 @@ plotCellCounts <- function(UMAPdata,
 #'
 #' This representation displays the clusters in the X-axis and the total number of associated cells in the Y-axis.
 #'
-#' @param UMAPdata a UMAPdata object
+#' @param Celldata a Celldata object
 #' @param clusters a character vector containing the identifiers of the clusters to use. By default, all clusters are used
 #' @param sort a boolean value indicating if clusters must be sorted by the number associated cluster
 #' @param legend.max.samples xxx
-#' @param plot.interactive xxx
 #'
 #' @return a ggplot2 object
 #'
 #' @export
 #'
-plotClustersCounts <- function(UMAPdata,
+plotClustersCounts <- function(Celldata,
                                clusters = NULL,
                                sort = TRUE,
-                               legend.max.samples = 10,
-                               plot.interactive = TRUE) {
+                               legend.max.samples = 10) {
 
   checkmate::qassert(clusters, c("0", "N+"))
   checkmate::qassert(sort, "B1")
   checkmate::qassert(legend.max.samples, "N1")
-  checkmate::qassert(plot.interactive, "B1")
 
-  matrix.cell <- UMAPdata@matrix.cell.count
+  matrix.cell <- Celldata@matrix.cell.count
 
   if (!is.null(clusters)) {
     matrix.cell <- matrix.cell[rownames(matrix.cell) %in% clusters, ]
   } else {
-    clusters <- unique(UMAPdata@identify.clusters)
+    clusters <- unique(Celldata@identify.clusters)
     matrix.cell <- matrix.cell[clusters, , drop = FALSE]
   }
 
@@ -227,7 +216,7 @@ plotClustersCounts <- function(UMAPdata,
     ggplot2::xlab("clusters") +
     ggplot2::ylab("number of cells")
 
-  if (length(unique(UMAPdata@samples)) >= legend.max.samples) {
+  if (length(unique(Celldata@samples)) >= legend.max.samples) {
     plot <- plot + ggplot2::guides(fill = "none")
   }
 
@@ -238,13 +227,6 @@ plotClustersCounts <- function(UMAPdata,
       axis.text.x = ggplot2::element_text(angle = 90, hjust = 1, vjust = 0.5),
       legend.key = ggplot2::element_blank())
 
-  if (plot.interactive == TRUE) {
-    plot <- ggiraph::girafe(ggobj = plot,
-                            options = list(ggiraph::opts_sizing(width = .9),
-                                           ggiraph::opts_hover_inv(css = "opacity:0.6;"),
-                                           ggiraph::opts_hover(css = "fill:black;")))
-  }
-
   return(plot)
 }
 
@@ -252,7 +234,7 @@ plotClustersCounts <- function(UMAPdata,
 #'
 #' @description This function aims to visualize xxx
 #'
-#' @param UMAPdata a UMAPdata object
+#' @param Celldata a Celldata object
 #' @param clusters a character vector containing the identifier of the cluster to use
 #' @param quant.low a numeric value providing the number of first quantile
 #' @param quant.high a numeric value providing the number of last quantile
@@ -262,7 +244,7 @@ plotClustersCounts <- function(UMAPdata,
 #'
 #' @export
 #'
-plotPhenoClusters <- function(UMAPdata,
+plotPhenoClusters <- function(Celldata,
                               clusters,
                               quant.low = 0.05,
                               quant.high = 0.95,
@@ -275,9 +257,9 @@ plotPhenoClusters <- function(UMAPdata,
 
   expression.color.palette <- c("white", "yellow", "orange", "red", "red4")
 
-  matrix.exp <- UMAPdata@matrix.expression
-  samples <- UMAPdata@samples
-  cluster <- UMAPdata@identify.clusters
+  matrix.exp <- Celldata@matrix.expression
+  samples <- Celldata@samples
+  cluster <- Celldata@identify.clusters
 
   proj <- cbind(samples, matrix.exp, cluster)
 
@@ -346,13 +328,13 @@ plotPhenoClusters <- function(UMAPdata,
 #'
 #' @description This function aims to visualize a computed manifold representation for given analysis.
 #'
-#' This representation can be used on a UMAPdata object for which a manifold analysis has been performed.
+#' This representation can be used on a Celldata object for which a manifold analysis has been performed.
 #'
 #' If a cell clustering has been performed, then the clusters are delineated using concave hulls.
 #' Additionnaly, the manifold can be colored based on the local cell density or marker expressions.
 #' It is possible to centred ans reduce the values of expressions.
 #'
-#' @param UMAPdata a UMAPdata object
+#' @param Celldata a Celldata object
 #' @param markers a character value providing the name of the marker to use for the colouring. By default, cells are colored based on their local density
 #' @param samples a character vector containing the names of biological samples to use
 #' @param scale a boolean value specifing if expression calue must be rescaled
@@ -363,7 +345,7 @@ plotPhenoClusters <- function(UMAPdata,
 #'
 #' @export
 #'
-plotManifold <- function(UMAPdata,
+plotManifold <- function(Celldata,
                          markers = "density",
                          samples = NULL,
                          scale = FALSE,
@@ -376,21 +358,21 @@ plotManifold <- function(UMAPdata,
   checkmate::qassert(quant.low, "N1")
   checkmate::qassert(quant.high, "N1")
 
-  proj <- UMAPdata@manifold
+  proj <- Celldata@manifold
 
   if (length(proj) == 0) {
     stop("Manifold is null")
   }
 
   colnames(proj) <- c("UMAP1", "UMAP2")
-  clusters <- UMAPdata@identify.clusters
+  clusters <- Celldata@identify.clusters
 
   if (length(clusters) != 0) {
     proj$clusters <- clusters
   }
 
   proj <- stats::na.omit(proj)
-  lines <- UMAPdata@concave.hulls
+  lines <- Celldata@concave.hulls
 
   if (markers == "density") {
     legend.title <- "cell density"
@@ -402,14 +384,14 @@ plotManifold <- function(UMAPdata,
     stop("Clusters is null")
   } else {
     legend.title <- "marker\nexpression"
-    proj$value <- UMAPdata@matrix.expression[, markers]
+    proj$value <- Celldata@matrix.expression[, markers]
   }
 
   plot <- ggplot2::ggplot()
 
   if (!is.null(samples)) {
     proj.ref <- proj
-    proj <- proj[UMAPdata@samples %in% samples, ]
+    proj <- proj[Celldata@samples %in% samples, ]
     plot <- plot +
       ggplot2::geom_point(data = proj.ref,
                           ggplot2::aes_string(x = "UMAP1",
@@ -485,27 +467,27 @@ plotManifold <- function(UMAPdata,
 #' The representation can be displayed based on specific principal components.
 #' The representation can be restricted to specific cell clusters and samples. In addition, it is possible to choose the levels displayed, clusters or samples.
 #'
-#' @param UMAPdata a UMAPdata object
+#' @param Celldata a Celldata object
 #' @param levels a character value containing the variable to be displayed. Possible values are: 'both', 'clusters' or 'samples'
 #' @param clusters a character vector containing the identifier of the cluster to use. By default, all clusters are used
 #' @param samples a character vector containing the names of biological samples to use. By default, all samples are used
 #' @param components a numeric vector providing the components to display
 #' @param condition.samples a character vector containing the variable to be studied for the samples. Possible values are: 'condition' or 'timepoint"
 #' @param cor.radius.th a numeric value specifing xxx
-#' @param plot.interactive xxx
+#' @param plot.text a boolean value specifing if adds text directly at the plot
 #'
 #' @return a ggplot2 object
 #'
 #' @export
 #'
-plotPCA <- function(UMAPdata,
+plotPCA <- function(Celldata,
                     levels = c("both", "clusters", "samples"),
                     clusters = NULL,
                     samples = NULL,
                     components = c(1, 2),
                     condition.samples = c("condition", "timepoint"),
                     cor.radius.th = 0.6,
-                    plot.interactive = TRUE) {
+                    plot.text = TRUE) {
 
   levels <- match.arg(levels)
   condition.samples <- match.arg(condition.samples)
@@ -516,7 +498,7 @@ plotPCA <- function(UMAPdata,
   checkmate::qassert(components, "N2")
   checkmate::qassert(condition.samples, "S1")
   checkmate::qassert(cor.radius.th, "N1")
-  checkmate::qassert(plot.interactive, "B1")
+  checkmate::qassert(plot.text, "B1")
 
   if (levels != "both" && levels != "clusters" && levels != "samples") {
     stop("The levels name is invalid")
@@ -530,7 +512,7 @@ plotPCA <- function(UMAPdata,
     return(data.frame(x = x, y = y))
   }
 
-  matrix.abundance <- UMAPdata@matrix.abundance
+  matrix.abundance <- Celldata@matrix.abundance
 
   if (!is.null(clusters)) {
     matrix.abundance <- matrix.abundance[rownames(matrix.abundance) %in% clusters, ]
@@ -553,7 +535,7 @@ plotPCA <- function(UMAPdata,
   data.variables$x <- scales::rescale(data.variables$x, to = c(-1, 1))
   data.variables$y <- scales::rescale(data.variables$y, to = c(-1, 1))
 
-  data.variables <- merge(data.variables, UMAPdata@metadata, by = "row.names")
+  data.variables <- merge(data.variables, Celldata@metadata, by = "row.names")
   data.variables$Row.names <- NULL
 
   circle1 <- circleFun(c(0, 0), 2, npoints = 100)
@@ -583,7 +565,7 @@ plotPCA <- function(UMAPdata,
                                       shape = 21, size = 2,
                                       stroke = 0.1, fill = "black", color = "black")
 
-    if (plot.interactive == FALSE) {
+    if (plot.text == TRUE) {
       plot <- plot +
         ggrepel::geom_text_repel(data = data.clusters,
                                  ggplot2::aes_string(x = "x",
@@ -595,8 +577,6 @@ plotPCA <- function(UMAPdata,
                                  min.segment.length = 0,
                                  segment.color = NA,
                                  segment.size = 0.1)
-    } else {
-      css <- "fill:red;"
     }
   }
 
@@ -618,7 +598,7 @@ plotPCA <- function(UMAPdata,
                                       shape = 21, size = 2,
                                       stroke = 0.1, color = "black")
 
-    if (plot.interactive == FALSE) {
+    if (plot.text == TRUE) {
       plot <- plot +
         ggrepel::geom_text_repel(data = data.variables,
                                  ggplot2::aes_string(x = "x", y = "y",
@@ -629,8 +609,6 @@ plotPCA <- function(UMAPdata,
                                  min.segment.length = 0,
                                  segment.color = NA,
                                  segment.size = 0.1)
-    } else {
-      css <- "fill:black;"
     }
   }
 
@@ -653,13 +631,6 @@ plotPCA <- function(UMAPdata,
       panel.grid.minor = ggplot2::element_blank(),
       panel.grid.major = ggplot2::element_blank())
 
-  if (plot.interactive == TRUE) {
-    plot <- ggiraph::girafe(ggobj = plot,
-                            options = list(ggiraph::opts_sizing(width = .9),
-                                           ggiraph::opts_hover_inv(css = "opacity:0.6;"),
-                                           ggiraph::opts_hover(css = css)))
-  }
-
   return(plot)
 }
 
@@ -669,23 +640,23 @@ plotPCA <- function(UMAPdata,
 #' Each dot represents a sample or a cluster and the distances between the dots are proportional to the Euclidean distance between these objects.
 #' The representation can be restricted to specific cell clusters and samples. In addition, it is possible to choose the levels displayed, clusters or samples.
 #'
-#' @param UMAPdata a UMAPdata object
+#' @param Celldata a Celldata object
 #' @param levels a character value containing the variable to be displayed. Possible values are: 'clusters' or 'samples'
 #' @param condition.samples a character vector containing the variable to be studied for the samples. Possible values are: 'condition' or 'timepoint"
 #' @param clusters a character vector containing the identifiers of the clusters to use. By default, all clusters are used
 #' @param samples a character vector containing the names of biological samples to use. By default, all samples are used
-#' @param plot.interactive xxx
+#' @param plot.text a boolean value specifing if adds text directly at the plot
 #'
 #' @return a ggplot2 object
 #'
 #' @export
 #'
-plotMDS <- function(UMAPdata,
+plotMDS <- function(Celldata,
                     levels = c("clusters", "samples"),
                     condition.samples = c("condition", "timepoint"),
                     clusters = NULL,
                     samples = NULL,
-                    plot.interactive = TRUE) {
+                    plot.text = TRUE) {
 
   levels <- match.arg(levels)
   condition.samples <- match.arg(condition.samples)
@@ -694,13 +665,13 @@ plotMDS <- function(UMAPdata,
   checkmate::qassert(condition.samples, "S1")
   checkmate::qassert(clusters, c("0", "S*"))
   checkmate::qassert(samples, c("0", "S*"))
-  checkmate::qassert(plot.interactive, "B1")
+  checkmate::qassert(plot.text, "B1")
 
   if (levels != "clusters" && levels != "samples") {
     stop("The levels name is invalid")
   }
 
-  matrix.abundance <- UMAPdata@matrix.abundance
+  matrix.abundance <- Celldata@matrix.abundance
 
   if (levels == "clusters") {
     if (!is.null(clusters)) {
@@ -733,15 +704,13 @@ plotMDS <- function(UMAPdata,
                                                           data_id = "clusters"),
                                       shape = 21, fill = "black", color = "black")
 
-    if (plot.interactive == FALSE) {
+    if (plot.text == TRUE) {
       plot <- plot +
         ggrepel::geom_text_repel(data = proj.clusters,
                                  ggplot2::aes_string(x = "x",
                                                      y = "y",
                                                      label = "clusters"),
                                  size = 3)
-    } else {
-      css <- "fill:red;"
     }
 
   } else {
@@ -763,7 +732,7 @@ plotMDS <- function(UMAPdata,
 
     proj.samples$samples <- colnames(matrix.abundance)
 
-    proj.samples <- merge(proj.samples, UMAPdata@metadata, by = "row.names")
+    proj.samples <- merge(proj.samples, Celldata@metadata, by = "row.names")
     proj.samples$Row.names <- NULL
 
     plot <- ggplot2::ggplot() +
@@ -779,15 +748,13 @@ plotMDS <- function(UMAPdata,
                                                           data_id = "individual"),
                                       shape = 21, color = "black")
 
-    if (plot.interactive == FALSE) {
+    if (plot.text == TRUE) {
       plot <- plot +
         ggrepel::geom_text_repel(data = proj.samples,
                                  ggplot2::aes_string(x = "x",
                                                      y = "y",
                                                      label = "samples"),
                                  size = 3)
-    } else {
-      css <- "fill:black;"
     }
   }
 
@@ -807,13 +774,6 @@ plotMDS <- function(UMAPdata,
                    panel.grid.minor = ggplot2::element_blank(),
                    panel.grid.major = ggplot2::element_blank())
 
-  if (plot.interactive == TRUE) {
-    plot <- ggiraph::girafe(ggobj = plot,
-                            options = list(ggiraph::opts_sizing(width = .9),
-                                           ggiraph::opts_hover_inv(css = "opacity:0.6;"),
-                                           ggiraph::opts_hover(css = css)))
-  }
-
   return(plot)
 }
 
@@ -826,27 +786,25 @@ plotMDS <- function(UMAPdata,
 #' Moreover boxplot can be constructed based on sample meta information.
 #' Statistic can be computed for all comparisons.
 #'
-#' @param UMAPdata a UMAPdata object
+#' @param Celldata a Celldata object
 #' @param clusters a character vector containing the identifiers of the clusters to use
 #' @param samples a character vector containing the names of biological samples to use. By default, all samples are used
 #' @param observation a character value containing the parameters to use
 #' @param test.statistics a character value providing the type of statistical test to use. Possible values are: 'wilcox.test' or 't.test'
 #' @param paired a boolean value indicating if a paired or unpaired comparison should be applied
 #' @param hide.ns a boolean value indicating xxx
-#' @param plot.interactive xxx
 #'
 #' @return a ggplot2 object
 #'
 #' @export
 #'
-plotBoxplot <- function(UMAPdata,
+plotBoxplot <- function(Celldata,
                         clusters,
                         samples = NULL,
                         observation = c("individual", "condition", "timepoint"),
                         test.statistics = c("wilcox.test", "t.test"),
                         paired = FALSE,
-                        hide.ns = TRUE,
-                        plot.interactive = TRUE) {
+                        hide.ns = TRUE) {
 
   observation <- match.arg(observation)
   test.statistics <- match.arg(test.statistics)
@@ -857,15 +815,14 @@ plotBoxplot <- function(UMAPdata,
   checkmate::qassert(test.statistics, "S1")
   checkmate::qassert(paired, "B1")
   checkmate::qassert(hide.ns, "B1")
-  checkmate::qassert(plot.interactive, "B1")
 
-  matrix.cell.count <- UMAPdata@matrix.cell.count
+  matrix.cell.count <- Celldata@matrix.cell.count
 
   if (!is.null(samples)) {
     matrix.cell.count <- matrix.cell.count[, colnames(matrix.cell.count) %in% samples]
   }
 
-  metadata <- UMAPdata@metadata
+  metadata <- Celldata@metadata
 
   matrix.cell.count2 <- matrix.cell.count[rownames(matrix.cell.count) %in% clusters, ]
   cells.number <- sum(colSums(matrix.cell.count2))
@@ -882,6 +839,7 @@ plotBoxplot <- function(UMAPdata,
                                      formula = stats::as.formula(paste0("value ~ ", observation)),
                                      method = test.statistics, paired = paired)
   stat.test <- data.frame(stat.test)
+  
   stat.test$y.position <- max(matrix.cell.count$value)
 
   plot <- ggplot2::ggplot() +
@@ -901,7 +859,7 @@ plotBoxplot <- function(UMAPdata,
                                      color = "grey80", shape = 16, size = 1.5,
                                      position = position_jitter) +
     ggpubr::stat_pvalue_manual(stat.test, label = "p.signif", color = "#424242",
-                               size = 5, hide.ns = hide.ns)
+                               size = 5, hide.ns = hide.ns, step.increase = 0.1)
 
   plot <- plot +
     ggplot2::ylab("abundance of cluster")
@@ -915,12 +873,6 @@ plotBoxplot <- function(UMAPdata,
                    panel.grid.major =  ggplot2::element_blank(),
                    legend.position = "none")
 
-  if (plot.interactive == TRUE) {
-    plot <- ggiraph::girafe(ggobj = plot,
-                            options = list(ggiraph::opts_sizing(width = .9),
-                                           ggiraph::opts_hover(css = "fill:black;")))
-  }
-
   return(plot)
 }
 
@@ -930,27 +882,27 @@ plotBoxplot <- function(UMAPdata,
 #' In such representation, each in dot corresponds to a cell cluster and dots are positioned in two dimensional space where the X-axis represents the log2(fold-change) and the Y-axis represents the -log10 of the p-value.
 #' Un horizontal line is displayed accordingly to the p-value threshold and to vertical lines are displayed accordingly to the fold-change threshold.
 #'
-#' @param UMAPdata a UMAPdata object
+#' @param Celldata a Celldata object
 #' @param comparison a character value containing the comparison to study
 #' @param th.pv a numeric value containing the p-value threshold to use
 #' @param th.fc a numeric value containing the fold-change threshold to use
-#' @param plot.interactive xxx
+#' @param plot.text a boolean value specifing if adds text directly at the plot
 #'
 #' @return a ggplot2 object
 #'
 #' @export
 #'
-plotVolcano <- function(UMAPdata,
+plotVolcano <- function(Celldata,
                         comparison,
                         th.pv = 1.3,
                         th.fc = 1.5,
-                        plot.interactive = TRUE) {
+                        plot.text = TRUE) {
 
   checkmate::qassert(comparison, "S1")
   checkmate::qassert(th.pv, "N1")
   checkmate::qassert(th.fc, "N1")
 
-  stats <- UMAPdata@statistic
+  stats <- Celldata@statistic
   stats <- stats[stats$comparison == comparison, ]
 
   stats$log10.pvalue <- -log10(stats$pvalue)
@@ -976,7 +928,7 @@ plotVolcano <- function(UMAPdata,
     ggplot2::geom_hline(yintercept = th.pv, linetype = "dashed") +
     ggplot2::geom_vline(xintercept = c(log2(th.fc), -log2(th.fc)), linetype = "dashed")
 
-  if (plot.interactive == FALSE) {
+  if (plot.text == TRUE) {
     plot <- plot +
       ggrepel::geom_text_repel(data = stats.diff,
                                ggplot2::aes_string(x = "lfc",
@@ -1002,13 +954,6 @@ plotVolcano <- function(UMAPdata,
                    aspect.ratio = 1,
                    legend.position = "bottom")
 
-  if (plot.interactive == TRUE) {
-    plot <- ggiraph::girafe(ggobj = plot,
-                            options = list(ggiraph::opts_sizing(width = .9),
-                                           ggiraph::opts_hover_inv(css = "opacity:0.6;"),
-                                           ggiraph::opts_hover(css = "fill:black;")))
-  }
-
   return(plot)
 }
 
@@ -1020,21 +965,21 @@ plotVolcano <- function(UMAPdata,
 #' @details
 #' The Pearson correlation is computed based on the marker expressions
 #'
-#' @param UMAPdata a UMAPdata object
+#' @param Celldata a Celldata object
 #' @param clusters a character vector containing the identifier of the cluster to use
 #'
 #' @return a ggplot2 object
 #'
 #' @export
 #'
-plotDistogram <- function(UMAPdata,
+plotDistogram <- function(Celldata,
                           clusters = NULL) {
 
   checkmate::qassert(clusters, c("0", "S+"))
 
-  matrix.exp <- UMAPdata@matrix.expression
-  samples <- UMAPdata@samples
-  cluster <- UMAPdata@identify.clusters
+  matrix.exp <- Celldata@matrix.expression
+  samples <- Celldata@samples
+  cluster <- Celldata@identify.clusters
 
   proj <- cbind(samples, cluster, matrix.exp)
   colnames(proj) <- c("samples", "clusters", colnames(matrix.exp))
@@ -1112,7 +1057,7 @@ plotDistogram <- function(UMAPdata,
 #'
 #' @description This function aims to visualize co-expression between two markers using a scatter representation
 #'
-#' @param UMAPdata a UMAPdata object
+#' @param Celldata a Celldata object
 #' @param marker1 a character value specifying the first marker to be visualised
 #' @param marker2 a character value specifying the second marker to be visualised
 #' @param samples a character vector containing the names of biological samples to use. By default, all samples are used
@@ -1122,7 +1067,7 @@ plotDistogram <- function(UMAPdata,
 #'
 #' @export
 #'
-plotScatter <- function(UMAPdata,
+plotScatter <- function(Celldata,
                         marker1,
                         marker2,
                         samples = NULL,
@@ -1133,9 +1078,9 @@ plotScatter <- function(UMAPdata,
   checkmate::qassert(samples, c("0", "S+"))
   checkmate::qassert(clusters, c("0", "S+"))
 
-  matrix.exp <- UMAPdata@matrix.expression
-  sample <- UMAPdata@samples
-  cluster <- UMAPdata@identify.clusters
+  matrix.exp <- Celldata@matrix.expression
+  sample <- Celldata@samples
+  cluster <- Celldata@identify.clusters
 
   proj <- cbind(sample, cluster, matrix.exp)
 
@@ -1179,32 +1124,29 @@ plotScatter <- function(UMAPdata,
 #'
 #' @description This function aims to visualize xxx
 #'
-#' @param UMAPdata a UMAPdata object
+#' @param Celldata a Celldata object
 #' @param condition.samples a character vector containing the variable to be studied for the samples. Possible values are: 'condition' or 'timepoint"
 #' @param samples a character vector containing the names of biological samples to use. By default, all samples are used
 #' @param clusters a character vector containing the identifiers of the clusters to use
-#' @param plot.interactive xxx
 #'
 #' @return xx
 #'
 #' @export
 #'
-plotCoordinates <- function(UMAPdata,
+plotCoordinates <- function(Celldata,
                             condition.samples = c("condition", "timepoint"),
                             samples = NULL,
-                            clusters,
-                            plot.interactive = TRUE) {
+                            clusters) {
 
   condition.samples <- match.arg(condition.samples)
 
   checkmate::qassert(condition.samples, "S1")
   checkmate::qassert(samples, c("0", "S+"))
   checkmate::qassert(clusters, "S+")
-  checkmate::qassert(plot.interactive, "B1")
 
-  matrix.exp <- UMAPdata@matrix.expression
-  sample <- UMAPdata@samples
-  cluster <- UMAPdata@identify.clusters
+  matrix.exp <- Celldata@matrix.expression
+  sample <- Celldata@samples
+  cluster <- Celldata@identify.clusters
 
   proj <- cbind(sample, cluster, matrix.exp)
 
@@ -1244,8 +1186,8 @@ plotCoordinates <- function(UMAPdata,
   max.value <- max.value * (1 + sign(max.value) * 0.1)
   min.value <- min.value * (1 - sign(min.value) * 0.1)
 
-  UMAPdata@metadata$samples <- rownames(UMAPdata@metadata)
-  proj <- merge(proj, UMAPdata@metadata, by = "samples")
+  Celldata@metadata$samples <- rownames(Celldata@metadata)
+  proj <- merge(proj, Celldata@metadata, by = "samples")
 
   plot <- ggplot2::ggplot() +
     ggplot2::ggtitle(paste0("Parallel coordinates - clusters: ",
@@ -1281,13 +1223,6 @@ plotCoordinates <- function(UMAPdata,
                    panel.grid.major =  ggplot2::element_blank(),
                    legend.position = "bottom")
 
-  if (plot.interactive == TRUE) {
-    plot <- ggiraph::girafe(ggobj = plot,
-                            options = list(ggiraph::opts_sizing(width = .9),
-                                           ggiraph::opts_hover_inv(css = "opacity:0.2;"),
-                                           ggiraph::opts_hover(css = "stroke-width:2;")))
-  }
-
   return(plot)
 }
 
@@ -1295,7 +1230,7 @@ plotCoordinates <- function(UMAPdata,
 #'
 #' @description This function aims to represent a Linear Discriminant Analysis representation based on cell cluster abundances
 #'
-#' @param UMAPdata a UMAPdata object
+#' @param Celldata a Celldata object
 #' @param levels a character value containing the variable to be displayed. Possible values are: 'clusters' or 'samples'
 #' @param ref.condition a character value providing the name of reference condition
 #' @param condition a character value providing the name of the condition to be compared
@@ -1305,7 +1240,7 @@ plotCoordinates <- function(UMAPdata,
 #'
 #' @export
 #'
-plotLDA <- function(UMAPdata,
+plotLDA <- function(Celldata,
                     levels = c("predictions", "coefficients"),
                     ref.condition,
                     condition,
@@ -1320,7 +1255,7 @@ plotLDA <- function(UMAPdata,
     stop("The levels name is invalid")
   }
 
-  matrix.abundance <- UMAPdata@matrix.abundance
+  matrix.abundance <- Celldata@matrix.abundance
 
   if (!is.null(clusters)) {
     matrix.abundance <- matrix.abundance[rownames(matrix.abundance) %in%

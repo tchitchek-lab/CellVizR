@@ -5,7 +5,7 @@
 \title{Plots an heatmap of cell cluster abundances}
 \usage{
 plotHmAbundances(
-  UMAPdata,
+  Celldata,
   clusters = NULL,
   samples = NULL,
   saturation = 2.5,
@@ -13,7 +13,7 @@ plotHmAbundances(
 )
 }
 \arguments{
-\item{UMAPdata}{a UMAPdata object}
+\item{Celldata}{a Celldata object}
 
 \item{clusters}{a character vector containing the identifiers of the clusters to use. By default, all clusters are used}
 

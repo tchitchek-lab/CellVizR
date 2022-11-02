@@ -5,7 +5,7 @@
 \title{Plots a LDA representation based cell cluster abundances}
 \usage{
 plotLDA(
-  UMAPdata,
+  Celldata,
   levels = c("predictions", "coefficients"),
   ref.condition,
   condition,
@@ -13,7 +13,7 @@ plotLDA(
 )
 }
 \arguments{
-\item{UMAPdata}{a UMAPdata object}
+\item{Celldata}{a Celldata object}
 
 \item{levels}{a character value containing the variable to be displayed. Possible values are: 'clusters' or 'samples'}
 

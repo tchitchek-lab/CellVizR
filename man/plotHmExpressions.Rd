@@ -5,7 +5,7 @@
 \title{Plots an heatmap of cell marker expressions}
 \usage{
 plotHmExpressions(
-  UMAPdata,
+  Celldata,
   markers = NULL,
   clusters = NULL,
   method.hclust = c("ward.D", "ward.D2", "single", "complete", "average", "mcquitty",
@@ -15,7 +15,7 @@ plotHmExpressions(
 )
 }
 \arguments{
-\item{UMAPdata}{a UMAPdata object}
+\item{Celldata}{a Celldata object}
 
 \item{markers}{a character vector providing the marker names to use. By default, all markers are used}
 

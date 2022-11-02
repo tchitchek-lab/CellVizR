@@ -5,7 +5,7 @@
 \title{Computes the percentage of clusters with uniform phenotypes}
 \usage{
 QCUniformClusters(
-  UMAPdata,
+  Celldata,
   uniform.test = c("both", "uniform", "IQR"),
   th.pvalue = 0.05,
   th.IQR = 2,
@@ -13,7 +13,7 @@ QCUniformClusters(
 )
 }
 \arguments{
-\item{UMAPdata}{a UMAPdata object}
+\item{Celldata}{a Celldata object}
 
 \item{uniform.test}{a character providing the name of test assessment to perform. Possible value are : 'both', 'uniform', 'IQR'}
 

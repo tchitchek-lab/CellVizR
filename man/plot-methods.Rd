@@ -2,20 +2,20 @@
 % Please edit documentation in R/plot.R
 \name{plot}
 \alias{plot}
-\alias{plot,UMAPdata,ANY-method}
-\title{Plots graphics for all UMAPdata objects}
+\alias{plot,Celldata,ANY-method}
+\title{Plots graphics for all Celldata objects}
 \usage{
-\S4method{plot}{UMAPdata,ANY}(x)
+\S4method{plot}{Celldata,ANY}(x)
 }
 \arguments{
-\item{x}{a UMAPdata object}
+\item{x}{a Celldata object}
 }
 \value{
 a ggplot2 object
 }
 \description{
-Generates a graphical representation for a UMAPdata object
-The displayed representation depends on the current analysis status of the UMAPdata object
+Generates a graphical representation for a Celldata object
+The displayed representation depends on the current analysis status of the Celldata object
 
 - If the manifold has not been calculated, then the number of cells per sample will be displayed
 

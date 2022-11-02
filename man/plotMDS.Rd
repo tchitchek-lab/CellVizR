@@ -5,16 +5,16 @@
 \title{Plots a MDS representation based on cell cluster abundances}
 \usage{
 plotMDS(
-  UMAPdata,
+  Celldata,
   levels = c("clusters", "samples"),
   condition.samples = c("condition", "timepoint"),
   clusters = NULL,
   samples = NULL,
-  plot.interactive = TRUE
+  plot.text = TRUE
 )
 }
 \arguments{
-\item{UMAPdata}{a UMAPdata object}
+\item{Celldata}{a Celldata object}
 
 \item{levels}{a character value containing the variable to be displayed. Possible values are: 'clusters' or 'samples'}
 
@@ -24,7 +24,7 @@ plotMDS(
 
 \item{samples}{a character vector containing the names of biological samples to use. By default, all samples are used}
 
-\item{plot.interactive}{xxx}
+\item{plot.text}{a boolean value specifing if adds text directly at the plot}
 }
 \value{
 a ggplot2 object

@@ -31,10 +31,10 @@ import(
 \item{seed}{a numeric value providing the random seed to use during stochastic operations}
 }
 \value{
-a S4 object of class 'UMAPdata'
+a S4 object of class 'Celldata'
 }
 \description{
-This function aims to import acquired cell events into a UMAPdata object.
+This function aims to import acquired cell events into a Celldata object.
 
 Input files can be tab-separated or FCS files.
 Different transformations can be applied such as logicle, arcsinh or logarithmic.

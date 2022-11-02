@@ -5,7 +5,7 @@
 \title{Generates a manifold of cell events}
 \usage{
 generateManifold(
-  UMAPdata,
+  Celldata,
   type = c("UMAP", "tSNE", "lvish"),
   markers = NULL,
   seed = 42,
@@ -14,7 +14,7 @@ generateManifold(
 )
 }
 \arguments{
-\item{UMAPdata}{a UMAPdata object}
+\item{Celldata}{a Celldata object}
 
 \item{type}{a character value specifying the type of manifold to compute. Possible values are: 'UMAP' for Uniform Manifold Approximation and Projection, 'tSNE' for t Stochastic Neighbor Embedding, and 'lvish' for LargeVis}
 
@@ -27,10 +27,10 @@ generateManifold(
 \item{...}{Other arguments passed on to methods}
 }
 \value{
-a S4 object of class 'UMAPdata'
+a S4 object of class 'Celldata'
 }
 \description{
-This function aims to generate a manifold representation for cell events stored in a UMAPdata object
+This function aims to generate a manifold representation for cell events stored in a Celldata object
 
 This function allows the use of several non-linear dimension reduction techniques such as UMAP, t-SNE or LargeVis
 The whole set of cell markers or specific cell markers can be used during the dimensionality reduction process

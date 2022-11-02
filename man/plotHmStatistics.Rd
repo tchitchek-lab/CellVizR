@@ -5,14 +5,14 @@
 \title{Plots an heatmap of a statistical analysis results}
 \usage{
 plotHmStatistics(
-  UMAPdata,
+  Celldata,
   clusters = NULL,
   statistics = c("pvalue", "lfc", "effsize"),
   saturation = 3
 )
 }
 \arguments{
-\item{UMAPdata}{a UMAPdata object}
+\item{Celldata}{a Celldata object}
 
 \item{clusters}{a character vector containing the identifiers of the clusters to use. By default, all clusters are used}
 

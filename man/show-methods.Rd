@@ -2,17 +2,17 @@
 % Please edit documentation in R/print.R
 \name{show}
 \alias{show}
-\alias{show,UMAPdata-method}
-\title{Prints information for a UMAPdata objects}
+\alias{show,Celldata-method}
+\title{Prints information for a Celldata objects}
 \usage{
-\S4method{show}{UMAPdata}(object)
+\S4method{show}{Celldata}(object)
 }
 \arguments{
-\item{object}{a UMAPdata object}
+\item{object}{a Celldata object}
 }
 \value{
 none
 }
 \description{
-Shows a preview for a UMAPdata object
+Shows a preview for a Celldata object
 }

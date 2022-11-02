@@ -5,18 +5,17 @@
 \title{Plots cell cluster abundances using a boxplot representation}
 \usage{
 plotBoxplot(
-  UMAPdata,
+  Celldata,
   clusters,
   samples = NULL,
   observation = c("individual", "condition", "timepoint"),
   test.statistics = c("wilcox.test", "t.test"),
   paired = FALSE,
-  hide.ns = TRUE,
-  plot.interactive = TRUE
+  hide.ns = TRUE
 )
 }
 \arguments{
-\item{UMAPdata}{a UMAPdata object}
+\item{Celldata}{a Celldata object}
 
 \item{clusters}{a character vector containing the identifiers of the clusters to use}
 
@@ -29,8 +28,6 @@ plotBoxplot(
 \item{paired}{a boolean value indicating if a paired or unpaired comparison should be applied}
 
 \item{hide.ns}{a boolean value indicating xxx}
-
-\item{plot.interactive}{xxx}
 }
 \value{
 a ggplot2 object

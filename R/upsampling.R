@@ -1,15 +1,15 @@
 #' @title Performs the upsampling of downsampled events
 #'
-#' @description This function aims to perform upsample downsampled events based on an existing UMAPdata object and existing cell events stored in tab-separated or FCS files
+#' @description This function aims to perform upsample downsampled events based on an existing Celldata object and existing cell events stored in tab-separated or FCS files
 #'
 #' Importantly, the identification of cell clusters must have been performed prior to this operation
 #'
-#' @param UMAPdata a UMAPdata object
+#' @param Celldata a Celldata object
 #' @param files a character vector providing the path of the tab-separated or FCS files
 #' @param transform a character value containing the type of the transformation to apply. Possible values are: 'logicle', 'arcsinh', 'logarithmic' or 'none'
 #'
-#' @return a S4 object of class 'UMAPdata'
-performUpsampling <- function(UMAPdata,
+#' @return a S4 object of class 'Celldata'
+performUpsampling <- function(Celldata,
                               files,
                               transform = c("logicle", "arcsinh",
                                             "logarithmic", "none")) {
@@ -17,22 +17,22 @@ performUpsampling <- function(UMAPdata,
   checkmate::qassert(files, "S*")
 
   sample_files <- sub(pattern = "(.*)\\..*$", replacement = "\\1", basename(files))
-  files <- files[sample_files %in% unique(UMAPdata@samples)]
-  UMAPdata.reload <- import(files, transform = transform)
-  downsampled.exp <- UMAPdata@matrix.expression
+  files <- files[sample_files %in% unique(Celldata@samples)]
+  Celldata.reload <- import(files, transform = transform)
+  downsampled.exp <- Celldata@matrix.expression
   newmarkersnames <- colnames(downsampled.exp)
-  colnames(downsampled.exp) <- UMAPdata@raw.markers
+  colnames(downsampled.exp) <- Celldata@raw.markers
 
-  reload.exp <- UMAPdata.reload@matrix.expression
+  reload.exp <- Celldata.reload@matrix.expression
   reload.exp <- reload.exp[, colnames(reload.exp) %in% colnames(downsampled.exp)]
 
   chk.downsampled <- apply(downsampled.exp, 1, sum)
   chk.reload <- apply(reload.exp, 1, sum)
 
   upsampled.exp <- reload.exp[!chk.reload %in% chk.downsampled, ]
-  upsampled.samples <- UMAPdata.reload@samples[!chk.reload %in% chk.downsampled]
+  upsampled.samples <- Celldata.reload@samples[!chk.reload %in% chk.downsampled]
   
-  downsampled.exp$cluster   <- UMAPdata@identify.clusters
+  downsampled.exp$cluster   <- Celldata@identify.clusters
   downsampled.centers <- plyr::ddply(downsampled.exp, "cluster", function(x) {
     x$cluster <- NULL
     centers <- apply(x, 2, stats::median, rm.na = TRUE)
@@ -44,22 +44,22 @@ performUpsampling <- function(UMAPdata,
   knn <- FNN::knnx.index(downsampled.centers, upsampled.exp,
                          k = 1, algorithm = "kd_tree")
 
-  UMAPdata@matrix.expression <- rbind(downsampled.exp, upsampled.exp)
-  colnames(UMAPdata@matrix.expression) <- newmarkersnames
+  Celldata@matrix.expression <- rbind(downsampled.exp, upsampled.exp)
+  colnames(Celldata@matrix.expression) <- newmarkersnames
 
-  matrix.expression.r <- UMAPdata.reload@matrix.expression.r
-  UMAPdata@matrix.expression.r <- matrix.expression.r[, colnames(matrix.expression.r) %in% colnames(downsampled.exp)]
-  UMAPdata@samples <- c(UMAPdata@samples, upsampled.samples)
-  UMAPdata@identify.clusters <- c(UMAPdata@identify.clusters, knn)
+  matrix.expression.r <- Celldata.reload@matrix.expression.r
+  Celldata@matrix.expression.r <- matrix.expression.r[, colnames(matrix.expression.r) %in% colnames(downsampled.exp)]
+  Celldata@samples <- c(Celldata@samples, upsampled.samples)
+  Celldata@identify.clusters <- c(Celldata@identify.clusters, knn)
 
   message("computing cell cluster count matrix...")
-  UMAPdata@matrix.cell.count <- computeCellCounts(proj = UMAPdata@matrix.expression,
-                                                  clusters = UMAPdata@identify.clusters,
-                                                  samples = UMAPdata@samples)
+  Celldata@matrix.cell.count <- computeCellCounts(proj = Celldata@matrix.expression,
+                                                  clusters = Celldata@identify.clusters,
+                                                  samples = Celldata@samples)
 
   message("computing cell cluster abundance matrix...")
-  UMAPdata@matrix.abundance <- computeClusterAbundances(count = UMAPdata@matrix.cell.count)
+  Celldata@matrix.abundance <- computeClusterAbundances(count = Celldata@matrix.cell.count)
 
-  validObject(UMAPdata)
-  return(UMAPdata)
+  validObject(Celldata)
+  return(Celldata)
 }

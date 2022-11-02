@@ -7,18 +7,18 @@
 #' For each cluster, the p-value, log2 fold-change and effect size relative to the reference condition are computed.
 #' Statistical comparison can be performed in a paired and unpaired manner.
 #'
-#' @param UMAPdata a UMAPdata object
+#' @param Celldata a Celldata object
 #' @param condition a character value providing the name of the condition to be compared
 #' @param ref.condition a character value providing the name of reference condition
 #' @param test.statistics a character value providing the type of statistical test to use. Possible values are: 'wilcoxon' or 't-test'
 #' @param paired a boolean value indicating if a paired or unpaired comparison should be applied
 #'
-#' @return a S4 object of class 'UMAPdata'
+#' @return a S4 object of class 'Celldata'
 #'
 #' @export
 #' @import rstatix
 #'
-computeStatistics <- function(UMAPdata,
+computeStatistics <- function(Celldata,
                               condition,
                               ref.condition,
                               test.statistics = c("wilcox.test", "t.test"),
@@ -34,7 +34,7 @@ computeStatistics <- function(UMAPdata,
   message("Computing of the ", test.statistics, " for: ", condition, " vs. ", ref.condition)
 
   comparison <- paste0(condition, " vs. ", ref.condition)
-  if (comparison %in% unique(UMAPdata@statistic$comparison)) {
+  if (comparison %in% unique(Celldata@statistic$comparison)) {
     stop("The statistic slot already exists")
   }
 
@@ -54,7 +54,7 @@ computeStatistics <- function(UMAPdata,
     return(statistic)
   }
 
-  abundances <- UMAPdata@matrix.abundance
+  abundances <- Celldata@matrix.abundance
   abundances <- data.matrix(abundances)
 
   stats <- data.frame()
@@ -81,12 +81,12 @@ computeStatistics <- function(UMAPdata,
   stats$lfc <- as.numeric(stats$lfc)
   stats$effsize <- as.numeric(stats$effsize)
 
-  if (nrow(UMAPdata@statistic) == 0) {
-    UMAPdata@statistic <- cbind(comparison, stats)
+  if (nrow(Celldata@statistic) == 0) {
+    Celldata@statistic <- cbind(comparison, stats)
   } else {
-    UMAPdata@statistic <- rbind(UMAPdata@statistic, cbind(comparison, stats))
+    Celldata@statistic <- rbind(Celldata@statistic, cbind(comparison, stats))
   }
 
-  validObject(UMAPdata)
-  return(UMAPdata)
+  validObject(Celldata)
+  return(Celldata)
 }

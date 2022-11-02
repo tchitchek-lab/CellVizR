@@ -55,7 +55,7 @@ computeMarkerMedians <- function(exprs) {
 #' The range expression of each cell marker is discretized into several categories between bounds of marker expressions
 #' To hierarchical clustering, shown using dendrogramm, can be computed on both marker and cluster levels
 #'
-#' @param UMAPdata a UMAPdata object
+#' @param Celldata a Celldata object
 #' @param markers a character vector providing the marker names to use. By default, all markers are used
 #' @param clusters a character vector containing the identifiers of the clusters to use. By default, all clusters are used
 #' @param method.hclust a character value providing the agglomeration method to be use. Possible values are: 'ward.D', 'ward.D2', 'single', 'complete', 'average', 'mcquitty', 'median' or 'centroid' (please refer to the function 'hclust' of the 'stats' package)
@@ -66,7 +66,7 @@ computeMarkerMedians <- function(exprs) {
 #'
 #' @export
 #'
-plotHmExpressions <- function(UMAPdata,
+plotHmExpressions <- function(Celldata,
                              markers = NULL,
                              clusters = NULL,
                              method.hclust = c("ward.D", "ward.D2", "single",
@@ -87,12 +87,12 @@ plotHmExpressions <- function(UMAPdata,
   rainbow.color.palette <- grDevices::colorRampPalette(rainbow.color.palette)(nb.cat)
 
   if (!is.null(markers)) {
-    exp.markers <- UMAPdata@matrix.expression[, markers]
+    exp.markers <- Celldata@matrix.expression[, markers]
   } else {
-    exp.markers <- UMAPdata@matrix.expression[, colnames(UMAPdata@matrix.expression)]
+    exp.markers <- Celldata@matrix.expression[, colnames(Celldata@matrix.expression)]
   }
 
-  exp.markers$clusters <- UMAPdata@identify.clusters
+  exp.markers$clusters <- Celldata@identify.clusters
 
   if (!is.null(clusters)) {
     exp.markers <- exp.markers[exp.markers$clusters %in% clusters, ]
@@ -239,7 +239,7 @@ plotHmExpressions <- function(UMAPdata,
 #' The levels of abundance of each sample in each cluster is represented using a color gradient scale
 #' Abundance values can be centered and reduced.
 #'
-#' @param UMAPdata a UMAPdata object
+#' @param Celldata a Celldata object
 #' @param clusters a character vector containing the identifiers of the clusters to use. By default, all clusters are used
 #' @param samples a character vector containing the names of biological samples to use. By default, all samples are used
 #' @param saturation a numeric value providing the saturation threshold of cell cluster abundances
@@ -249,7 +249,7 @@ plotHmExpressions <- function(UMAPdata,
 #'
 #' @export
 #'
-plotHmAbundances <- function(UMAPdata,
+plotHmAbundances <- function(Celldata,
                             clusters = NULL,
                             samples = NULL,
                             saturation = 2.5,
@@ -260,7 +260,7 @@ plotHmAbundances <- function(UMAPdata,
   checkmate::qassert(saturation, "N1")
   checkmate::qassert(rescale, "B1")
 
-  abundances <- UMAPdata@matrix.abundance
+  abundances <- Celldata@matrix.abundance
 
   if (rescale == TRUE) {
     abundances <- t(scale(t(abundances)))
@@ -384,7 +384,7 @@ plotHmAbundances <- function(UMAPdata,
 #' This representation displays statistical information for each cell cluster for a given comparison of samples
 #' Different statistics can be visualized, such as the p-value, the log2(fold-change), and effect size
 #'
-#' @param UMAPdata a UMAPdata object
+#' @param Celldata a Celldata object
 #' @param clusters a character vector containing the identifiers of the clusters to use. By default, all clusters are used
 #' @param statistics a character value providing the name of the statistic to display. Possible values are: 'pvalue' for p-value, 'lfc' for log2 fold change or 'eff' for effect size
 #' @param saturation a numeric value providing the saturation value for statistics to display
@@ -393,7 +393,7 @@ plotHmAbundances <- function(UMAPdata,
 #'
 #' @export
 #'
-plotHmStatistics <- function(UMAPdata,
+plotHmStatistics <- function(Celldata,
                             clusters = NULL,
                             statistics = c("pvalue", "lfc", "effsize"),
                             saturation = 3) {
@@ -404,7 +404,7 @@ plotHmStatistics <- function(UMAPdata,
   checkmate::qassert(statistics, "S1")
   checkmate::qassert(saturation, "N1")
 
-  stats <- UMAPdata@statistic
+  stats <- Celldata@statistic
   stats$value <- stats[, statistics]
 
   stats$clusters <- as.character(stats$clusters)
@@ -523,7 +523,7 @@ plotHmStatistics <- function(UMAPdata,
 #' @export
 #'
 plotCombineHM <- function(HM1,
-                         HM2) {
+                          HM2) {
 
   grob2 <- c(HM1$grobs, HM2$grobs)
 

@@ -5,7 +5,7 @@
 \title{Plots of phenotype of identified cell clusters}
 \usage{
 plotPhenoClusters(
-  UMAPdata,
+  Celldata,
   clusters,
   quant.low = 0.05,
   quant.high = 0.95,
@@ -13,7 +13,7 @@ plotPhenoClusters(
 )
 }
 \arguments{
-\item{UMAPdata}{a UMAPdata object}
+\item{Celldata}{a Celldata object}
 
 \item{clusters}{a character vector containing the identifier of the cluster to use}
 

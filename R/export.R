@@ -42,11 +42,11 @@ createFlowframe <- function(intensities) {
 
 #' @title Exports cell expression profiles to TSV or FCS files
 #'
-#' @description Exports cell expresion profiles from a UMAPdata object to a tab-separated or FCS files
+#' @description Exports cell expresion profiles from a Celldata object to a tab-separated or FCS files
 #'
 #' Cell expression profiles can be exported for a set of given samples and for a set of given cell clusters
 #'
-#' @param UMAPdata a UMAPdata object
+#' @param Celldata a Celldata object
 #' @param filename a character value providing the name of the output file
 #' @param clusters a character vector containing the identifiers of the cell clusters to export. By default, all clusters are extracted
 #' @param samples a character vector containing the names of biological samples to export. By default, all samples are extracted
@@ -55,7 +55,7 @@ createFlowframe <- function(intensities) {
 #'
 #' @name export
 #' @rdname export-methods
-methods::setGeneric("export", function(UMAPdata,
+methods::setGeneric("export", function(Celldata,
                                       filename,
                                       clusters = NULL,
                                       samples = NULL) {
@@ -63,8 +63,8 @@ methods::setGeneric("export", function(UMAPdata,
 
 #' @rdname export-methods
 #' @export
-methods::setMethod("export", c("UMAPdata"),
-                   function(UMAPdata,
+methods::setMethod("export", c("Celldata"),
+                   function(Celldata,
                             filename,
                             clusters = NULL,
                             samples = NULL) {
@@ -73,10 +73,10 @@ methods::setMethod("export", c("UMAPdata"),
                      checkmate::qassert(clusters, c("0", "S*"))
                      checkmate::qassert(samples, c("0", "S*"))
 
-                     exprs <- UMAPdata@matrix.expression.r
+                     exprs <- Celldata@matrix.expression.r
 
-                     if (length(UMAPdata@manifold) != 0 && any(tools::file_ext(filename) %in% c("fcs", "FCS"))) {
-                       manifold.shifted <- apply(UMAPdata@manifold, 2, function(x) {
+                     if (length(Celldata@manifold) != 0 && any(tools::file_ext(filename) %in% c("fcs", "FCS"))) {
+                       manifold.shifted <- apply(Celldata@manifold, 2, function(x) {
                          ((x - min(x)) / (max(x) - min(x))) * 10000 })
                        tofill <- data.frame(dim1 = rep(0, nrow(exprs) - nrow(manifold.shifted)),
                                             dim2 = rep(0, nrow(exprs) - nrow(manifold.shifted)))
@@ -84,19 +84,19 @@ methods::setMethod("export", c("UMAPdata"),
                        exprs <- cbind(exprs, manifold.shifted)
                      }
 
-                     if (length(UMAPdata@manifold) != 0 && !any(tools::file_ext(filename) %in% c("fcs", "FCS"))) {
-                       manifold <- UMAPdata@manifold
+                     if (length(Celldata@manifold) != 0 && !any(tools::file_ext(filename) %in% c("fcs", "FCS"))) {
+                       manifold <- Celldata@manifold
                        tofill <- data.frame(dim1 = rep(NA, nrow(exprs) - nrow(manifold)),
                                             dim2 = rep(NA, nrow(exprs) - nrow(manifold)))
                        manifold <- rbind(manifold, tofill)
                        exprs <- cbind(exprs, manifold)
                      }
 
-                     if (length(UMAPdata@identify.clusters) != 0) {
-                       exprs <- cbind(exprs, cluster = as.numeric(UMAPdata@identify.clusters))
+                     if (length(Celldata@identify.clusters) != 0) {
+                       exprs <- cbind(exprs, cluster = as.numeric(Celldata@identify.clusters))
                      }
 
-                     exprs <- cbind(exprs, samples = UMAPdata@samples)
+                     exprs <- cbind(exprs, samples = Celldata@samples)
 
                      if (!is.null(samples)) {
                        exprs <- exprs[exprs$samples %in% samples, ]

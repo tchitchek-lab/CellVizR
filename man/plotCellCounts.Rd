@@ -5,23 +5,20 @@
 \title{Plots the numbers of cells for each sample}
 \usage{
 plotCellCounts(
-  UMAPdata,
+  Celldata,
   stats = c("min", "median", "mean", "q75", "max"),
   samples = NULL,
-  sort = TRUE,
-  plot.interactive = TRUE
+  sort = TRUE
 )
 }
 \arguments{
-\item{UMAPdata}{a UMAPdata object}
+\item{Celldata}{a Celldata object}
 
 \item{stats}{a character vector providing the statistics to display. Possible values are: 'min', 'median', 'mean', 'q75', 'max'}
 
 \item{samples}{a character vector containing the names of biological samples to use. By default, all samples are used}
 
 \item{sort}{a boolean value indicating if clusters must be sorted by the number associated sample}
-
-\item{plot.interactive}{xxx}
 }
 \value{
 a ggplot2 object

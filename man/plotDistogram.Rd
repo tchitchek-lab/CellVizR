@@ -4,10 +4,10 @@
 \alias{plotDistogram}
 \title{Plots of a distogram of marker co-expression}
 \usage{
-plotDistogram(UMAPdata, clusters = NULL)
+plotDistogram(Celldata, clusters = NULL)
 }
 \arguments{
-\item{UMAPdata}{a UMAPdata object}
+\item{Celldata}{a Celldata object}
 
 \item{clusters}{a character vector containing the identifier of the cluster to use}
 }

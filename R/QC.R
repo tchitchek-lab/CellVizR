@@ -2,7 +2,7 @@
 #'
 #' @description This function aims to compute and show cell clusters having a number of associated cells lower than a specific threshold
 #'
-#' @param UMAPdata a UMAPdata object
+#' @param Celldata a Celldata object
 #' @param th.size a numeric value providing the minimum number of cells needed for a cluster to be considered a small cluster
 #' @param plot.device a boolean value specifying a results representation must be displayed
 #'
@@ -10,14 +10,14 @@
 #'
 #' @export
 #'
-QCSmallClusters <- function(UMAPdata,
+QCSmallClusters <- function(Celldata,
                             th.size = 50,
                             plot.device = TRUE) {
 
   checkmate::qassert(th.size, "N1")
   checkmate::qassert(plot.device, "B1")
 
-  values.small <- computeSmallClusters(UMAPdata,
+  values.small <- computeSmallClusters(Celldata,
                                        th.size = th.size)
 
   if (plot.device == TRUE) {
@@ -33,7 +33,7 @@ QCSmallClusters <- function(UMAPdata,
 # @description This function is used internally to compute the percentage of clusters having a number of associated cells lower than a specific threshold
 #
 #
-# @param UMAPdata a UMAPdata object
+# @param Celldata a Celldata object
 # @param th.size a numeric value providing the minimum number of cells needed for a cluster to be considered a small cluster
 #
 # @return a list containing QC information for small clusters
@@ -42,10 +42,10 @@ QCSmallClusters <- function(UMAPdata,
 #
 # @export
 #
-computeSmallClusters <- function(UMAPdata,
+computeSmallClusters <- function(Celldata,
                                  th.size) {
 
-  data.clusters <- UMAPdata@matrix.cell.count
+  data.clusters <- Celldata@matrix.cell.count
 
   total.cells <- apply(data.clusters, 1,
                        FUN = function(x) {
@@ -127,7 +127,7 @@ plotSmallClusters <- function(values.small) {
 #'
 #' -'both' corresponds to the combination of the two parameters : uniform and IQR
 #'
-#' @param UMAPdata a UMAPdata object
+#' @param Celldata a Celldata object
 #' @param uniform.test a character providing the name of test assessment to perform. Possible value are : 'both', 'uniform', 'IQR'
 #' @param th.pvalue a numeric value providing the p-value threshold of the Hartigan's dip test (unimodal if pvalue > th.pvalue)
 #' @param th.IQR a numeric value providing the IQR (interquartile range) threshold to assume a distribution as uniform
@@ -137,7 +137,7 @@ plotSmallClusters <- function(values.small) {
 #'
 #' @export
 #'
-QCUniformClusters <- function(UMAPdata,
+QCUniformClusters <- function(Celldata,
                               uniform.test = c("both", "uniform", "IQR"),
                               th.pvalue = 0.05,
                               th.IQR = 2,
@@ -150,7 +150,7 @@ QCUniformClusters <- function(UMAPdata,
   checkmate::qassert(th.IQR, "N1")
   checkmate::qassert(plot.device, "B1")
 
-  values.uniform <- computeUniformClusters(UMAPdata,
+  values.uniform <- computeUniformClusters(Celldata,
                                            uniform.test = uniform.test,
                                            th.pvalue = th.pvalue,
                                            th.IQR = th.IQR)
@@ -168,7 +168,7 @@ QCUniformClusters <- function(UMAPdata,
 # @description This function is used internally to identify cell clusters that have a non-uniform phenotype.
 # A uniform cluster corresponds to clusters that have a unimodal expression and having a low spread of expression for all the markers to compose it
 #
-# @param UMAPdata a UMAPdata object
+# @param Celldata a Celldata object
 # @param uniform.test a character providing the name of test assessment to perform. Possible value are : 'both', 'uniform', 'IQR'
 # @param th.pvalue a numeric value providing the p-value threshold of the Hartigan's dip test (unimodal if pvalue > th.pvalue)
 # @param th.IQR a numeric value providing the IQR (interquartile range) threshold to assume a distribution as uniform
@@ -177,7 +177,7 @@ QCUniformClusters <- function(UMAPdata,
 # Returns a data.frame with a boolean value indicating if the clusters have a uniform phenotype
 # In addition, returns the percentage of the calculation
 #
-computeUniformClusters <- function(UMAPdata,
+computeUniformClusters <- function(Celldata,
                                    uniform.test,
                                    th.pvalue,
                                    th.IQR) {
@@ -190,9 +190,9 @@ computeUniformClusters <- function(UMAPdata,
   diptests <- data.frame()
   IQRs <- data.frame()
   modes <- data.frame()
-  for (cluster in gtools::mixedsort(unique(UMAPdata@identify.clusters))) {
-    for (marker in UMAPdata@identify.clusters.params$clustering.markers) {
-      matrix.expression.sub <- UMAPdata@matrix.expression[UMAPdata@identify.clusters == cluster, marker]
+  for (cluster in gtools::mixedsort(unique(Celldata@identify.clusters))) {
+    for (marker in Celldata@identify.clusters.params$clustering.markers) {
+      matrix.expression.sub <- Celldata@matrix.expression[Celldata@identify.clusters == cluster, marker]
       diptest <- diptest::dip.test(matrix.expression.sub)$p.value
       quantiles <- stats::quantile(matrix.expression.sub)
       IQR <- quantiles[4] - quantiles[2]

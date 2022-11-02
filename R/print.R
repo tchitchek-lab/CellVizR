@@ -1,8 +1,8 @@
-#' @title Prints information for a given UMAPdata object
+#' @title Prints information for a given Celldata object
 #'
-#' @description Prints a preview for a UMAPdata object
+#' @description Prints a preview for a Celldata object
 #'
-#' @param x a UMAPdata object
+#' @param x a Celldata object
 #'
 #' @return none
 #'
@@ -11,9 +11,9 @@
 NULL
 #' @rdname print-methods
 
-setMethod("print", "UMAPdata",
+setMethod("print", "Celldata",
           function(x) {
-            cat("Object class: UMAPdata\n")
+            cat("Object class: Celldata\n")
             cat(paste0("Numbers of markers: ", length(x@matrix.expression[, -1])))
             cat("\nMarkers: ")
             cat(paste0(colnames(x@matrix.expression), collapse = ", "))
@@ -65,11 +65,11 @@ setMethod("print", "UMAPdata",
             }
           })
 
-#' @title Prints information for a UMAPdata objects
+#' @title Prints information for a Celldata objects
 #'
-#' @description Shows a preview for a UMAPdata object
+#' @description Shows a preview for a Celldata object
 #'
-#' @param object a UMAPdata object
+#' @param object a Celldata object
 #'
 #' @return none
 #'
@@ -79,7 +79,7 @@ NULL
 
 #' @rdname show-methods
 
-setMethod("show", "UMAPdata",
+setMethod("show", "Celldata",
           definition = function(object) {
             print(object)
           }

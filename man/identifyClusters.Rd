@@ -5,7 +5,7 @@
 \title{Identify cell cluster of having similar marker expressions}
 \usage{
 identifyClusters(
-  UMAPdata,
+  Celldata,
   space = c("manifold", "markers"),
   markers = NULL,
   method = c("kmeans", "kmedian", "clara", "DBSCAN", "SOM"),
@@ -16,7 +16,7 @@ identifyClusters(
 )
 }
 \arguments{
-\item{UMAPdata}{a UMAPdata object}
+\item{Celldata}{a Celldata object}
 
 \item{space}{a character value containing the space of clustering method to use. Possible values are: 'manifold' or 'markers'}
 
@@ -33,7 +33,7 @@ identifyClusters(
 \item{...}{Other arguments passed on to methods}
 }
 \value{
-a S4 object of class 'UMAPdata'
+a S4 object of class 'Celldata'
 }
 \description{
 This function aims to identify cell clusters, which are groups of cells having similar expressions for selected markers, using different unsupervised clustering methods.

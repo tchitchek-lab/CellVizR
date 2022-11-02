@@ -1,22 +1,22 @@
 #' @title Generates a manifold of cell events
 #'
-#' @description This function aims to generate a manifold representation for cell events stored in a UMAPdata object
+#' @description This function aims to generate a manifold representation for cell events stored in a Celldata object
 #'
 #' This function allows the use of several non-linear dimension reduction techniques such as UMAP, t-SNE or LargeVis
 #' The whole set of cell markers or specific cell markers can be used during the dimensionality reduction process
 #'
-#' @param UMAPdata a UMAPdata object
+#' @param Celldata a Celldata object
 #' @param type a character value specifying the type of manifold to compute. Possible values are: 'UMAP' for Uniform Manifold Approximation and Projection, 'tSNE' for t Stochastic Neighbor Embedding, and 'lvish' for LargeVis
 #' @param markers a character vector providing the cell markers to use for the manifold generation
 #' @param seed a numeric value providing the random seed to use during stochastic operations
 #' @param verbose a boolean value indicating if computational details must be displayed on the console
 #' @param ... Other arguments passed on to methods
 #'
-#' @return a S4 object of class 'UMAPdata'
+#' @return a S4 object of class 'Celldata'
 #'
 #' @export
 #'
-generateManifold <- function(UMAPdata,
+generateManifold <- function(Celldata,
                              type = c("UMAP", "tSNE", "lvish"),
                              markers = NULL,
                              seed = 42,
@@ -30,7 +30,7 @@ generateManifold <- function(UMAPdata,
   checkmate::qassert(seed, "N1")
   checkmate::qassert(verbose, "B1")
 
-  matrix.exprs <- UMAPdata@matrix.expression
+  matrix.exprs <- Celldata@matrix.expression
 
   if (is.null(markers)) {
     markers <- names(matrix.exprs)
@@ -63,16 +63,16 @@ generateManifold <- function(UMAPdata,
                                                       ...)
          })
 
-  UMAPdata@manifold <- generate.manifold
+  Celldata@manifold <- generate.manifold
 
   manifold.params <- list(type = type,
                           markers = markers,
                           verbose = verbose,
                           ...)
-  UMAPdata@manifold.params <- manifold.params
+  Celldata@manifold.params <- manifold.params
 
-  validObject(UMAPdata)
-  return(UMAPdata)
+  validObject(Celldata)
+  return(Celldata)
 }
 
 # @title Internal - Generates a UMAP manifold of cell events

@@ -5,23 +5,23 @@
 \title{Performs the upsampling of downsampled events}
 \usage{
 performUpsampling(
-  UMAPdata,
+  Celldata,
   files,
   transform = c("logicle", "arcsinh", "logarithmic", "none")
 )
 }
 \arguments{
-\item{UMAPdata}{a UMAPdata object}
+\item{Celldata}{a Celldata object}
 
 \item{files}{a character vector providing the path of the tab-separated or FCS files}
 
 \item{transform}{a character value containing the type of the transformation to apply. Possible values are: 'logicle', 'arcsinh', 'logarithmic' or 'none'}
 }
 \value{
-a S4 object of class 'UMAPdata'
+a S4 object of class 'Celldata'
 }
 \description{
-This function aims to perform upsample downsampled events based on an existing UMAPdata object and existing cell events stored in tab-separated or FCS files
+This function aims to perform upsample downsampled events based on an existing Celldata object and existing cell events stored in tab-separated or FCS files
 
 Importantly, the identification of cell clusters must have been performed prior to this operation
 }

@@ -5,18 +5,18 @@
 \title{Plots a PCA representation based cell cluster abundances}
 \usage{
 plotPCA(
-  UMAPdata,
+  Celldata,
   levels = c("both", "clusters", "samples"),
   clusters = NULL,
   samples = NULL,
   components = c(1, 2),
   condition.samples = c("condition", "timepoint"),
   cor.radius.th = 0.6,
-  plot.interactive = TRUE
+  plot.text = TRUE
 )
 }
 \arguments{
-\item{UMAPdata}{a UMAPdata object}
+\item{Celldata}{a Celldata object}
 
 \item{levels}{a character value containing the variable to be displayed. Possible values are: 'both', 'clusters' or 'samples'}
 
@@ -30,7 +30,7 @@ plotPCA(
 
 \item{cor.radius.th}{a numeric value specifing xxx}
 
-\item{plot.interactive}{xxx}
+\item{plot.text}{a boolean value specifing if adds text directly at the plot}
 }
 \value{
 a ggplot2 object

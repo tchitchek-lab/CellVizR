@@ -4,14 +4,14 @@ Cytometry data are now classically analyzed using non-linear
 dimensionality reduction approaches, but it is still challenging to
 easily handle the whole pipeline of computational analyses.
 
-UMAPVizR allows the statistical analysis and visualization of
+CellVizR allows the statistical analysis and visualization of
 high-dimensional cytometry data using manifold algorithms and clustering
 methods. Especially, several key analysis steps are available to perform
 data importation, manifold generation, cell cluster identification,
 statistical analyses, cluster visualization, and quality controls of
 generated results.
 
-UMAPVizR can import cell events from FCS or txt file formats using
+CellVizR can import cell events from FCS or txt file formats using
 different transformation, down-sampling, and normalization approaches.
 Manifold representations can be generated using the UMAP, tSNE or
 LargeVis algorithms to project cell events into a lower dimensionality
@@ -25,15 +25,15 @@ Statistical results can be visualized using volcano plots or heatmaps.
 
 ## 1.1 Workflow overview
 
-In the `UMAPVizR` workflow, an S4 object is created to store data and
+In the `CellVizR` workflow, an S4 object is created to store data and
 sample information is implemented for analysis. This stored information
 will allow performing the statistics and visualization of the dataset.
 
 <img src="README/figures/workflow.png" width="90%" style="display: block; margin: auto;" />
 
-*Figure 1: Workflow of UMAPVizR*
+*Figure 1: Workflow of CellVizR*
 
-*The analysis in UMAPVizR consists of 5 main steps: (1) importing the
+*The analysis in CellVizR consists of 5 main steps: (1) importing the
 data in FCS or txt format resulting in the creation of an S4 UMAPdata
 object; (2) assigning the metadata (sample information) into the
 UMAPdata object; and (3) generating the manifold and clustering. The
@@ -43,13 +43,13 @@ analyzed using statistical approaches.*
 ## 1.2 Input data
 
 The following conditions must be respected to analyze data with
-`UMAPVizR`:
+`CellVizR`:
 
 -   **Type and format of data**: The cytometry data that can be analyzed
-    and integrated with `UMAPVizR` are flow, mass or spectral cytometry
+    and integrated with `CellVizR` are flow, mass or spectral cytometry
     data. The input files can be in standard cytometry format (FCS) or
     txt format.
--   **Compensation**: Before starting an analysis with `UMAPVizR`,
+-   **Compensation**: Before starting an analysis with `CellVizR`,
     performing the compensation steps for flow cytometry and spectral
     data with conventional software (FlowJo, Kaluza, etc) is necessary.
 -   **Cleaning and gating**: It is recommended to remove debris, dead
@@ -59,7 +59,7 @@ The following conditions must be respected to analyze data with
 
 # 2. Quick start
 
-In this section, the main analysis steps of `UMAPVizR` are presented.
+In this section, the main analysis steps of `CellVizR` are presented.
 
 These steps cover several aspects, such as:
 
@@ -70,25 +70,25 @@ These steps cover several aspects, such as:
 
 ## 2.1 Installation
 
-To download `UMAPVizR` it is required `devtools`:
+To download `CellVizR` it is required `devtools`:
 
 ``` r
 install.packages("devtools")
 library("devtools")
-install_github("tchitchek-lab/UMAPVizR")
+install_github("tchitchek-lab/CellVizR")
 ```
 
-The `UMAPVizR` package automatically downloads the necessary packages
+The `CellVizR` package automatically downloads the necessary packages
 for its operation such as: `coin`, `concaveman`, `dendextend`,
 `flowCore`, `ggdendro`, `gglot2`, `gridExtra`, `MASS`, `plyr`,
 `reshape`, `reshape2`, `rstatix`, `Rtsne`, `scales`, `stats`, `stringr`,
 `uwot`. If not, the packages are available on the `CRAN`, except
 `flowCore` which is available on `Bioconductor`.
 
-Once installed, `UMAPVizR` can be loaded using the following command:
+Once installed, `CellVizR` can be loaded using the following command:
 
 ``` r
-library("UMAPVizR")
+library("CellVizR")
 ```
 
 ## 2.2 Importing cell expression profiles (import)
@@ -136,7 +136,7 @@ plotCellCounts(UMAPV,
                sort = TRUE)
 ```
 
-![](README/figure-markdown_github/plotCellCounts-1.png)
+![](README_files/figure-markdown_github/plotCellCounts-1.png)
 
 ``` r
 # Possible to make it interactive
@@ -209,28 +209,28 @@ UMAPV <- generateManifold(UMAPV,
 
     ## Manifold method is: UMAP
 
-    ## 11:12:18 UMAP embedding parameters a = 1.896 b = 0.8006
+    ## 11:58:26 UMAP embedding parameters a = 1.896 b = 0.8006
 
-    ## 11:12:18 Converting dataframe to numerical matrix
+    ## 11:58:26 Converting dataframe to numerical matrix
 
-    ## 11:12:18 Read 26722 rows and found 10 numeric columns
+    ## 11:58:26 Read 26722 rows and found 10 numeric columns
 
-    ## 11:12:18 Using Annoy for neighbor search, n_neighbors = 15
+    ## 11:58:26 Using Annoy for neighbor search, n_neighbors = 15
 
-    ## 11:12:19 Building Annoy index with metric = euclidean, n_trees = 50
+    ## 11:58:27 Building Annoy index with metric = euclidean, n_trees = 50
 
     ## 0%   10   20   30   40   50   60   70   80   90   100%
 
     ## [----|----|----|----|----|----|----|----|----|----|
 
     ## **************************************************|
-    ## 11:12:21 Writing NN index file to temp file C:\Users\GWMA\AppData\Local\Temp\RtmpaWJfgG\file2d245d30793a
-    ## 11:12:21 Searching Annoy index using 40 threads, search_k = 1500
-    ## 11:12:22 Annoy recall = 100%
-    ## 11:12:22 Commencing smooth kNN distance calibration using 40 threads with target n_neighbors = 15
-    ## 11:12:23 Initializing from normalized Laplacian + noise (using irlba)
-    ## 11:12:23 Commencing optimization for 200 epochs, with 537220 positive edges using 1 thread
-    ## 11:12:41 Optimization finished
+    ## 11:58:28 Writing NN index file to temp file C:\Users\GWMA\AppData\Local\Temp\RtmpqMP0ID\file29484f161a04
+    ## 11:58:28 Searching Annoy index using 40 threads, search_k = 1500
+    ## 11:58:29 Annoy recall = 100%
+    ## 11:58:30 Commencing smooth kNN distance calibration using 40 threads with target n_neighbors = 15
+    ## 11:58:30 Initializing from normalized Laplacian + noise (using irlba)
+    ## 11:58:31 Commencing optimization for 200 epochs, with 539456 positive edges using 1 thread
+    ## 11:58:49 Optimization finished
 
 The main arguments of the `generateManifold` function are:
 
@@ -307,7 +307,7 @@ plotManifold(UMAPV,
              markers = "density")
 ```
 
-![](README/figure-markdown_github/PlotManifold-1.png)
+![](README_files/figure-markdown_github/PlotManifold-1.png)
 
 If the name of the marker is used, then the intensity of marker
 expression, overlaid on the manifold (e.g. CD8), will be shown as below:
@@ -318,7 +318,7 @@ plotManifold(UMAPV,
              markers = "CD8")
 ```
 
-![](README/figure-markdown_github/PlotManifold2-1.png)
+![](README_files/figure-markdown_github/PlotManifold2-1.png)
 
 It is possible to specify the biological samples to be displayed in the
 representation using the `samples` argument as below:
@@ -330,7 +330,7 @@ plotManifold(UMAPV,
              samples = "V1_10105LA")
 ```
 
-![](README/figure-markdown_github/PlotManifold3-1.png)
+![](README_files/figure-markdown_github/PlotManifold3-1.png)
 
 If the name of the clusters is used, the the clusters number will be
 shown as below:
@@ -341,7 +341,7 @@ plotManifold(UMAPV,
              markers = "clusters")
 ```
 
-![](README/figure-markdown_github/PlotManifold4-1.png)
+![](README_files/figure-markdown_github/PlotManifold4-1.png)
 
 ### 2.5.2 Heatmap of cell marker expressions (plotHmExpressions)
 
@@ -363,7 +363,7 @@ hm.exp <- plotHmExpressions(UMAPV)
 gridExtra::grid.arrange(hm.exp)
 ```
 
-![](README/figure-markdown_github/PlotHMExpressions-1.png) It is
+![](README_files/figure-markdown_github/PlotHMExpressions-1.png) It is
 possible to customize the `plotHmExpressions` with these parameters:
 
 -   the `markers` argument, which specifies the markers to be displayed
@@ -381,7 +381,7 @@ hm.exp <- plotHmExpressions(UMAPV,
 gridExtra::grid.arrange(hm.exp)
 ```
 
-![](README/figure-markdown_github/plotHmExpressions2-1.png)
+![](README_files/figure-markdown_github/plotHmExpressions2-1.png)
 
 ### 2.5.3 Representation of phenotype of identified cell clusters (plotPhenoClusters)
 
@@ -399,27 +399,27 @@ plotPhenoClusters(UMAPV,
                   clusters = 58)
 ```
 
-    ## Picking joint bandwidth of 0.0161
+    ## Picking joint bandwidth of 0.0159
 
-    ## Picking joint bandwidth of 0.0321
+    ## Picking joint bandwidth of 0.0294
 
-    ## Picking joint bandwidth of 0.0404
+    ## Picking joint bandwidth of 0.0366
 
-    ## Picking joint bandwidth of 0.0519
+    ## Picking joint bandwidth of 0.0451
 
-    ## Picking joint bandwidth of 0.0403
+    ## Picking joint bandwidth of 0.0378
 
-    ## Picking joint bandwidth of 0.0202
+    ## Picking joint bandwidth of 0.0195
 
-    ## Picking joint bandwidth of 0.0447
+    ## Picking joint bandwidth of 0.0354
 
-    ## Picking joint bandwidth of 0.0256
+    ## Picking joint bandwidth of 0.0254
 
-    ## Picking joint bandwidth of 0.0277
+    ## Picking joint bandwidth of 0.0279
 
-    ## Picking joint bandwidth of 0.0476
+    ## Picking joint bandwidth of 0.0461
 
-![](README/figure-markdown_github/plotPhenoClusters-1.png)
+![](README_files/figure-markdown_github/plotPhenoClusters-1.png)
 
 ### 2.5.4 Representation of phenotype of cell clusters using parallels coordinates (plotCoordinates)
 
@@ -436,7 +436,7 @@ plotCoordinates(UMAPV,
                 clusters = "58")
 ```
 
-![](README/figure-markdown_github/plotCoordinates-1.png)
+![](README_files/figure-markdown_github/plotCoordinates-1.png)
 
 ``` r
 # Possible to make it interactive
@@ -509,7 +509,7 @@ plotVolcano(UMAPV,
             plot.text = TRUE)
 ```
 
-![](README/figure-markdown_github/plotVolcano-1.png)
+![](README_files/figure-markdown_github/plotVolcano-1.png)
 
 ``` r
 # Possible to make it interactive
@@ -537,7 +537,7 @@ hm.stats <- plotHmStatistics(UMAPV,
 gridExtra::grid.arrange(hm.stats)
 ```
 
-![](README/figure-markdown_github/plotHmStatistics-1.png)
+![](README_files/figure-markdown_github/plotHmStatistics-1.png)
 
 ## 3.3 Visualisation of cell cluster abundances
 
@@ -571,7 +571,7 @@ hm.abun <- plotHmAbundances(UMAPV,
 gridExtra::grid.arrange(hm.abun)
 ```
 
-![](README/figure-markdown_github/plotHmAbundances-1.png)
+![](README_files/figure-markdown_github/plotHmAbundances-1.png)
 
 ### 3.3.2 Cell cluster abundances using a boxplot representation (plotBoxplot)
 
@@ -596,7 +596,7 @@ plotBoxplot(UMAPV,
             test.statistics = "wilcox.test")
 ```
 
-![](README/figure-markdown_github/plotBoxplot-1.png)
+![](README_files/figure-markdown_github/plotBoxplot-1.png)
 
 ``` r
 # Possible to make it interactive
@@ -632,7 +632,7 @@ plotMDS(UMAPV,
         plot.text = TRUE)
 ```
 
-![](README/figure-markdown_github/plotMDS-1.png)
+![](README_files/figure-markdown_github/plotMDS-1.png)
 
 ``` r
 # Possible to make it interactive
@@ -664,7 +664,7 @@ plotPCA(UMAPV,
         plot.text = TRUE)
 ```
 
-![](README/figure-markdown_github/plotPCA-1.png)
+![](README_files/figure-markdown_github/plotPCA-1.png)
 
 ``` r
 # Possible to make it interactive
@@ -679,7 +679,7 @@ Other possible parameters to customize the `plotPCA` are:
 
 # 4. Quality control
 
-The `UMAPVizR` package allows to perform quality control of generated
+The `CellVizR` package allows to perform quality control of generated
 results.
 
 The quality control can be performed:
@@ -800,42 +800,42 @@ QCS <- QCSmallClusters(UMAPV,
                        plot.device = TRUE)
 ```
 
-![](README/figure-markdown_github/QCSmallClusters-1.png)
+![](README_files/figure-markdown_github/QCSmallClusters-1.png)
 
     ##      V1_10105LA V1_10209HE V1_10306CG V1_10503DC V1_11204CD V1_20208AA
-    ## [1,]      FALSE       TRUE      FALSE       TRUE       TRUE       TRUE
-    ## [2,]       TRUE      FALSE       TRUE       TRUE       TRUE      FALSE
-    ## [3,]       TRUE       TRUE       TRUE      FALSE      FALSE       TRUE
-    ## [4,]      FALSE       TRUE      FALSE       TRUE       TRUE      FALSE
+    ## [1,]       TRUE       TRUE       TRUE      FALSE      FALSE       TRUE
+    ## [2,]      FALSE      FALSE       TRUE      FALSE      FALSE      FALSE
+    ## [3,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [4,]      FALSE       TRUE       TRUE       TRUE       TRUE      FALSE
     ## [5,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [6,]       TRUE       TRUE      FALSE      FALSE      FALSE      FALSE
+    ## [6,]       TRUE       TRUE       TRUE      FALSE      FALSE      FALSE
     ##      V1_20210RF V6_10105LA V6_10209HE V6_10306CG V6_10503DC V6_11204CD
-    ## [1,]      FALSE      FALSE      FALSE       TRUE       TRUE       TRUE
-    ## [2,]      FALSE       TRUE      FALSE      FALSE      FALSE      FALSE
+    ## [1,]      FALSE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [2,]      FALSE      FALSE      FALSE      FALSE      FALSE      FALSE
     ## [3,]      FALSE      FALSE       TRUE       TRUE      FALSE      FALSE
-    ## [4,]      FALSE      FALSE      FALSE       TRUE      FALSE       TRUE
-    ## [5,]       TRUE      FALSE      FALSE      FALSE      FALSE      FALSE
-    ## [6,]      FALSE       TRUE       TRUE       TRUE      FALSE      FALSE
+    ## [4,]      FALSE      FALSE       TRUE       TRUE      FALSE       TRUE
+    ## [5,]       TRUE       TRUE      FALSE      FALSE       TRUE      FALSE
+    ## [6,]       TRUE       TRUE       TRUE      FALSE      FALSE      FALSE
     ##      V6_20208AA V6_20210RF V7_10105LA V7_10209HE V7_10306CG V7_10503DC
-    ## [1,]       TRUE      FALSE      FALSE       TRUE       TRUE       TRUE
-    ## [2,]      FALSE      FALSE      FALSE      FALSE       TRUE      FALSE
+    ## [1,]       TRUE      FALSE       TRUE       TRUE       TRUE      FALSE
+    ## [2,]      FALSE      FALSE      FALSE      FALSE      FALSE      FALSE
     ## [3,]      FALSE      FALSE      FALSE       TRUE       TRUE      FALSE
-    ## [4,]      FALSE      FALSE      FALSE      FALSE      FALSE       TRUE
-    ## [5,]       TRUE      FALSE      FALSE      FALSE      FALSE       TRUE
-    ## [6,]      FALSE      FALSE      FALSE       TRUE       TRUE      FALSE
-    ##      V7_11204CD V7_20208AA V7_20210RF V8_10105LA V8_10209HE V8_10306CG
-    ## [1,]       TRUE       TRUE      FALSE      FALSE      FALSE      FALSE
-    ## [2,]      FALSE      FALSE      FALSE      FALSE      FALSE       TRUE
-    ## [3,]       TRUE      FALSE      FALSE       TRUE       TRUE       TRUE
-    ## [4,]       TRUE      FALSE      FALSE       TRUE      FALSE      FALSE
+    ## [4,]      FALSE      FALSE      FALSE       TRUE       TRUE       TRUE
     ## [5,]      FALSE      FALSE      FALSE      FALSE      FALSE       TRUE
+    ## [6,]      FALSE      FALSE       TRUE       TRUE       TRUE      FALSE
+    ##      V7_11204CD V7_20208AA V7_20210RF V8_10105LA V8_10209HE V8_10306CG
+    ## [1,]       TRUE      FALSE      FALSE       TRUE       TRUE       TRUE
+    ## [2,]      FALSE      FALSE      FALSE       TRUE      FALSE      FALSE
+    ## [3,]       TRUE      FALSE      FALSE       TRUE       TRUE       TRUE
+    ## [4,]       TRUE       TRUE      FALSE       TRUE       TRUE      FALSE
+    ## [5,]       TRUE       TRUE      FALSE      FALSE      FALSE       TRUE
     ## [6,]       TRUE      FALSE      FALSE       TRUE       TRUE      FALSE
     ##      V8_10503DC V8_11204CD V8_20208AA V8_20210RF total.cells
-    ## [1,]       TRUE       TRUE       TRUE      FALSE       FALSE
-    ## [2,]       TRUE       TRUE       TRUE      FALSE       FALSE
+    ## [1,]      FALSE      FALSE       TRUE      FALSE       FALSE
+    ## [2,]      FALSE      FALSE      FALSE      FALSE       FALSE
     ## [3,]      FALSE      FALSE       TRUE      FALSE       FALSE
-    ## [4,]      FALSE       TRUE      FALSE      FALSE       FALSE
-    ## [5,]       TRUE       TRUE       TRUE      FALSE       FALSE
+    ## [4,]       TRUE       TRUE      FALSE      FALSE       FALSE
+    ## [5,]       TRUE       TRUE       TRUE       TRUE       FALSE
     ## [6,]      FALSE      FALSE      FALSE      FALSE       FALSE
 
 The second method allows to identify the uniform clusters, i.e.those
@@ -871,15 +871,15 @@ QCU <- QCUniformClusters(UMAPV,
                          plot.device = TRUE)
 ```
 
-![](README/figure-markdown_github/QCUniformClusters-1.png)
+![](README_files/figure-markdown_github/QCUniformClusters-1.png)
 
     ##   clusters markers    pv_dip       IQR passed
-    ## 1        1    CD16 0.9919784 0.2570690   TRUE
-    ## 2        1     CD3 0.9792357 0.3189988   TRUE
-    ## 3        1    CD56 0.9883049 0.4140749   TRUE
-    ## 4        1     CD8 0.9901155 0.3437514   TRUE
-    ## 5        1   HLADR 0.9981569 0.3546891   TRUE
-    ## 6        1   NKG2D 0.9560423 0.2187926   TRUE
+    ## 1        1    CD16 0.9969386 0.2651895   TRUE
+    ## 2        1     CD3 0.9948315 0.3032393   TRUE
+    ## 3        1    CD56 0.9920345 0.3288604   TRUE
+    ## 4        1     CD8 0.9717085 0.1813187   TRUE
+    ## 5        1   HLADR 0.4625909 0.2673890   TRUE
+    ## 6        1   NKG2D 0.9863257 0.2057160   TRUE
 
 # 5. Advanced usage
 

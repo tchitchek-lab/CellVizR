@@ -5,23 +5,20 @@
 \title{Plots of phenotype of cell clusters using parallels coordinates}
 \usage{
 plotCoordinates(
-  UMAPdata,
+  Celldata,
   condition.samples = c("condition", "timepoint"),
   samples = NULL,
-  clusters,
-  plot.interactive = TRUE
+  clusters
 )
 }
 \arguments{
-\item{UMAPdata}{a UMAPdata object}
+\item{Celldata}{a Celldata object}
 
 \item{condition.samples}{a character vector containing the variable to be studied for the samples. Possible values are: 'condition' or 'timepoint"}
 
 \item{samples}{a character vector containing the names of biological samples to use. By default, all samples are used}
 
 \item{clusters}{a character vector containing the identifiers of the clusters to use}
-
-\item{plot.interactive}{xxx}
 }
 \value{
 xx

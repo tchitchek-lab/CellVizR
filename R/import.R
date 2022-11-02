@@ -1,6 +1,6 @@
 #' @title Imports of cell expression profiles from TSV or FCS files
 #'
-#' @description This function aims to import acquired cell events into a UMAPdata object.
+#' @description This function aims to import acquired cell events into a Celldata object.
 #'
 #' Input files can be tab-separated or FCS files.
 #' Different transformations can be applied such as logicle, arcsinh or logarithmic.
@@ -15,7 +15,7 @@
 #' @param exclude.markers a character vector providing the marker names to be excluded during the import
 #' @param seed a numeric value providing the random seed to use during stochastic operations
 #'
-#' @return a S4 object of class 'UMAPdata'
+#' @return a S4 object of class 'Celldata'
 #'
 #' @export
 #' @import methods
@@ -71,7 +71,9 @@ import <- function(files,
 
     switch(transform,
            logicle = {
-             trans <- flowCore::estimateLogicle(fcs, channels = flowCore::colnames(fcs), m = 5.5)
+             trans.logicle <- flowCore::logicleTransform(w = 0.5, t = 262144, m = 4.5)
+             marker.trans <- flowCore::colnames(fcs)
+             trans <- flowCore::transformList(marker.trans, trans.logicle)
              fcs <- flowCore::transform(fcs, trans)
            },
            arcsinh = {
@@ -146,7 +148,7 @@ import <- function(files,
     exprs   <- exprs[, !colnames(exprs) %in% exclude.markers]
   }
 
-  res <- methods::new("UMAPdata",
+  res <- methods::new("Celldata",
                       matrix.expression.r = exprs.r,
                       matrix.expression = exprs,
                       samples = samples,
@@ -266,34 +268,34 @@ downsamplingDensity <- function(file,
   return(list("exprs.raw" = exprs.raw, "exprs.sub" = exprs.sub))
 }
 
-#' @title Renames markers within a UMAPdata object
+#' @title Renames markers within a Celldata object
 #'
-#' @description This function aims to rename cell markers stored within a UMAPdata object.
+#' @description This function aims to rename cell markers stored within a Celldata object.
 #'
 #' This function is interesting to remove the names of the fluorochromes or metals recorded during the acquisition process.
 #'
-#' @param UMAPdata a UMAPdata object
+#' @param Celldata a Celldata object
 #' @param marker.names a character vector providing the new marker names to use
 #'
-#' @return a S4 object of class 'UMAPdata'
+#' @return a S4 object of class 'Celldata'
 #'
 #'@export
 #'
-renameMarkers <- function(UMAPdata,
+renameMarkers <- function(Celldata,
                          marker.names) {
 
   if (length(marker.names) != length(unique(marker.names))) {
     stop("The same marker is used twice")
   }
 
-  if (ncol(UMAPdata@matrix.expression) != length(marker.names)) {
+  if (ncol(Celldata@matrix.expression) != length(marker.names)) {
     stop("The number of markers given is different from the initial number of markers")
   }
 
-  colnames(UMAPdata@matrix.expression) <- marker.names
-  validObject(UMAPdata)
+  colnames(Celldata@matrix.expression) <- marker.names
+  validObject(Celldata)
 
-  return(UMAPdata)
+  return(Celldata)
 }
 
 #' @title Assigns meta-information about biological samples
@@ -302,14 +304,14 @@ renameMarkers <- function(UMAPdata,
 #'
 #' Especially, the biological individual, the biological condition and the time point of each sample can be specified for subsequent analyses.
 #'
-#' @param UMAPdata a UMAPdata object
+#' @param Celldata a Celldata object
 #' @param metadata a data.frame containing contextual information about the biological samples. This data.frame must have 3 columns specifying for each sample the associated individual (column named 'individual'), the biological condition (column named 'condition') and the time point (column named 'timepoint')
 #'
-#' @return a S4 object of class 'UMAPdata'
+#' @return a S4 object of class 'Celldata'
 #'
 #' @export
 #'
-assignMetadata <- function(UMAPdata,
+assignMetadata <- function(Celldata,
                           metadata) {
 
   checkmate::qassert(metadata, c("D2", "D3"))
@@ -326,12 +328,12 @@ assignMetadata <- function(UMAPdata,
     stop("colnames 'individual' is missing")
   }
 
-  if (all(unique(UMAPdata@samples) != rownames(metadata))) {
-    stop("sample names (rownames) of the metadata are inconcistent with the sample names stored in the UMAPdata object")
+  if (all(unique(Celldata@samples) != rownames(metadata))) {
+    stop("sample names (rownames) of the metadata are inconcistent with the sample names stored in the Celldata object")
   }
 
-  UMAPdata@metadata <- metadata
+  Celldata@metadata <- metadata
 
-  validObject(UMAPdata)
-  return(UMAPdata)
+  validObject(Celldata)
+  return(Celldata)
 }

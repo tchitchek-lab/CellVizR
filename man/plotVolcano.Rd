@@ -4,16 +4,10 @@
 \alias{plotVolcano}
 \title{Plots of a volcano plot of statistical analysis}
 \usage{
-plotVolcano(
-  UMAPdata,
-  comparison,
-  th.pv = 1.3,
-  th.fc = 1.5,
-  plot.interactive = TRUE
-)
+plotVolcano(Celldata, comparison, th.pv = 1.3, th.fc = 1.5, plot.text = TRUE)
 }
 \arguments{
-\item{UMAPdata}{a UMAPdata object}
+\item{Celldata}{a Celldata object}
 
 \item{comparison}{a character value containing the comparison to study}
 
@@ -21,7 +15,7 @@ plotVolcano(
 
 \item{th.fc}{a numeric value containing the fold-change threshold to use}
 
-\item{plot.interactive}{xxx}
+\item{plot.text}{a boolean value specifing if adds text directly at the plot}
 }
 \value{
 a ggplot2 object

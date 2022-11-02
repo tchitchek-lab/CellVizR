@@ -4,15 +4,15 @@
 \alias{assignMetadata}
 \title{Assigns meta-information about biological samples}
 \usage{
-assignMetadata(UMAPdata, metadata)
+assignMetadata(Celldata, metadata)
 }
 \arguments{
-\item{UMAPdata}{a UMAPdata object}
+\item{Celldata}{a Celldata object}
 
 \item{metadata}{a data.frame containing contextual information about the biological samples. This data.frame must have 3 columns specifying for each sample the associated individual (column named 'individual'), the biological condition (column named 'condition') and the time point (column named 'timepoint')}
 }
 \value{
-a S4 object of class 'UMAPdata'
+a S4 object of class 'Celldata'
 }
 \description{
 This function aims to attach meta-information to each biological sample.

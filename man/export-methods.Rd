@@ -2,15 +2,15 @@
 % Please edit documentation in R/export.R
 \name{export}
 \alias{export}
-\alias{export,UMAPdata-method}
+\alias{export,Celldata-method}
 \title{Exports cell expression profiles to TSV or FCS files}
 \usage{
-export(UMAPdata, filename, clusters = NULL, samples = NULL)
+export(Celldata, filename, clusters = NULL, samples = NULL)
 
-\S4method{export}{UMAPdata}(UMAPdata, filename, clusters = NULL, samples = NULL)
+\S4method{export}{Celldata}(Celldata, filename, clusters = NULL, samples = NULL)
 }
 \arguments{
-\item{UMAPdata}{a UMAPdata object}
+\item{Celldata}{a Celldata object}
 
 \item{filename}{a character value providing the name of the output file}
 
@@ -22,7 +22,7 @@ export(UMAPdata, filename, clusters = NULL, samples = NULL)
 none
 }
 \description{
-Exports cell expresion profiles from a UMAPdata object to a tab-separated or FCS files
+Exports cell expresion profiles from a Celldata object to a tab-separated or FCS files
 
 Cell expression profiles can be exported for a set of given samples and for a set of given cell clusters
 }

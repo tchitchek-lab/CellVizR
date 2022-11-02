@@ -4,10 +4,10 @@
 \alias{QCSmallClusters}
 \title{Computes the percentage of cell clusters with low number of cells}
 \usage{
-QCSmallClusters(UMAPdata, th.size = 50, plot.device = TRUE)
+QCSmallClusters(Celldata, th.size = 50, plot.device = TRUE)
 }
 \arguments{
-\item{UMAPdata}{a UMAPdata object}
+\item{Celldata}{a Celldata object}
 
 \item{th.size}{a numeric value providing the minimum number of cells needed for a cluster to be considered a small cluster}
 

@@ -8,7 +8,7 @@
 #' @details
 #' For each identify cell cluster, the boundaries of cells belonging to this cluster are delineated using a concave hull
 #'
-#' @param UMAPdata a UMAPdata object
+#' @param Celldata a Celldata object
 #' @param space a character value containing the space of clustering method to use. Possible values are: 'manifold' or 'markers'
 #' @param markers a character vector providing the cell markers to use for the manifold generation
 #' @param method a character value containing the name of the clustering method to use. Possible values are: 'kmeans', 'kmedian', 'clara', 'DBSCAN' and 'SOM'
@@ -17,11 +17,11 @@
 #' @param seed a numeric value providing the random seed to use during stochastic operations
 #' @param ... Other arguments passed on to methods
 #'
-#' @return a S4 object of class 'UMAPdata'
+#' @return a S4 object of class 'Celldata'
 #'
 #' @export
 #'
-identifyClusters <- function(UMAPdata,
+identifyClusters <- function(Celldata,
                              space = c("manifold", "markers"),
                              markers = NULL,
                              method = c("kmeans", "kmedian", "clara", "DBSCAN", "SOM"),
@@ -40,8 +40,8 @@ identifyClusters <- function(UMAPdata,
   checkmate::qassert(length.threshold, "N1")
   checkmate::qassert(seed, "N1")
 
-  proj  <- UMAPdata@manifold
-  exprs <- UMAPdata@matrix.expression
+  proj  <- Celldata@manifold
+  exprs <- Celldata@matrix.expression
 
   message("Clustering method is: ", method)
   cat("\n")
@@ -49,7 +49,7 @@ identifyClusters <- function(UMAPdata,
 
   if (space == "manifold") {
     data <- proj
-    clustering.markers <- UMAPdata@manifold.params$markers
+    clustering.markers <- Celldata@manifold.params$markers
   } else if (space == "markers") {
     if (is.null(markers)) {
       markers <- names(exprs)
@@ -80,36 +80,36 @@ identifyClusters <- function(UMAPdata,
   clusters <- as.vector(clusters)
   clusters <- as.character(clusters)
 
-  UMAPdata@identify.clusters <- clusters
+  Celldata@identify.clusters <- clusters
 
   identify.Clusters.params <- list(...,
                                    concavity = concavity,
                                    length.threshold = length.threshold,
                                    clustering.markers = clustering.markers)
-  UMAPdata@identify.clusters.params <- identify.Clusters.params
+  Celldata@identify.clusters.params <- identify.Clusters.params
 
   if (space == "manifold") {
     message("computing cell clusters boundaries...")
-    UMAPdata@concave.hulls <- computeConcaveHulls(proj = proj,
+    Celldata@concave.hulls <- computeConcaveHulls(proj = proj,
                                                   clusters = clusters,
                                                   concavity = concavity,
                                                   length.threshold = length.threshold)
   }
 
-  samples <- UMAPdata@samples
+  samples <- Celldata@samples
 
   message("computing cell cluster count matrix...")
-  UMAPdata@matrix.cell.count <- computeCellCounts(proj = data,
+  Celldata@matrix.cell.count <- computeCellCounts(proj = data,
                                                   samples = samples,
                                                   clusters = clusters)
 
   message("computing cell cluster abundance matrix...")
-  count <- UMAPdata@matrix.cell.count
-  UMAPdata@matrix.abundance <- computeClusterAbundances(count = count)
+  count <- Celldata@matrix.cell.count
+  Celldata@matrix.abundance <- computeClusterAbundances(count = count)
 
-  validObject(UMAPdata)
+  validObject(Celldata)
 
-  return(UMAPdata)
+  return(Celldata)
 }
 
 # @title Internal - Computes the concave hulls for identified cell clusters

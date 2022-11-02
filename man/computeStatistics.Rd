@@ -5,7 +5,7 @@
 \title{Computes differential analysis statistics for cell clusters}
 \usage{
 computeStatistics(
-  UMAPdata,
+  Celldata,
   condition,
   ref.condition,
   test.statistics = c("wilcox.test", "t.test"),
@@ -13,7 +13,7 @@ computeStatistics(
 )
 }
 \arguments{
-\item{UMAPdata}{a UMAPdata object}
+\item{Celldata}{a Celldata object}
 
 \item{condition}{a character value providing the name of the condition to be compared}
 
@@ -24,7 +24,7 @@ computeStatistics(
 \item{paired}{a boolean value indicating if a paired or unpaired comparison should be applied}
 }
 \value{
-a S4 object of class 'UMAPdata'
+a S4 object of class 'Celldata'
 }
 \description{
 This function aims to compute the statistics of Differentially Abundant Clusters 'DAC'.

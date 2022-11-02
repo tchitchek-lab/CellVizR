@@ -4,10 +4,10 @@
 \alias{plotScatter}
 \title{Plots of a scatter plot of marker co-expression}
 \usage{
-plotScatter(UMAPdata, marker1, marker2, samples = NULL, clusters = NULL)
+plotScatter(Celldata, marker1, marker2, samples = NULL, clusters = NULL)
 }
 \arguments{
-\item{UMAPdata}{a UMAPdata object}
+\item{Celldata}{a Celldata object}
 
 \item{marker1}{a character value specifying the first marker to be visualised}
 
