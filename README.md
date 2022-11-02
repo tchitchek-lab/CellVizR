@@ -136,7 +136,7 @@ plotCellCounts(UMAPV,
                sort = TRUE)
 ```
 
-![](README_files/figure-markdown_github/plotCellCounts-1.png)
+![](README/figure-markdown_github/plotCellCounts-1.png)
 
 ``` r
 # Possible to make it interactive
@@ -307,7 +307,7 @@ plotManifold(UMAPV,
              markers = "density")
 ```
 
-![](README_files/figure-markdown_github/PlotManifold-1.png)
+![](README/figure-markdown_github/PlotManifold-1.png)
 
 If the name of the marker is used, then the intensity of marker
 expression, overlaid on the manifold (e.g. CD8), will be shown as below:
@@ -318,7 +318,7 @@ plotManifold(UMAPV,
              markers = "CD8")
 ```
 
-![](README_files/figure-markdown_github/PlotManifold2-1.png)
+![](README/figure-markdown_github/PlotManifold2-1.png)
 
 It is possible to specify the biological samples to be displayed in the
 representation using the `samples` argument as below:
@@ -330,7 +330,7 @@ plotManifold(UMAPV,
              samples = "V1_10105LA")
 ```
 
-![](README_files/figure-markdown_github/PlotManifold3-1.png)
+![](README/figure-markdown_github/PlotManifold3-1.png)
 
 If the name of the clusters is used, the the clusters number will be
 shown as below:
@@ -341,7 +341,7 @@ plotManifold(UMAPV,
              markers = "clusters")
 ```
 
-![](README_files/figure-markdown_github/PlotManifold4-1.png)
+![](README/figure-markdown_github/PlotManifold4-1.png)
 
 ### 2.5.2 Heatmap of cell marker expressions (plotHmExpressions)
 
@@ -363,7 +363,7 @@ hm.exp <- plotHmExpressions(UMAPV)
 gridExtra::grid.arrange(hm.exp)
 ```
 
-![](README_files/figure-markdown_github/PlotHMExpressions-1.png) It is
+![](README/figure-markdown_github/PlotHMExpressions-1.png) It is
 possible to customize the `plotHmExpressions` with these parameters:
 
 -   the `markers` argument, which specifies the markers to be displayed
@@ -381,7 +381,7 @@ hm.exp <- plotHmExpressions(UMAPV,
 gridExtra::grid.arrange(hm.exp)
 ```
 
-![](README_files/figure-markdown_github/plotHmExpressions2-1.png)
+![](README/figure-markdown_github/plotHmExpressions2-1.png)
 
 ### 2.5.3 Representation of phenotype of identified cell clusters (plotPhenoClusters)
 
@@ -419,7 +419,7 @@ plotPhenoClusters(UMAPV,
 
     ## Picking joint bandwidth of 0.0461
 
-![](README_files/figure-markdown_github/plotPhenoClusters-1.png)
+![](README/figure-markdown_github/plotPhenoClusters-1.png)
 
 ### 2.5.4 Representation of phenotype of cell clusters using parallels coordinates (plotCoordinates)
 
@@ -436,7 +436,7 @@ plotCoordinates(UMAPV,
                 clusters = "58")
 ```
 
-![](README_files/figure-markdown_github/plotCoordinates-1.png)
+![](README/figure-markdown_github/plotCoordinates-1.png)
 
 ``` r
 # Possible to make it interactive
@@ -509,7 +509,7 @@ plotVolcano(UMAPV,
             plot.text = TRUE)
 ```
 
-![](README_files/figure-markdown_github/plotVolcano-1.png)
+![](README/figure-markdown_github/plotVolcano-1.png)
 
 ``` r
 # Possible to make it interactive
@@ -537,7 +537,7 @@ hm.stats <- plotHmStatistics(UMAPV,
 gridExtra::grid.arrange(hm.stats)
 ```
 
-![](README_files/figure-markdown_github/plotHmStatistics-1.png)
+![](README/figure-markdown_github/plotHmStatistics-1.png)
 
 ## 3.3 Visualisation of cell cluster abundances
 
@@ -571,7 +571,7 @@ hm.abun <- plotHmAbundances(UMAPV,
 gridExtra::grid.arrange(hm.abun)
 ```
 
-![](README_files/figure-markdown_github/plotHmAbundances-1.png)
+![](README/figure-markdown_github/plotHmAbundances-1.png)
 
 ### 3.3.2 Cell cluster abundances using a boxplot representation (plotBoxplot)
 
@@ -596,7 +596,7 @@ plotBoxplot(UMAPV,
             test.statistics = "wilcox.test")
 ```
 
-![](README_files/figure-markdown_github/plotBoxplot-1.png)
+![](README/figure-markdown_github/plotBoxplot-1.png)
 
 ``` r
 # Possible to make it interactive
@@ -632,7 +632,7 @@ plotMDS(UMAPV,
         plot.text = TRUE)
 ```
 
-![](README_files/figure-markdown_github/plotMDS-1.png)
+![](README/figure-markdown_github/plotMDS-1.png)
 
 ``` r
 # Possible to make it interactive
@@ -664,7 +664,7 @@ plotPCA(UMAPV,
         plot.text = TRUE)
 ```
 
-![](README_files/figure-markdown_github/plotPCA-1.png)
+![](README/figure-markdown_github/plotPCA-1.png)
 
 ``` r
 # Possible to make it interactive
@@ -800,7 +800,7 @@ QCS <- QCSmallClusters(UMAPV,
                        plot.device = TRUE)
 ```
 
-![](README_files/figure-markdown_github/QCSmallClusters-1.png)
+![](README/figure-markdown_github/QCSmallClusters-1.png)
 
     ##      V1_10105LA V1_10209HE V1_10306CG V1_10503DC V1_11204CD V1_20208AA
     ## [1,]       TRUE       TRUE       TRUE      FALSE      FALSE       TRUE
@@ -871,7 +871,7 @@ QCU <- QCUniformClusters(UMAPV,
                          plot.device = TRUE)
 ```
 
-![](README_files/figure-markdown_github/QCUniformClusters-1.png)
+![](README/figure-markdown_github/QCUniformClusters-1.png)
 
     ##   clusters markers    pv_dip       IQR passed
     ## 1        1    CD16 0.9969386 0.2651895   TRUE
