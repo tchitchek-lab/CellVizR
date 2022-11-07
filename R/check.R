@@ -59,9 +59,9 @@ QCMarkerRanges <- function(files,
   for (file in files) {
 
     fcs <- flowCore::read.FCS(file)
-    trans <- flowCore::estimateLogicle(fcs,
-                                       channels = flowCore::colnames(fcs),
-                                       m = 5.5)
+    trans.logicle <- flowCore::logicleTransform(w = 0.5, t = 262144, m = 4.5)
+    marker.trans <- flowCore::colnames(fcs)
+    trans <- flowCore::transformList(marker.trans, trans.logicle)
     fcs <- flowCore::transform(fcs, trans)
     data.expr <- flowCore::exprs(fcs)
     data.expr <- data.expr[, colnames(data.expr) %in%
