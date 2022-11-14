@@ -4,14 +4,14 @@ Cytometry data are now classically analyzed using non-linear
 dimensionality reduction approaches, but it is still challenging to
 easily handle the whole pipeline of computational analyses.
 
-CellVizR allows the statistical analysis and visualization of
+UMAPVizR allows the statistical analysis and visualization of
 high-dimensional cytometry data using manifold algorithms and clustering
 methods. Especially, several key analysis steps are available to perform
 data importation, manifold generation, cell cluster identification,
 statistical analyses, cluster visualization, and quality controls of
 generated results.
 
-CellVizR can import cell events from FCS or txt file formats using
+UMAPVizR can import cell events from FCS or txt file formats using
 different transformation, down-sampling, and normalization approaches.
 Manifold representations can be generated using the UMAP, tSNE or
 LargeVis algorithms to project cell events into a lower dimensionality
@@ -25,15 +25,15 @@ Statistical results can be visualized using volcano plots or heatmaps.
 
 ## 1.1 Workflow overview
 
-In the `CellVizR` workflow, an S4 object is created to store data and
+In the `UMAPVizR` workflow, an S4 object is created to store data and
 sample information is implemented for analysis. This stored information
 will allow performing the statistics and visualization of the dataset.
 
 <img src="README/figures/workflow.png" width="90%" style="display: block; margin: auto;" />
 
-*Figure 1: Workflow of CellVizR*
+*Figure 1: Workflow of UMAPVizR*
 
-*The analysis in CellVizR consists of 5 main steps: (1) importing the
+*The analysis in UMAPVizR consists of 5 main steps: (1) importing the
 data in FCS or txt format resulting in the creation of an S4 UMAPdata
 object; (2) assigning the metadata (sample information) into the
 UMAPdata object; and (3) generating the manifold and clustering. The
@@ -43,13 +43,13 @@ analyzed using statistical approaches.*
 ## 1.2 Input data
 
 The following conditions must be respected to analyze data with
-`CellVizR`:
+`UMAPVizR`:
 
 -   **Type and format of data**: The cytometry data that can be analyzed
-    and integrated with `CellVizR` are flow, mass or spectral cytometry
+    and integrated with `UMAPVizR` are flow, mass or spectral cytometry
     data. The input files can be in standard cytometry format (FCS) or
     txt format.
--   **Compensation**: Before starting an analysis with `CellVizR`,
+-   **Compensation**: Before starting an analysis with `UMAPVizR`,
     performing the compensation steps for flow cytometry and spectral
     data with conventional software (FlowJo, Kaluza, etc) is necessary.
 -   **Cleaning and gating**: It is recommended to remove debris, dead
@@ -59,7 +59,7 @@ The following conditions must be respected to analyze data with
 
 # 2. Quick start
 
-In this section, the main analysis steps of `CellVizR` are presented.
+In this section, the main analysis steps of `UMAPVizR` are presented.
 
 These steps cover several aspects, such as:
 
@@ -70,25 +70,25 @@ These steps cover several aspects, such as:
 
 ## 2.1 Installation
 
-To download `CellVizR` it is required `devtools`:
+To download `UMAPVizR` it is required `devtools`:
 
 ``` r
 install.packages("devtools")
 library("devtools")
-install_github("tchitchek-lab/CellVizR")
+install_github("tchitchek-lab/UMAPVizR")
 ```
 
-The `CellVizR` package automatically downloads the necessary packages
+The `UMAPVizR` package automatically downloads the necessary packages
 for its operation such as: `coin`, `concaveman`, `dendextend`,
 `flowCore`, `ggdendro`, `gglot2`, `gridExtra`, `MASS`, `plyr`,
 `reshape`, `reshape2`, `rstatix`, `Rtsne`, `scales`, `stats`, `stringr`,
 `uwot`. If not, the packages are available on the `CRAN`, except
 `flowCore` which is available on `Bioconductor`.
 
-Once installed, `CellVizR` can be loaded using the following command:
+Once installed, `UMAPVizR` can be loaded using the following command:
 
 ``` r
-library("CellVizR")
+library("UMAPVizR")
 ```
 
 ## 2.2 Importing cell expression profiles (import)
@@ -679,7 +679,7 @@ Other possible parameters to customize the `plotPCA` are:
 
 # 4. Quality control
 
-The `CellVizR` package allows to perform quality control of generated
+The `UMAPVizR` package allows to perform quality control of generated
 results.
 
 The quality control can be performed:
