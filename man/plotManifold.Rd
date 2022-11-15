@@ -8,6 +8,7 @@ plotManifold(
   Celldata,
   markers = "density",
   samples = NULL,
+  observation = c("individual", "condition", "timepoint"),
   scale = FALSE,
   quant.low = 0.05,
   quant.high = 0.95
@@ -19,6 +20,8 @@ plotManifold(
 \item{markers}{a character value providing the name of the marker to use for the colouring. By default, cells are colored based on their local density}
 
 \item{samples}{a character vector containing the names of biological samples to use}
+
+\item{observation}{a character value containing the parameters to use}
 
 \item{scale}{a boolean value specifing if expression calue must be rescaled}
 
