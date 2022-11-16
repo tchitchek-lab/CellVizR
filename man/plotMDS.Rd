@@ -6,6 +6,7 @@
 \usage{
 plotMDS(
   Celldata,
+  matrix = c("abundance", "expression"),
   levels = c("clusters", "samples"),
   condition.samples = c("condition", "timepoint"),
   clusters = NULL,
@@ -15,6 +16,8 @@ plotMDS(
 }
 \arguments{
 \item{Celldata}{a Celldata object}
+
+\item{matrix}{a character vector containing the matrix to be studied. Possible values are: 'abundance' or 'expression'}
 
 \item{levels}{a character value containing the variable to be displayed. Possible values are: 'clusters' or 'samples'}
 

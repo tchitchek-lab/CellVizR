@@ -196,3 +196,51 @@ computeClusterAbundances <- function(count) {
 
   return(matrix.abundance)
 }
+
+#' @title Create Metaclusters
+#'
+#' @description This function aims to xxx
+#'
+#' @param Celldata a Celldata object
+#' @param clusters a character vector containing the identifiers of the clusters to use. By default, all clusters are used
+#' @param metaclusters a character value containing the name of metaclusters 
+#'
+#' @return xx
+#'
+#' @export
+#'
+CreateMetaclusters <- function(Celldata, 
+                               clusters,
+                               metaclusters) {
+  # browser()
+  # while (TRUE) {}
+  
+  checkmate::qassert(clusters, "S+")
+  checkmate::qassert(metaclusters, "S1")
+  
+  identify.clusters <- Celldata@identify.clusters
+  
+  matrix.cell.count <- Celldata@matrix.cell.count
+  matrix.cell.count <- cbind(matrix.cell.count, 
+                             "clusters" = rownames(matrix.cell.count))
+  
+  for (i in clusters) {
+    print(i)
+    identify.clusters[identify.clusters == i] <- metaclusters
+    matrix.cell.count$clusters[matrix.cell.count$clusters == i] <- metaclusters
+  }
+  
+  matrix.cell.count <- plyr::ddply(matrix.cell.count, "clusters", function(x){
+    x$clusters = NULL
+    apply(x,2,sum)
+  })
+  
+  rownames(matrix.cell.count) <- matrix.cell.count$clusters
+  matrix.cell.count$clusters <- NULL
+  
+  Celldata@identify.clusters <- identify.clusters
+  Celldata@matrix.cell.count <- matrix.cell.count
+  Celldata@matrix.abundance <- computeClusterAbundances(count = matrix.cell.count)
+  
+  return(Celldata)
+}

@@ -430,17 +430,6 @@ plotManifold <- function(Celldata,
     }
   }
   
-  # if (!is.null(samples)) {
-  #   proj.ref <- proj
-  #   proj <- proj[Celldata@samples %in% samples, ]
-  #   plot <- plot +
-  #     ggplot2::geom_point(data = proj.ref,
-  #                         ggplot2::aes_string(x = "dim1",
-  #                                             y = "dim2"),
-  #                         color = "gray", size = 0.0001) +
-  #     ggnewscale::new_scale_color()
-  # }
-  
   plot <- plot +
     ggplot2::geom_point(data = proj,
                         ggplot2::aes_string(x = "dim1",
@@ -682,6 +671,7 @@ plotPCA <- function(Celldata,
 #' The representation can be restricted to specific cell clusters and samples. In addition, it is possible to choose the levels displayed, clusters or samples.
 #'
 #' @param Celldata a Celldata object
+#' @param matrix a character vector containing the matrix to be studied. Possible values are: 'abundance' or 'expression'
 #' @param levels a character value containing the variable to be displayed. Possible values are: 'clusters' or 'samples'
 #' @param condition.samples a character vector containing the variable to be studied for the samples. Possible values are: 'condition' or 'timepoint"
 #' @param clusters a character vector containing the identifiers of the clusters to use. By default, all clusters are used
@@ -693,6 +683,7 @@ plotPCA <- function(Celldata,
 #' @export
 #'
 plotMDS <- function(Celldata,
+                    matrix = c("abundance","expression"),
                     levels = c("clusters", "samples"),
                     condition.samples = c("condition", "timepoint"),
                     clusters = NULL,
@@ -701,25 +692,65 @@ plotMDS <- function(Celldata,
   
   levels <- match.arg(levels)
   condition.samples <- match.arg(condition.samples)
+  matrix <- match.arg(matrix)
   
   checkmate::qassert(levels, "S1")
   checkmate::qassert(condition.samples, "S1")
-  checkmate::qassert(clusters, c("0", "S*"))
-  checkmate::qassert(samples, c("0", "S*"))
+  checkmate::qassert(matrix, "S1")
+  checkmate::qassert(clusters, c("0", "S+"))
+  checkmate::qassert(samples, c("0", "S+"))
   checkmate::qassert(plot.text, "B1")
   
   if (levels != "clusters" && levels != "samples") {
     stop("The levels name is invalid")
   }
   
-  matrix.abundance <- Celldata@matrix.abundance
+  if (matrix != "abundance" && matrix != "expression") {
+    stop("The matrix name is invalid")
+  }
   
-  if (levels == "clusters") {
+  if (matrix == "abundance") {
+    data.matrix <- Celldata@matrix.abundance
     if (!is.null(clusters)) {
-      matrix.abundance <- matrix.abundance[rownames(matrix.abundance) %in% clusters, ]
+      data.matrix <- data.matrix[rownames(data.matrix) %in% clusters, ]
     }
-    
-    dist.clusters <- stats::dist(matrix.abundance)
+    if (!is.null(samples)) {
+      data.matrix <- data.matrix[, names(data.matrix) %in% samples]
+    }
+  } else {
+    data.matrix <- cbind(UMAPV@matrix.expression, 
+                         "samples" = UMAPV@samples,
+                         "clusters" = UMAPV@identify.clusters)
+    if (!is.null(clusters)){
+      data.matrix = data.matrix[data.matrix$clusters %in% clusters,]
+    }
+    if (!is.null(samples)) {
+      data.matrix = data.matrix[data.matrix$samples %in% samples,]
+    }
+    if (levels == "clusters") {
+      data.matrix$samples <- NULL
+      data.matrix <- plyr::ddply(data.matrix, "clusters", function(x) {
+        x$clusters <- NULL
+        apply(x, 2, stats::median)
+      })
+      rownames(data.matrix) <- data.matrix$clusters
+      data.matrix$clusters <- NULL
+    } else {
+      data.matrix$clusters <- NULL
+      data.matrix <- plyr::ddply(data.matrix, "samples", function(x) {
+        x$samples <- NULL
+        apply(x, 2, stats::median)
+      })
+      
+      rownames(data.matrix) <- data.matrix$samples
+      data.matrix$samples <- NULL
+      data.matrix <- t(data.matrix)
+    }
+  }
+
+  if (levels == "clusters") {
+
+    dist.clusters <- stats::dist(data.matrix)
     fit1 <- MASS::isoMDS(dist.clusters, k = 2, trace = FALSE)
     
     x1 <- fit1$points[, 1]
@@ -731,7 +762,7 @@ plotMDS <- function(Celldata,
     proj.clusters <- data.frame(x = x1,
                                 y = y1)
     
-    proj.clusters$clusters <- rownames(matrix.abundance)
+    proj.clusters$clusters <- rownames(data.matrix)
     
     plot <- ggplot2::ggplot() +
       ggplot2::labs(title = "Multidimensional Scaling",
@@ -755,11 +786,8 @@ plotMDS <- function(Celldata,
     }
     
   } else {
-    if (!is.null(samples)) {
-      matrix.abundance <- matrix.abundance[, names(matrix.abundance) %in% samples]
-    }
-    
-    dist.samples <- stats::dist(t(matrix.abundance))
+
+    dist.samples <- stats::dist(t(data.matrix))
     
     fit2 <- MASS::isoMDS(dist.samples, k = 2, trace = FALSE)
     x2 <- fit2$points[, 1]
@@ -771,7 +799,7 @@ plotMDS <- function(Celldata,
     proj.samples <- data.frame(x = x2,
                                y = y2)
     
-    proj.samples$samples <- colnames(matrix.abundance)
+    proj.samples$samples <- colnames(data.matrix)
     
     proj.samples <- merge(proj.samples, Celldata@metadata, by = "row.names")
     proj.samples$Row.names <- NULL
@@ -1190,8 +1218,16 @@ plotCoordinates <- function(Celldata,
   cluster <- Celldata@identify.clusters
   
   proj <- cbind(sample, cluster, matrix.exp)
-  
   colnames(proj) <- c("samples", "clusters", colnames(matrix.exp))
+  
+  melt.matrix <- reshape::melt(matrix.exp,variables="id")
+  
+  quantile <- plyr::ddply(melt.matrix, "variable",
+                          function(x) {
+                            quantile(x$value,
+                                     probs = c(0.05, 0.95),
+                                     na.rm = TRUE)})
+  colnames(quantile) <- c("marker", "lower.bound", "upper.bound")
   
   if (!is.null(samples)) {
     proj <- proj[proj$samples %in% samples, ]
@@ -1213,13 +1249,6 @@ plotCoordinates <- function(Celldata,
                        function(df) {
                          mean(df$value, na.rm = TRUE)})
   colnames(means) <- c("marker", "means")
-  
-  quantile <- plyr::ddply(proj, "variable",
-                          function(x) {
-                            quantile(x$value,
-                                     probs = c(0.05, 0.95),
-                                     na.rm = TRUE)})
-  colnames(quantile) <- c("marker", "lower.bound", "upper.bound")
   
   max.value <- max(c(proj$value, quantile$upper.bound), na.rm = TRUE)
   min.value <- min(c(proj$value, quantile$lower.bound), na.rm = TRUE)
@@ -1303,18 +1332,21 @@ plotLDA <- function(Celldata,
                                            clusters, ]
   }
   
-  values.condition <- matrix.abundance[, colnames(matrix.abundance) %in%
-                                         condition, drop = FALSE]
-  values.ref.condition <- matrix.abundance[, colnames(matrix.abundance) %in%
-                                             ref.condition, drop = FALSE]
+  values.condition <- matrix.abundance[, grepl(condition, colnames(matrix.abundance)),
+                                       drop = TRUE]
+  values.ref.condition <- matrix.abundance[, grepl(ref.condition, colnames(matrix.abundance)),
+                                           drop = TRUE]
   
   grouping <- c(rep("condition", ncol(values.condition)),
                 rep("ref.condition", ncol(values.ref.condition)))
   
   matrix.abundance <- cbind(values.condition, values.ref.condition)
+  matrix.abundance <- t(matrix.abundance)
   
-  model <- MASS::lda(x = t(matrix.abundance), grouping = grouping)
-  predict <- stats::predict(model, newdata = t(matrix.abundance))
+  matrix.abundance <- matrix.abundance[,apply(matrix.abundance,2,sum)!=0]
+  
+  model <- MASS::lda(x = matrix.abundance, grouping = grouping)
+  predict <- stats::predict(model, newdata = matrix.abundance)
   
   if (levels == "predictions") {
     
