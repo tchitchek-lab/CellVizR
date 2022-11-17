@@ -456,8 +456,8 @@ plotManifold <- function(Celldata,
   } else if (markers == "clusters") {
     proj.center <- plyr::ddply(proj, "clusters",
                                function(x) {
-                                 c(UMAP1 = stats::median(x$UMAP1),
-                                   UMAP2 = stats::median(x$UMAP2))})
+                                 c(dim1 = stats::median(x$dim1),
+                                   dim2 = stats::median(x$dim2))})
     
     plot <- plot + ggplot2::geom_text(data = proj.center,
                                       ggplot2::aes_string(x = "dim1",

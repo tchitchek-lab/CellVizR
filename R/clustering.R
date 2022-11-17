@@ -225,7 +225,6 @@ CreateMetaclusters <- function(Celldata,
                              "clusters" = rownames(matrix.cell.count))
   
   for (i in clusters) {
-    print(i)
     identify.clusters[identify.clusters == i] <- metaclusters
     matrix.cell.count$clusters[matrix.cell.count$clusters == i] <- metaclusters
   }
