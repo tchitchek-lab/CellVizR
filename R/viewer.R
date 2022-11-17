@@ -349,16 +349,16 @@ plotPhenoClusters <- function(Celldata,
 plotManifold <- function(Celldata,
                          markers = "density",
                          samples = NULL,
-                         observation = c("individual", "condition", "timepoint"),
+                         condition = NULL,
+                         timepoint = NULL,
                          scale = FALSE,
                          quant.low = 0.05,
                          quant.high = 0.95) {
   
-  observation <- match.arg(observation)
-  
   checkmate::qassert(markers, "S1")
   checkmate::qassert(samples, c("0", "S*"))
-  checkmate::qassert(observation, "S1")
+  checkmate::qassert(condition, c("0", "S*"))
+  checkmate::qassert(timepoint, c("0", "S*"))
   checkmate::qassert(scale, "B1")
   checkmate::qassert(quant.low, "N1")
   checkmate::qassert(quant.high, "N1")
@@ -401,35 +401,24 @@ plotManifold <- function(Celldata,
   
   plot <- ggplot2::ggplot()
   
+  if(!is.null(samples) || !is.null(condition) || !is.null(timepoint)){ 
+    proj.ref <- proj
+    plot <- plot +
+      ggplot2::geom_point(data = proj.ref,
+                          ggplot2::aes_string(x = "dim1",
+                                              y = "dim2"),
+                          color = "gray", size = 0.0001) +
+      ggnewscale::new_scale_color()
+  }
+  
   if(!is.null(samples)) {
-    if (observation == "condition") {
-      proj.ref <- proj
-      proj <- proj[proj$condition %in% samples, ]
-      plot <- plot +
-        ggplot2::geom_point(data = proj.ref,
-                            ggplot2::aes_string(x = "dim1",
-                                                y = "dim2"),
-                            color = "gray", size = 0.0001) +
-        ggnewscale::new_scale_color()
-    } else if (observation == "timepoint") {
-      proj.ref <- proj
-      proj <- proj[proj$timepoint %in% samples, ]
-      plot <- plot +
-        ggplot2::geom_point(data = proj.ref,
-                            ggplot2::aes_string(x = "dim1",
-                                                y = "dim2"),
-                            color = "gray", size = 0.0001) +
-        ggnewscale::new_scale_color()
-    } else {
-      proj.ref <- proj
-      proj <- proj[proj$individual %in% samples, ]
-      plot <- plot +
-        ggplot2::geom_point(data = proj.ref,
-                            ggplot2::aes_string(x = "dim1",
-                                                y = "dim2"),
-                            color = "gray", size = 0.0001) +
-        ggnewscale::new_scale_color()
-    }
+    proj <- proj[proj$individual %in% samples, ]
+  }
+  if(!is.null(condition)) {
+    proj <- proj[proj$condition %in% condition, ]
+  }
+  if(!is.null(timepoint)) {
+    proj <- proj[proj$timepoint %in% timepoint, ]
   }
   
   plot <- plot +

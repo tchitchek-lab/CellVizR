@@ -8,7 +8,8 @@ plotManifold(
   Celldata,
   markers = "density",
   samples = NULL,
-  observation = c("individual", "condition", "timepoint"),
+  condition = NULL,
+  timepoint = NULL,
   scale = FALSE,
   quant.low = 0.05,
   quant.high = 0.95
@@ -21,13 +22,13 @@ plotManifold(
 
 \item{samples}{a character vector containing the names of biological samples to use}
 
-\item{observation}{a character value containing the parameters to use}
-
 \item{scale}{a boolean value specifing if expression calue must be rescaled}
 
 \item{quant.low}{a numeric value providing the number of first quantile}
 
 \item{quant.high}{a numeric value providing the number of last quantile}
+
+\item{observation}{a character value containing the parameters to use}
 }
 \value{
 a ggplot2 object
