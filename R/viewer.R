@@ -394,8 +394,10 @@ plotManifold <- function(Celldata,
   }
   
   proj <- cbind(proj, Celldata@samples)
-  colnames(proj) <- c("dim1", "dim2", "clusters", "value", "individual")
-  proj <- base::merge(proj, metadata, by = "individual")
+  colnames(proj) <- c("dim1", "dim2", "clusters", "value", "samples")
+  metadata$samples <- rownames(metadata)
+  proj <- base::merge(proj, metadata, by = "samples")
+  proj$samples <- NULL
   
   plot <- ggplot2::ggplot()
   
@@ -718,9 +720,9 @@ plotMDS <- function(Celldata,
       data.matrix <- data.matrix[, names(data.matrix) %in% samples]
     }
   } else {
-    data.matrix <- cbind(UMAPV@matrix.expression, 
-                         "samples" = UMAPV@samples,
-                         "clusters" = UMAPV@identify.clusters)
+    data.matrix <- cbind(Celldata@matrix.expression, 
+                         "samples" = Celldata@samples,
+                         "clusters" = Celldata@identify.clusters)
     if (!is.null(clusters)){
       data.matrix = data.matrix[data.matrix$clusters %in% clusters,]
     }
