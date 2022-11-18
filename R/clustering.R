@@ -209,7 +209,7 @@ computeClusterAbundances <- function(count) {
 #'
 #' @export
 #'
-CreateMetaclusters <- function(Celldata, 
+createMetaclusters <- function(Celldata, 
                                clusters,
                                metaclusters) {
 

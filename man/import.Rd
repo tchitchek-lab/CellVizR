@@ -34,7 +34,7 @@ import(
 a S4 object of class 'Celldata'
 }
 \description{
-This function aims to import acquired cell events into a Celldata object.
+This function aims to import acquired cell events from cytometric profiling into a Celldata object.
 
 Input files can be tab-separated or FCS files.
 Different transformations can be applied such as logicle, arcsinh or logarithmic.

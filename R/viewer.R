@@ -364,7 +364,7 @@ plotManifold <- function(Celldata,
     stop("Manifold is null")
   }
   
-  colnames(proj) <- c("UMAP1", "UMAP2")
+  colnames(proj) <- c("dim1", "dim2")
   clusters <- Celldata@identify.clusters
   
   if (length(clusters) != 0) {
@@ -394,16 +394,16 @@ plotManifold <- function(Celldata,
     proj <- proj[Celldata@samples %in% samples, ]
     plot <- plot +
       ggplot2::geom_point(data = proj.ref,
-                          ggplot2::aes_string(x = "UMAP1",
-                                              y = "UMAP2"),
+                          ggplot2::aes_string(x = "dim1",
+                                              y = "dim2"),
                           color = "gray", size = 0.0001) +
       ggnewscale::new_scale_color()
   }
   
   plot <- plot +
     ggplot2::geom_point(data = proj,
-                        ggplot2::aes_string(x = "UMAP1",
-                                            y = "UMAP2",
+                        ggplot2::aes_string(x = "dim1",
+                                            y = "dim2",
                                             color = "value"),
                         size = 0.0001)
   
@@ -425,12 +425,12 @@ plotManifold <- function(Celldata,
     
     proj.center <- plyr::ddply(proj, "clusters",
                                function(x) {
-                                 c(UMAP1 = stats::median(x$UMAP1),
-                                   UMAP2 = stats::median(x$UMAP2))})
+                                 c(dim1 = stats::median(x$dim1),
+                                   dim2 = stats::median(x$dim2))})
     
     plot <- plot + ggplot2::geom_text(data = proj.center,
-                                      ggplot2::aes_string(x = "UMAP1",
-                                                          y = "UMAP2",
+                                      ggplot2::aes_string(x = "dim1",
+                                                          y = "dim2",
                                                           label = "clusters"),
                                       size = 3) +
       ggplot2::guides(color = "none") +
@@ -451,6 +451,8 @@ plotManifold <- function(Celldata,
     ggplot2::scale_y_continuous(expand = c(0.01, 0.01))
   
   plot <- plot +
+    ggplot2::xlab(paste0(Celldata@manifold.params$type, "1")) + 
+    ggplot2::ylab(paste0(Celldata@manifold.params$type, "2")) + 
     ggplot2::theme_bw() +
     ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5),
                    aspect.ratio = 1,

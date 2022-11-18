@@ -1,6 +1,6 @@
 #' @title Imports of cell expression profiles from TSV or FCS files
 #'
-#' @description This function aims to import acquired cell events into a Celldata object.
+#' @description This function aims to import acquired cell events from cytometric profiling into a Celldata object.
 #'
 #' Input files can be tab-separated or FCS files.
 #' Different transformations can be applied such as logicle, arcsinh or logarithmic.
@@ -158,6 +158,19 @@ import <- function(files,
   return(res)
 }
 
+#' @title Imports of cell expression profiles from MTX files
+#'
+#' @description This function aims to import acquired cell events from single-cell transcriptomic profiling into a Celldata object.
+#'
+#'
+#' @param mtx a character vector specifying the path of the mtx file to load
+#' @param cells a character vector specifying the format of the mtx file to load
+#' @param features a character vector specifying the format of the mtx file to load
+#'
+#' @return a S4 object of class 'Celldata'
+#'
+#' @export
+#' @import methods
 importMTX <- function(mtx      = mtx,
                       cells    = cells,
                       features = features) {
@@ -166,8 +179,8 @@ importMTX <- function(mtx      = mtx,
 							             cells    = cells,
 							             features = features)
 							 
-	seurat_object <- CreateSeuratObject(counts = expression_matrix)
-	counts        <- GetAssayData(object = seurat_object[["RNA"]], slot = "counts")
+	seurat_object <- Seurat:::CreateSeuratObject(counts = expression_matrix)
+	counts        <- Seurat:::GetAssayData(object = seurat_object[["RNA"]], slot = "counts")
 	counts        <- t(as.matrix(x = log(counts + 1)))
 	counts        <- counts[order(rownames(counts)),]
 	counts        <- data.frame(counts)

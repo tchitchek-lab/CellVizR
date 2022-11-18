@@ -34,9 +34,9 @@ will allow performing the statistics and visualization of the dataset.
 *Figure 1: Workflow of CellVizR*
 
 *The analysis in CellVizR consists of 5 main steps: (1) importing the
-data in FCS or txt format resulting in the creation of an S4 Celldata
+data in FCS or txt format resulting in the creation of an S4 UMAPdata
 object; (2) assigning the metadata (sample information) into the
-Celldata object; and (3) generating the manifold and clustering. The
+UMAPdata object; and (3) generating the manifold and clustering. The
 computed results can be (4) visualized in different manners and (5)
 analyzed using statistical approaches.*
 
@@ -64,7 +64,7 @@ In this section, the main analysis steps of `CellVizR` are presented.
 These steps cover several aspects, such as:
 
 -   Installing the package
--   Importing the data and creating an `Celldata` object
+-   Importing the data and creating an `UMAPdata` object
 -   Creating the manifold and clustering
 -   Generating basic visualization
 
@@ -79,11 +79,10 @@ install_github("tchitchek-lab/CellVizR")
 ```
 
 The `CellVizR` package automatically downloads the necessary packages
-for its operation such as: `coin`, `concaveman`, `dendextend`,
-`flowCore`, `ggdendro`, `gglot2`, `gridExtra`, `MASS`, `plyr`,
-`reshape`, `reshape2`, `rstatix`, `Rtsne`, `scales`, `stats`, `stringr`,
-`uwot`. If not, the packages are available on the `CRAN`, except
-`flowCore` which is available on `Bioconductor`.
+for its operation such as:
+`checkmate`,`cluster`,`concaveman`,`cowplot`,`dbscan`,`dendextend`,`diptest`,`FactoMineR`,`flowCore`,`FNN`,`ggdendro`,`ggiraph`,`ggnewscale`,`ggplot2`,`ggpubr`,`ggrepel`,`ggridges`,`Gmedian`,`gridExtra`,`gtools`,`kohonen`,`MASS`,`plyr`,`reshape`,`reshape2`,`rstatix`,`Rtsne`,`scales`,`spade`,`stats`,`stringr`,`uwot`,`viridis`.
+If not, the packages are available on the `CRAN`, except `flowCore`
+which is available on `Bioconductor`.
 
 Once installed, `CellVizR` can be loaded using the following command:
 
@@ -94,7 +93,7 @@ library("CellVizR")
 ## 2.2 Importing cell expression profiles (import)
 
 The `import` function allows importing the expression matrix of the
-cytometry files into a `Celldata` object.
+cytometry files into a `UMAPdata` object.
 
 The files to be loaded must be in FCS or txt format. The `import`
 function is used as below:
@@ -104,14 +103,14 @@ function is used as below:
 files <- list.files("C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/", 
                     pattern = "fcs", full.names = TRUE)
 
-# import the FCS files into a Celldata object 
+# import the FCS files into a UMAPdata object 
 DataCell <- import(files, 
-                filetype = "fcs", 
-                transform = "logicle", 
-                exclude.markers = c("FS-H", "FS-A", "FS-W", "SS-H", 
-                                    "SS-A", "SS-W", "Time"), 
-                d.method = "uniform",
-                parameters.method = list("target.percent" = 0.1))
+                   filetype = "fcs", 
+                   transform = "logicle", 
+                   exclude.markers = c("FS-H", "FS-A", "FS-W", "SS-H", 
+                                       "SS-A", "SS-W", "Time"), 
+                   d.method = "uniform",
+                   parameters.method = list("target.percent" = 0.1))
 ```
 
 The main arguments of the `import` function are:
@@ -125,6 +124,14 @@ The main arguments of the `import` function are:
     transform for mass cytometry,
 -   the `exclude_markers` argument, which is used to remove the
     irrelevant channels
+-   the `d.method` argument, which allows choosing the type of
+    downsampling to apply to the data. Possible values are: `none`,
+    `uniform` and `density`
+-   the `parameters.method` argument, which allows choosing the
+    parameters for downsampling to apply to the data. Possible values
+    are: `target.number`, `target.percent`. If, the downsampling method
+    used is `density`, also specify the `exclude.pctile` and
+    `target.pctile`,
 
 After importing the dataset, the `plotCellCounts` function allows you to
 see the number of cells in each sample to be displayed as follows:
@@ -164,12 +171,15 @@ metadata <- data.frame("individual"= rep(c("10105LA","10209HE","10306CG",
                        "condition"= rep(c("PR","SPA","PSO","B7","SJ","SPA","SPA"),4),
                        "timepoint"= c(rep("V1", 7), rep("V6", 7), rep("V7", 7), rep("V8", 7))
 )
+```
 
-rownames(metadata) = paste0(metadata$timepoint,"_", metadata$individual)
+Important: The rownames column of metadata must match the name of the
+samples when imported.
 
+``` r
 # assign the dataframe 
 DataCell <- assignMetadata(DataCell, 
-                        metadata = metadata)
+                           metadata = metadata)
 ```
 
 ## 2.4 Manifold construction and clustering
@@ -191,46 +201,46 @@ The first step is to compute the manifold on the dataset by following
 the instructions below:
 
 ``` r
-# Perform Manifold from the "Celldata" object
+# Perform Manifold from the "UMAPdata" object
 DataCell <- generateManifold(DataCell, 
-                          markers = c("TCRgd", "NKP44", "HLADR", "NKp30", "NKp46",
-                                      "NKG2D", "CD3", "CD16", "CD56", "CD8"), 
-                          type = "UMAP", 
-                          n_neighbors = 15,
-                          n_components = 2,
-                          metric = "euclidean",
-                          n_epochs = NULL,
-                          n_threads = 40, 
-                          n_sgd_threads = 1,
-                          scale = FALSE)
+                             markers = c("TCRgd", "NKP44", "HLADR", "NKp30", "NKp46",
+                                         "NKG2D", "CD3", "CD16", "CD56", "CD8"), 
+                             type = "UMAP", 
+                             n_neighbors = 15,
+                             n_components = 2,
+                             metric = "euclidean",
+                             n_epochs = NULL,
+                             n_threads = 40, 
+                             n_sgd_threads = 1,
+                             scale = FALSE)
 ```
 
     ## Manifold markers are: TCRgd, NKP44, HLADR, NKp30, NKp46, NKG2D, CD3, CD16, CD56, CD8
 
     ## Manifold method is: UMAP
 
-    ## 11:58:26 UMAP embedding parameters a = 1.896 b = 0.8006
+    ## 17:12:26 UMAP embedding parameters a = 1.896 b = 0.8006
 
-    ## 11:58:26 Converting dataframe to numerical matrix
+    ## 17:12:26 Converting dataframe to numerical matrix
 
-    ## 11:58:26 Read 26722 rows and found 10 numeric columns
+    ## 17:12:26 Read 26722 rows and found 10 numeric columns
 
-    ## 11:58:26 Using Annoy for neighbor search, n_neighbors = 15
+    ## 17:12:26 Using Annoy for neighbor search, n_neighbors = 15
 
-    ## 11:58:27 Building Annoy index with metric = euclidean, n_trees = 50
+    ## 17:12:26 Building Annoy index with metric = euclidean, n_trees = 50
 
     ## 0%   10   20   30   40   50   60   70   80   90   100%
 
     ## [----|----|----|----|----|----|----|----|----|----|
 
     ## **************************************************|
-    ## 11:58:28 Writing NN index file to temp file C:\Users\GWMA\AppData\Local\Temp\RtmpqMP0ID\file29484f161a04
-    ## 11:58:28 Searching Annoy index using 40 threads, search_k = 1500
-    ## 11:58:29 Annoy recall = 100%
-    ## 11:58:30 Commencing smooth kNN distance calibration using 40 threads with target n_neighbors = 15
-    ## 11:58:30 Initializing from normalized Laplacian + noise (using irlba)
-    ## 11:58:31 Commencing optimization for 200 epochs, with 539456 positive edges using 1 thread
-    ## 11:58:49 Optimization finished
+    ## 17:12:28 Writing NN index file to temp file C:\Users\GWMA\AppData\Local\Temp\Rtmpea0rjM\file3c5c7a1a12d2
+    ## 17:12:28 Searching Annoy index using 40 threads, search_k = 1500
+    ## 17:12:29 Annoy recall = 100%
+    ## 17:12:29 Commencing smooth kNN distance calibration using 40 threads with target n_neighbors = 15
+    ## 17:12:30 Initializing from normalized Laplacian + noise (using irlba)
+    ## 17:12:31 Commencing optimization for 200 epochs, with 539456 positive edges using 1 thread
+    ## 17:12:49 Optimization finished
 
 The main arguments of the `generateManifold` function are:
 
@@ -246,10 +256,10 @@ instructions below:
 ``` r
 # Clustering computation from the manifold 
 DataCell <- identifyClusters(DataCell, 
-                          space = "manifold", 
-                          method = "kmeans", 
-                          centers = 120, 
-                          nstart = 3)
+                             space = "manifold", 
+                             method = "kmeans", 
+                             centers = 120, 
+                             nstart = 3)
 ```
 
     ## Clustering method is: kmeans
@@ -304,7 +314,8 @@ distribution of the cell density for all samples will be shown as below:
 ``` r
 # Display manifold overlay by 'density' 
 plotManifold(DataCell, 
-             markers = "density")
+             markers = "density",
+             samples = NULL)
 ```
 
 ![](README/figure-markdown_github/PlotManifold-1.png)
@@ -315,7 +326,8 @@ expression, overlaid on the manifold (e.g. CD8), will be shown as below:
 ``` r
 # Display manifold overlay by 'markers'  
 plotManifold(DataCell, 
-             markers = "CD8")
+             markers = "CD8",
+             samples = NULL)
 ```
 
 ![](README/figure-markdown_github/PlotManifold2-1.png)
@@ -326,7 +338,7 @@ representation using the `samples` argument as below:
 ``` r
 # Display manifold overlay by 'density' by sample 
 plotManifold(DataCell, 
-             markers = "density", 
+             markers = "density",
              samples = "V1_10105LA")
 ```
 
@@ -385,7 +397,7 @@ gridExtra::grid.arrange(hm.exp)
 
 ### 2.5.3 Representation of phenotype of identified cell clusters (plotPhenoClusters)
 
-The `plotPhenoClusters` function shows marker expression densities for
+The `plotMarkerDensity` function shows marker expression densities for
 one given cluster.
 
 For each marker distribution, the median expression is represented by a
@@ -395,7 +407,7 @@ green curve or red if it is non-unimodal.
 
 ``` r
 # PhenoClusters plot for specific cluster 
-plotPhenoClusters(DataCell, 
+plotMarkerDensity(DataCell, 
                   clusters = 58)
 ```
 
@@ -419,7 +431,7 @@ plotPhenoClusters(DataCell,
 
     ## Picking joint bandwidth of 0.0461
 
-![](README/figure-markdown_github/plotPhenoClusters-1.png)
+![](README/figure-markdown_github/plotMarkerDensity-1.png)
 
 ### 2.5.4 Representation of phenotype of cell clusters using parallels coordinates (plotCoordinates)
 
@@ -435,6 +447,8 @@ Y-axis represents the marker expressions.
 plotCoordinates(DataCell, 
                 clusters = "58")
 ```
+
+    ## Using  as id variables
 
 ![](README/figure-markdown_github/plotCoordinates-1.png)
 
@@ -470,18 +484,18 @@ list.conditions <- c("V6", "V7", "V8")
 
 for (condition in list.conditions) {
   DataCell <- computeStatistics(DataCell, 
-                             condition = paste0(condition), 
-                             ref.condition = paste0(baseline),
-                             test.statistics = "wilcox.test",
-                             paired = FALSE)
+                                condition = paste0(condition), 
+                                ref.condition = paste0(baseline),
+                                test.statistics = "t.test",
+                                paired = FALSE)
 }
 ```
 
-    ## Computing of the wilcox.test for: V6 vs. V1
+    ## Computing of the t.test for: V6 vs. V1
 
-    ## Computing of the wilcox.test for: V7 vs. V1
+    ## Computing of the t.test for: V7 vs. V1
 
-    ## Computing of the wilcox.test for: V8 vs. V1
+    ## Computing of the t.test for: V8 vs. V1
 
 ## 3.2 Visualisation of statistical analysis
 
@@ -554,9 +568,8 @@ conditions, as in the following example:
 
 ``` r
 #Samples to study
-V1 <- unique(DataCell@samples)[grepl("V1", unique(DataCell@samples))]
-V6 <- unique(DataCell@samples)[grepl("V6", unique(DataCell@samples))]
-samples = c(V1, V6)
+samples = getSamples(DataCell, 
+                     timepoint = c("V1", "V6"))
 
 #Statistically different clusters
 stats <- DataCell@statistic[DataCell@statistic$comparison == "V6 vs. V1",]
@@ -593,7 +606,7 @@ plotBoxplot(DataCell,
             clusters = clusters,
             samples = NULL,
             observation = "timepoint", 
-            test.statistics = "wilcox.test")
+            test.statistics = "t.test")
 ```
 
 ![](README/figure-markdown_github/plotBoxplot-1.png)
@@ -722,7 +735,7 @@ corrected using the `renameMarkers` as below:
 ``` r
 # Rename markers if necessary
 DataCell <- renameMarkers(DataCell, marker.names = c("TCRgd", "NKP44", "HLADR", "NKp30", "NKp46",
-                                               "NKG2D", "CD3", "CD16", "CD56", "CD8"))
+                                                     "NKG2D", "CD3", "CD16", "CD56", "CD8"))
 ```
 
 The second method computes the 5 centiles and 95 centiles expression
@@ -733,49 +746,49 @@ values for each marker of each sample:
 QCR <- QCMarkerRanges(files)
 ```
 
-    ##                  FS       FS       FS       SS       SS       SS TCR gd-FITC
-    ## V1_10105LA 4.836585 4.989121 4.353023 4.246526 4.410427 4.347033    1.222985
-    ## V1_10209HE 4.830411 4.955269 4.347033 4.233577 4.376030 4.334798    1.404291
-    ## V1_10306CG 4.947511 5.075207 4.347033 4.306356 4.453486 4.340958    1.624966
-    ## V1_10503DC 4.829002 4.962259 4.353023 4.289901 4.446210 4.347033    1.636824
-    ## V1_11204CD 4.726316 4.872409 4.347033 4.218561 4.382770 4.334798    1.346113
-    ## V1_20208AA 4.812913 4.943068 4.353023 4.235458 4.394541 4.340958    1.576944
-    ##             NKP44-PE   DR-ECD NKp30-Pcy5 NKp46-Pcy7 NKG2D-APC  CD3-A700
-    ## V1_10105LA 1.2894598 1.271010  1.1037258   1.989170  2.056610 1.9222306
-    ## V1_10209HE 0.9668970 1.579406  1.1496302   1.846668  2.414580 0.9294985
-    ## V1_10306CG 0.8354852 1.698004  0.8368412   2.761478  3.339898 1.2062602
-    ## V1_10503DC 1.0512715 1.318435  0.8781855   2.253348  2.616961 0.8506702
-    ## V1_11204CD 1.3617717 1.551328  1.3062589   2.304870  1.833130 0.9218318
-    ## V1_20208AA 1.3851102 1.888522  0.6596576   1.871311  2.670243 1.0915774
+    ##                  FS       FS        FS       SS       SS        SS TCR gd-FITC
+    ## V1_10105LA 3.835954 4.591215 0.8492808 3.243660 4.012122 0.8449608   0.9154929
+    ## V1_10209HE 3.829768 4.557351 0.8449608 3.230622 3.977681 0.8362701   1.0896257
+    ## V1_10306CG 3.947060 4.677327 0.8449608 3.303869 4.055231 0.8406239   1.0983334
+    ## V1_10503DC 3.828357 4.564343 0.8492808 3.287315 4.047948 0.8449608   1.1105192
+    ## V1_11204CD 3.725456 4.474459 0.8449608 3.215499 3.984430 0.8362701   0.9982873
+    ## V1_20208AA 3.812238 4.545145 0.8492808 3.232515 3.996216 0.8406239   1.1983233
+    ##             NKP44-PE    DR-ECD  NKp30-Pcy5 NKp46-Pcy7 NKG2D-APC    CD3-A700
+    ## V1_10105LA 1.0221593 0.9982851  0.34437769   1.912841  2.186237  1.82498352
+    ## V1_10209HE 0.4540053 1.2876305  0.41447530   1.680014  2.092440 -0.25736492
+    ## V1_10306CG 0.3002701 1.4209953  0.02057747   2.385978  2.955476  0.36994782
+    ## V1_10503DC 0.6950154 1.0563525  0.19227490   2.129246  2.526725 -0.57064192
+    ## V1_11204CD 1.0852063 1.3009333  1.03100626   1.903930  1.851252 -0.31361279
+    ## V1_20208AA 1.1473595 1.5286735 -0.03055137   1.761246  2.481763 -0.03495686
     ##            CD16-A750 CD56-BV421   CD8-KO
-    ## V1_10105LA  2.265913   2.708021 1.823717
-    ## V1_10209HE  2.694609   2.973497 1.934102
-    ## V1_10306CG  2.824189   2.967019 1.673800
-    ## V1_10503DC  2.686252   2.916044 2.133573
-    ## V1_11204CD  2.473504   2.863429 2.360409
-    ## V1_20208AA  2.904624   2.972236 1.752453
+    ## V1_10105LA  1.981205   2.287023 1.398245
+    ## V1_10209HE  2.317233   2.562494 1.469428
+    ## V1_10306CG  2.504834   2.555830 1.471242
+    ## V1_10503DC  2.309174   2.503308 1.793365
+    ## V1_11204CD  2.072469   2.448918 1.915688
+    ## V1_20208AA  2.505797   2.561197 1.540455
 
-    ##                  FS       FS       FS       SS       SS       SS TCR gd-FITC
-    ## V1_10105LA 5.158144 5.305961 4.443943 4.621098 4.813464 4.506733    2.280538
-    ## V1_10209HE 5.173436 5.307780 4.403514 4.584182 4.724468 4.413979    2.118809
-    ## V1_10306CG 5.248328 5.374601 4.392790 4.614367 4.754747 4.413979    2.195158
-    ## V1_10503DC 5.137767 5.276119 4.413979 4.626658 4.789096 4.434183    2.290403
-    ## V1_11204CD 5.168864 5.299504 4.419119 4.601341 4.781551 4.458183    2.503850
-    ## V1_20208AA 5.155240 5.290800 4.403514 4.567590 4.746772 4.443943    2.271837
+    ##                  FS       FS        FS       SS       SS        SS TCR gd-FITC
+    ## V1_10105LA 4.157933 4.908130 0.9200630 3.619960 4.415486 0.9745206    1.894825
+    ## V1_10209HE 4.173238 4.909950 0.8873849 3.582930 4.326441 0.8956605    1.750218
+    ## V1_10306CG 4.248189 4.976780 0.8790391 3.613209 4.356738 0.8956605    1.733319
+    ## V1_10503DC 4.137537 4.878283 0.8956605 3.625537 4.391105 0.9119997    1.838933
+    ## V1_11204CD 4.168662 4.901672 0.8997718 3.600143 4.383557 0.9320248    2.104529
+    ## V1_20208AA 4.155026 4.892967 0.8873849 3.566284 4.348759 0.9200630    1.872118
     ##            NKP44-PE   DR-ECD NKp30-Pcy5 NKp46-Pcy7 NKG2D-APC CD3-A700 CD16-A750
-    ## V1_10105LA 2.698542 3.751472   3.070920   4.164283  3.928043 3.178521  4.747111
-    ## V1_10209HE 2.408619 3.910715   3.057855   3.956062  3.914080 2.842833  4.826450
-    ## V1_10306CG 2.412678 3.838884   3.186744   4.040787  4.063245 3.043769  4.817522
-    ## V1_10503DC 2.414765 3.107674   3.167953   3.917157  3.895880 2.806967  4.751921
-    ## V1_11204CD 2.543483 3.261072   3.107780   3.986661  3.822221 2.822286  4.611977
-    ## V1_20208AA 2.510327 3.639751   3.115192   3.894700  3.917722 2.949332  4.845409
+    ## V1_10105LA 2.353069 3.359568   2.728439   3.776323  3.607855 2.839736  4.350019
+    ## V1_10209HE 2.096698 3.514636   2.721771   3.565452  3.520383 2.540947  4.428824
+    ## V1_10306CG 2.086451 3.443916   2.818599   3.644543  3.668300 2.725701  4.420814
+    ## V1_10503DC 2.078534 2.726523   2.796699   3.537180  3.538998 2.533955  4.354336
+    ## V1_11204CD 2.277626 2.875062   2.744615   3.588735  3.476107 2.528107  4.214141
+    ## V1_20208AA 2.236382 3.243167   2.740408   3.509518  3.544084 2.644464  4.447594
     ##            CD56-BV421   CD8-KO
-    ## V1_10105LA   4.359073 3.387718
-    ## V1_10209HE   4.428926 3.528046
-    ## V1_10306CG   4.336497 3.744981
-    ## V1_10503DC   4.264874 3.901291
-    ## V1_11204CD   4.269538 3.841241
-    ## V1_20208AA   4.265343 3.673689
+    ## V1_10105LA   3.960701 2.987863
+    ## V1_10209HE   4.030643 3.127233
+    ## V1_10306CG   3.938093 3.354593
+    ## V1_10503DC   3.866357 3.505325
+    ## V1_11204CD   3.871029 3.441518
+    ## V1_20208AA   3.866826 3.284242
 
 ## 4.2 Control quality of the cell clustering result
 
@@ -881,9 +894,26 @@ QCU <- QCUniformClusters(DataCell,
     ## 5        1   HLADR 0.4625909 0.2673890   TRUE
     ## 6        1   NKG2D 0.9863257 0.2057160   TRUE
 
-# 5. Advanced usage
+# 5.Advanced graphical representation
 
-## 5.1 Upsampling
+## 5.1 Modification of generated plot
+
+Modification titre or axes \## 5.2 Combined graphical representation
+Grid arrange + HM \## 5.3 Interactive graphics ggiraph
+
+# 6. Advanced usage
+
+## 6.1 Get samples
+
+The `getSamples()` function allows xxx
+
+The procedure is as follows:
+
+``` r
+samples <- getSamples()
+```
+
+## 6.2 Upsampling
 
 The `performUpsampling` function allows the data set to be implemented
 if downsampling has been performed.
@@ -897,11 +927,28 @@ The procedure is as follows:
 
 ``` r
 DataCell <- performUpsampling(DataCell,
-                           files = files,
-                           transform = "logicle")
+                              files = files,
+                              transform = "logicle")
 ```
 
-## 5.2 Export
+## 6.3 Metadata
+
+The `createMetaclusters()` function allows clusters to be combined to
+create a metaclusters.
+
+This function should be used as many times as there are metaclusters to
+be created. Be careful, when metaclusters are created, the origianl
+clusters are lost.
+
+The procedure is as follows:
+
+``` r
+DataCell <- CreateMetaclusters(DataCell, 
+                               clusters = xx, 
+                               metaclusters = xx)
+```
+
+## 6.4 Export
 
 The `export` function allows extracting of the dataset in FCS or txt
 format with some parameters such as UMAP coordinates and clusters.
