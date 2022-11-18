@@ -21,8 +21,9 @@ plotCoordinates(
 \item{clusters}{a character vector containing the identifiers of the clusters to use}
 }
 \value{
-xx
+a ggplot2 object
 }
 \description{
-This function aims to visualize xxx
+This function aims to visualize the caracterisitcs of cell clusters using parallels coordinates.
+Each line in the plot corresponds to a biological sample for which marker/gene expression are indicated.
 }

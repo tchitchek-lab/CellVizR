@@ -27,7 +27,7 @@ plotBoxplot(
 
 \item{paired}{a boolean value indicating if a paired or unpaired comparison should be applied}
 
-\item{hide.ns}{a boolean value indicating xxx}
+\item{hide.ns}{a boolean value indicating if non significant p-value must be hidden}
 }
 \value{
 a ggplot2 object

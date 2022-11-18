@@ -197,24 +197,22 @@ computeClusterAbundances <- function(count) {
   return(matrix.abundance)
 }
 
-#' @title Create Metaclusters
+#' @title Create metaclusters
 #'
-#' @description This function aims to xxx
+#' @description This function aims to gathered mutliple cell cluster to a large cell cluster
 #'
 #' @param Celldata a Celldata object
 #' @param clusters a character vector containing the identifiers of the clusters to use. By default, all clusters are used
-#' @param metaclusters a character value containing the name of metaclusters 
+#' @param metaclusters a character value containing the name of the metacluster to create 
 #'
-#' @return xx
+#' @return a Celldata object
 #'
 #' @export
 #'
 CreateMetaclusters <- function(Celldata, 
                                clusters,
                                metaclusters) {
-  # browser()
-  # while (TRUE) {}
-  
+
   checkmate::qassert(clusters, "S+")
   checkmate::qassert(metaclusters, "S1")
   

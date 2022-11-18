@@ -18,7 +18,7 @@ plotClustersCounts(
 
 \item{sort}{a boolean value indicating if clusters must be sorted by the number associated cluster}
 
-\item{legend.max.samples}{xxx}
+\item{legend.max.samples}{a numerical value specifying the maximal number of samples to display in the legend}
 }
 \value{
 a ggplot2 object

@@ -8,8 +8,6 @@ plotManifold(
   Celldata,
   markers = "density",
   samples = NULL,
-  condition = NULL,
-  timepoint = NULL,
   scale = FALSE,
   quant.low = 0.05,
   quant.high = 0.95
@@ -27,8 +25,6 @@ plotManifold(
 \item{quant.low}{a numeric value providing the number of first quantile}
 
 \item{quant.high}{a numeric value providing the number of last quantile}
-
-\item{observation}{a character value containing the parameters to use}
 }
 \value{
 a ggplot2 object

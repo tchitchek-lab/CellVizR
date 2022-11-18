@@ -160,7 +160,7 @@ plotCellCounts <- function(Celldata,
 #' @param Celldata a Celldata object
 #' @param clusters a character vector containing the identifiers of the clusters to use. By default, all clusters are used
 #' @param sort a boolean value indicating if clusters must be sorted by the number associated cluster
-#' @param legend.max.samples xxx
+#' @param legend.max.samples a numerical value specifying the maximal number of samples to display in the legend
 #'
 #' @return a ggplot2 object
 #'
@@ -238,13 +238,13 @@ plotClustersCounts <- function(Celldata,
 #' @param clusters a character vector containing the identifier of the cluster to use
 #' @param quant.low a numeric value providing the number of first quantile
 #' @param quant.high a numeric value providing the number of last quantile
-#' @param dip.th a numeric value specifing xxx
+#' @param dip.th a numeric value specifing the p-value threshold of the Hartigan's dip test 
 #'
 #' @return a ggplot2 object
 #'
 #' @export
 #'
-plotPhenoClusters <- function(Celldata,
+plotMarkerDensity <- function(Celldata,
                               clusters,
                               quant.low = 0.05,
                               quant.high = 0.95,
@@ -337,10 +337,9 @@ plotPhenoClusters <- function(Celldata,
 #' @param Celldata a Celldata object
 #' @param markers a character value providing the name of the marker to use for the colouring. By default, cells are colored based on their local density
 #' @param samples a character vector containing the names of biological samples to use
-#' @param observation a character value containing the parameters to use
 #' @param scale a boolean value specifing if expression calue must be rescaled
 #' @param quant.low a numeric value providing the number of first quantile
-#' @param quant.high a numeric value providing the number of last quantile
+#' @param quant.high a numeric value providing the number of last quantile 
 #'
 #' @return a ggplot2 object
 #'
@@ -349,28 +348,23 @@ plotPhenoClusters <- function(Celldata,
 plotManifold <- function(Celldata,
                          markers = "density",
                          samples = NULL,
-                         condition = NULL,
-                         timepoint = NULL,
                          scale = FALSE,
                          quant.low = 0.05,
                          quant.high = 0.95) {
   
   checkmate::qassert(markers, "S1")
   checkmate::qassert(samples, c("0", "S*"))
-  checkmate::qassert(condition, c("0", "S*"))
-  checkmate::qassert(timepoint, c("0", "S*"))
   checkmate::qassert(scale, "B1")
   checkmate::qassert(quant.low, "N1")
   checkmate::qassert(quant.high, "N1")
   
   proj <- Celldata@manifold
-  metadata <- Celldata@metadata
   
   if (length(proj) == 0) {
     stop("Manifold is null")
   }
   
-  colnames(proj) <- c("dim1", "dim2")
+  colnames(proj) <- c("UMAP1", "UMAP2")
   clusters <- Celldata@identify.clusters
   
   if (length(clusters) != 0) {
@@ -393,38 +387,23 @@ plotManifold <- function(Celldata,
     proj$value <- Celldata@matrix.expression[, markers]
   }
   
-  proj <- cbind(proj, Celldata@samples)
-  colnames(proj) <- c("dim1", "dim2", "clusters", "value", "samples")
-  metadata$samples <- rownames(metadata)
-  proj <- base::merge(proj, metadata, by = "samples")
-  proj$samples <- NULL
-  
   plot <- ggplot2::ggplot()
   
-  if(!is.null(samples) || !is.null(condition) || !is.null(timepoint)){ 
+  if (!is.null(samples)) {
     proj.ref <- proj
+    proj <- proj[Celldata@samples %in% samples, ]
     plot <- plot +
       ggplot2::geom_point(data = proj.ref,
-                          ggplot2::aes_string(x = "dim1",
-                                              y = "dim2"),
+                          ggplot2::aes_string(x = "UMAP1",
+                                              y = "UMAP2"),
                           color = "gray", size = 0.0001) +
       ggnewscale::new_scale_color()
   }
   
-  if(!is.null(samples)) {
-    proj <- proj[proj$individual %in% samples, ]
-  }
-  if(!is.null(condition)) {
-    proj <- proj[proj$condition %in% condition, ]
-  }
-  if(!is.null(timepoint)) {
-    proj <- proj[proj$timepoint %in% timepoint, ]
-  }
-  
   plot <- plot +
     ggplot2::geom_point(data = proj,
-                        ggplot2::aes_string(x = "dim1",
-                                            y = "dim2",
+                        ggplot2::aes_string(x = "UMAP1",
+                                            y = "UMAP2",
                                             color = "value"),
                         size = 0.0001)
   
@@ -443,20 +422,22 @@ plotManifold <- function(Celldata,
       ggplot2::labs(title = "density representation", color = legend.title)
     
   } else if (markers == "clusters") {
+    
     proj.center <- plyr::ddply(proj, "clusters",
                                function(x) {
-                                 c(dim1 = stats::median(x$dim1),
-                                   dim2 = stats::median(x$dim2))})
+                                 c(UMAP1 = stats::median(x$UMAP1),
+                                   UMAP2 = stats::median(x$UMAP2))})
     
     plot <- plot + ggplot2::geom_text(data = proj.center,
-                                      ggplot2::aes_string(x = "dim1",
-                                                          y = "dim2",
+                                      ggplot2::aes_string(x = "UMAP1",
+                                                          y = "UMAP2",
                                                           label = "clusters"),
                                       size = 3) +
       ggplot2::guides(color = "none") +
       ggplot2::labs(title = "clusters representation", color = legend.title)
     
   } else {
+    
     limits <- abs.proj(proj, scale, quant.low, quant.high)
     plot <- plot + viridis::scale_color_viridis(option = "plasma",
                                                 direction = -1,
@@ -470,8 +451,6 @@ plotManifold <- function(Celldata,
     ggplot2::scale_y_continuous(expand = c(0.01, 0.01))
   
   plot <- plot +
-    ggplot2::xlab(paste0(Celldata@manifold.params$type, "1")) + 
-    ggplot2::ylab(paste0(Celldata@manifold.params$type, "2"))
     ggplot2::theme_bw() +
     ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5),
                    aspect.ratio = 1,
@@ -494,7 +473,7 @@ plotManifold <- function(Celldata,
 #' @param samples a character vector containing the names of biological samples to use. By default, all samples are used
 #' @param components a numeric vector providing the components to display
 #' @param condition.samples a character vector containing the variable to be studied for the samples. Possible values are: 'condition' or 'timepoint"
-#' @param cor.radius.th a numeric value specifing xxx
+#' @param cor.radius.th a numeric value specifing the radius of the correlation plot radius
 #' @param plot.text a boolean value specifing if adds text directly at the plot
 #'
 #' @return a ggplot2 object
@@ -852,7 +831,7 @@ plotMDS <- function(Celldata,
 #' @param observation a character value containing the parameters to use
 #' @param test.statistics a character value providing the type of statistical test to use. Possible values are: 'wilcox.test' or 't.test'
 #' @param paired a boolean value indicating if a paired or unpaired comparison should be applied
-#' @param hide.ns a boolean value indicating xxx
+#' @param hide.ns a boolean value indicating if non significant p-value must be hidden
 #'
 #' @return a ggplot2 object
 #'
@@ -1182,14 +1161,15 @@ plotScatter <- function(Celldata,
 
 #' @title Plots of phenotype of cell clusters using parallels coordinates
 #'
-#' @description This function aims to visualize xxx
+#' @description This function aims to visualize the caracterisitcs of cell clusters using parallels coordinates.
+#' Each line in the plot corresponds to a biological sample for which marker/gene expression are indicated.
 #'
 #' @param Celldata a Celldata object
 #' @param condition.samples a character vector containing the variable to be studied for the samples. Possible values are: 'condition' or 'timepoint"
 #' @param samples a character vector containing the names of biological samples to use. By default, all samples are used
 #' @param clusters a character vector containing the identifiers of the clusters to use
 #'
-#' @return xx
+#' @return a ggplot2 object
 #'
 #' @export
 #'

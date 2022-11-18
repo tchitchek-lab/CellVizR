@@ -2,7 +2,7 @@
 % Please edit documentation in R/clustering.R
 \name{CreateMetaclusters}
 \alias{CreateMetaclusters}
-\title{Create Metaclusters}
+\title{Create metaclusters}
 \usage{
 CreateMetaclusters(Celldata, clusters, metaclusters)
 }
@@ -11,11 +11,11 @@ CreateMetaclusters(Celldata, clusters, metaclusters)
 
 \item{clusters}{a character vector containing the identifiers of the clusters to use. By default, all clusters are used}
 
-\item{metaclusters}{a character value containing the name of metaclusters}
+\item{metaclusters}{a character value containing the name of the metacluster to create}
 }
 \value{
-xx
+a Celldata object
 }
 \description{
-This function aims to xxx
+This function aims to gathered mutliple cell cluster to a large cell cluster
 }

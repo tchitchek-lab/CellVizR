@@ -9,21 +9,21 @@
 #
 computeCellDensities <- function(proj,
                                  n) {
-
+  
   density <- MASS::kde2d(proj[, 1], proj[, 2], n)
   ix <- findInterval(proj[, 1], density$x)
   iy <- findInterval(proj[, 2], density$y)
   ii <- cbind(ix, iy)
-
+  
   return(density$z[ii])
 }
 
 # @title Internal - Rescales numeric matrix for projection
 #
-# @description This functions is used internally xxx
+# @description This functions is used internally to rescale expression values
 #
 # @param proj a data.frame providing the manifold representation
-# @param abs a boolean value providing xx
+# @param abs a boolean value specifying if data must be rescaled
 # @param quant.low a numeric value providing the number first quantile
 # @param quant.high a numeric value providing the number last quantile
 #
@@ -43,6 +43,41 @@ abs.proj <- function(proj,
     proj$value[proj$value > quant.high] <- quant.high
     limits <- c(quant.low, quant.high)
   }
-
+  
   return(limits)
 }
+
+#' @title Filter to select samples
+#'
+#' @description This function aims to select the samples of interest
+
+#'
+#' @param Celldata a Celldata object
+#' @param individual a character vector containing the names of biological individual to use
+#' @param condition a character vector containing the biological condition to use
+#' @param timepoint a character vector containing the timepoint condition to use
+#'
+#' @return a ggplot2 object
+#'
+#' @export
+#'
+getSamples <- function(Celldata,
+                      individual = NULL,
+                      condition = NULL,
+                      timepoint = NULL) {
+  
+  metadata <- Celldata@metadata
+  
+  if(!is.null(individual)) {
+    metadata <- metadata[metadata$individual %in% individual, ]
+  }
+  if(!is.null(condition)) {
+    metadata <- metadata[metadata$condition %in% condition, ]
+  }
+  if(!is.null(timepoint)) {
+    metadata <- metadata[metadata$timepoint %in% timepoint, ]
+  }
+  
+  samples <- rownames(metadata)
+  return(samples)
+} 

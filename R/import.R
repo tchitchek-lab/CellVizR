@@ -158,6 +158,31 @@ import <- function(files,
   return(res)
 }
 
+importMTX <- function(mtx      = mtx,
+                      cells    = cells,
+                      features = features) {
+				   
+	expression_matrix <- Seurat::ReadMtx(mtx      = mtx,
+							             cells    = cells,
+							             features = features)
+							 
+	seurat_object <- CreateSeuratObject(counts = expression_matrix)
+	counts        <- GetAssayData(object = seurat_object[["RNA"]], slot = "counts")
+	counts        <- t(as.matrix(x = log(counts + 1)))
+	counts        <- counts[order(rownames(counts)),]
+	counts        <- data.frame(counts)
+	
+	res <- methods::new("Celldata",
+                      matrix.expression.r = counts,
+                      matrix.expression = counts,
+                      samples = rep("test",nrow(counts)),
+                      raw.markers = colnames(counts),
+                      matrix.abundance = data.frame())
+
+	return(res)
+	
+}
+
 # @title Internal - Computes the downsampling uniformly-based
 #
 # @description This function aims to perform a downsampling uniformly-based cells
