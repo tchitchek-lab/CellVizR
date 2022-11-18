@@ -4,14 +4,14 @@ Cytometry data are now classically analyzed using non-linear
 dimensionality reduction approaches, but it is still challenging to
 easily handle the whole pipeline of computational analyses.
 
-UMAPVizR allows the statistical analysis and visualization of
+CellVizR allows the statistical analysis and visualization of
 high-dimensional cytometry data using manifold algorithms and clustering
 methods. Especially, several key analysis steps are available to perform
 data importation, manifold generation, cell cluster identification,
 statistical analyses, cluster visualization, and quality controls of
 generated results.
 
-UMAPVizR can import cell events from FCS or txt file formats using
+CellVizR can import cell events from FCS or txt file formats using
 different transformation, down-sampling, and normalization approaches.
 Manifold representations can be generated using the UMAP, tSNE or
 LargeVis algorithms to project cell events into a lower dimensionality
@@ -25,31 +25,31 @@ Statistical results can be visualized using volcano plots or heatmaps.
 
 ## 1.1 Workflow overview
 
-In the `UMAPVizR` workflow, an S4 object is created to store data and
+In the `CellVizR` workflow, an S4 object is created to store data and
 sample information is implemented for analysis. This stored information
 will allow performing the statistics and visualization of the dataset.
 
 <img src="README/figures/workflow.png" width="90%" style="display: block; margin: auto;" />
 
-*Figure 1: Workflow of UMAPVizR*
+*Figure 1: Workflow of CellVizR*
 
-*The analysis in UMAPVizR consists of 5 main steps: (1) importing the
-data in FCS or txt format resulting in the creation of an S4 UMAPdata
+*The analysis in CellVizR consists of 5 main steps: (1) importing the
+data in FCS or txt format resulting in the creation of an S4 Celldata
 object; (2) assigning the metadata (sample information) into the
-UMAPdata object; and (3) generating the manifold and clustering. The
+Celldata object; and (3) generating the manifold and clustering. The
 computed results can be (4) visualized in different manners and (5)
 analyzed using statistical approaches.*
 
 ## 1.2 Input data
 
 The following conditions must be respected to analyze data with
-`UMAPVizR`:
+`CellVizR`:
 
 -   **Type and format of data**: The cytometry data that can be analyzed
-    and integrated with `UMAPVizR` are flow, mass or spectral cytometry
+    and integrated with `CellVizR` are flow, mass or spectral cytometry
     data. The input files can be in standard cytometry format (FCS) or
     txt format.
--   **Compensation**: Before starting an analysis with `UMAPVizR`,
+-   **Compensation**: Before starting an analysis with `CellVizR`,
     performing the compensation steps for flow cytometry and spectral
     data with conventional software (FlowJo, Kaluza, etc) is necessary.
 -   **Cleaning and gating**: It is recommended to remove debris, dead
@@ -59,42 +59,42 @@ The following conditions must be respected to analyze data with
 
 # 2. Quick start
 
-In this section, the main analysis steps of `UMAPVizR` are presented.
+In this section, the main analysis steps of `CellVizR` are presented.
 
 These steps cover several aspects, such as:
 
 -   Installing the package
--   Importing the data and creating an `UMAPdata` object
+-   Importing the data and creating an `Celldata` object
 -   Creating the manifold and clustering
 -   Generating basic visualization
 
 ## 2.1 Installation
 
-To download `UMAPVizR` it is required `devtools`:
+To download `CellVizR` it is required `devtools`:
 
 ``` r
 install.packages("devtools")
 library("devtools")
-install_github("tchitchek-lab/UMAPVizR")
+install_github("tchitchek-lab/CellVizR")
 ```
 
-The `UMAPVizR` package automatically downloads the necessary packages
+The `CellVizR` package automatically downloads the necessary packages
 for its operation such as: `coin`, `concaveman`, `dendextend`,
 `flowCore`, `ggdendro`, `gglot2`, `gridExtra`, `MASS`, `plyr`,
 `reshape`, `reshape2`, `rstatix`, `Rtsne`, `scales`, `stats`, `stringr`,
 `uwot`. If not, the packages are available on the `CRAN`, except
 `flowCore` which is available on `Bioconductor`.
 
-Once installed, `UMAPVizR` can be loaded using the following command:
+Once installed, `CellVizR` can be loaded using the following command:
 
 ``` r
-library("UMAPVizR")
+library("CellVizR")
 ```
 
 ## 2.2 Importing cell expression profiles (import)
 
 The `import` function allows importing the expression matrix of the
-cytometry files into a `UMAPdata` object.
+cytometry files into a `Celldata` object.
 
 The files to be loaded must be in FCS or txt format. The `import`
 function is used as below:
@@ -104,8 +104,8 @@ function is used as below:
 files <- list.files("C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/", 
                     pattern = "fcs", full.names = TRUE)
 
-# import the FCS files into a UMAPdata object 
-UMAPV <- import(files, 
+# import the FCS files into a Celldata object 
+DataCell <- import(files, 
                 filetype = "fcs", 
                 transform = "logicle", 
                 exclude.markers = c("FS-H", "FS-A", "FS-W", "SS-H", 
@@ -130,7 +130,7 @@ After importing the dataset, the `plotCellCounts` function allows you to
 see the number of cells in each sample to be displayed as follows:
 
 ``` r
-plotCellCounts(UMAPV, 
+plotCellCounts(DataCell, 
                stats = c("min","median","mean","q75","max"),
                samples = NULL,
                sort = TRUE)
@@ -168,7 +168,7 @@ metadata <- data.frame("individual"= rep(c("10105LA","10209HE","10306CG",
 rownames(metadata) = paste0(metadata$timepoint,"_", metadata$individual)
 
 # assign the dataframe 
-UMAPV <- assignMetadata(UMAPV, 
+DataCell <- assignMetadata(DataCell, 
                         metadata = metadata)
 ```
 
@@ -191,8 +191,8 @@ The first step is to compute the manifold on the dataset by following
 the instructions below:
 
 ``` r
-# Perform Manifold from the "UMAPdata" object
-UMAPV <- generateManifold(UMAPV, 
+# Perform Manifold from the "Celldata" object
+DataCell <- generateManifold(DataCell, 
                           markers = c("TCRgd", "NKP44", "HLADR", "NKp30", "NKp46",
                                       "NKG2D", "CD3", "CD16", "CD56", "CD8"), 
                           type = "UMAP", 
@@ -245,7 +245,7 @@ instructions below:
 
 ``` r
 # Clustering computation from the manifold 
-UMAPV <- identifyClusters(UMAPV, 
+DataCell <- identifyClusters(DataCell, 
                           space = "manifold", 
                           method = "kmeans", 
                           centers = 120, 
@@ -273,7 +273,7 @@ After clustering, the `plotClustersCounts` function allows to visualize
 the cells of each sample in the clusters as follows:
 
 ``` r
-plotClustersCounts(UMAPV, 
+plotClustersCounts(DataCell, 
                    clusters = NULL,
                    sort = TRUE)
 ```
@@ -303,7 +303,7 @@ distribution of the cell density for all samples will be shown as below:
 
 ``` r
 # Display manifold overlay by 'density' 
-plotManifold(UMAPV, 
+plotManifold(DataCell, 
              markers = "density")
 ```
 
@@ -314,7 +314,7 @@ expression, overlaid on the manifold (e.g. CD8), will be shown as below:
 
 ``` r
 # Display manifold overlay by 'markers'  
-plotManifold(UMAPV, 
+plotManifold(DataCell, 
              markers = "CD8")
 ```
 
@@ -325,7 +325,7 @@ representation using the `samples` argument as below:
 
 ``` r
 # Display manifold overlay by 'density' by sample 
-plotManifold(UMAPV, 
+plotManifold(DataCell, 
              markers = "density", 
              samples = "V1_10105LA")
 ```
@@ -337,7 +337,7 @@ shown as below:
 
 ``` r
 # Display manifold overlay by 'cluster' 
-plotManifold(UMAPV, 
+plotManifold(DataCell, 
              markers = "clusters")
 ```
 
@@ -359,7 +359,7 @@ This function is used as below:
 
 ``` r
 # Heatmap of expression markers 
-hm.exp <- plotHmExpressions(UMAPV)
+hm.exp <- plotHmExpressions(DataCell)
 gridExtra::grid.arrange(hm.exp)
 ```
 
@@ -375,7 +375,7 @@ following example:
 
 ``` r
 # Heatmap of expression markers 
-hm.exp <- plotHmExpressions(UMAPV, 
+hm.exp <- plotHmExpressions(DataCell, 
                             markers = c("NKP44", "NKp30", "NKp46", "NKG2D"), 
                             clusters = c(1:50))
 gridExtra::grid.arrange(hm.exp)
@@ -395,7 +395,7 @@ green curve or red if it is non-unimodal.
 
 ``` r
 # PhenoClusters plot for specific cluster 
-plotPhenoClusters(UMAPV, 
+plotPhenoClusters(DataCell, 
                   clusters = 58)
 ```
 
@@ -432,7 +432,7 @@ Y-axis represents the marker expressions.
 
 ``` r
 # Coordinates plot for specific cluster 
-plotCoordinates(UMAPV, 
+plotCoordinates(DataCell, 
                 clusters = "58")
 ```
 
@@ -469,7 +469,7 @@ baseline = "V1"
 list.conditions <- c("V6", "V7", "V8")
 
 for (condition in list.conditions) {
-  UMAPV <- computeStatistics(UMAPV, 
+  DataCell <- computeStatistics(DataCell, 
                              condition = paste0(condition), 
                              ref.condition = paste0(baseline),
                              test.statistics = "wilcox.test",
@@ -502,7 +502,7 @@ Here is an example for generating such representation:
 
 ``` r
 # Volcano plot for differential analysis 
-plotVolcano(UMAPV,
+plotVolcano(DataCell,
             comparison = ("V7 vs. V1"),
             th.pv = 1.3,
             th.fc = 1.5,
@@ -530,7 +530,7 @@ Here is an example for generating such representation:
 
 ``` r
 # Heatmap of statistics
-hm.stats <- plotHmStatistics(UMAPV, 
+hm.stats <- plotHmStatistics(DataCell, 
                              clusters = NULL,
                              statistics = "pvalue")
 
@@ -554,16 +554,16 @@ conditions, as in the following example:
 
 ``` r
 #Samples to study
-V1 <- unique(UMAPV@samples)[grepl("V1", unique(UMAPV@samples))]
-V6 <- unique(UMAPV@samples)[grepl("V6", unique(UMAPV@samples))]
+V1 <- unique(DataCell@samples)[grepl("V1", unique(DataCell@samples))]
+V6 <- unique(DataCell@samples)[grepl("V6", unique(DataCell@samples))]
 samples = c(V1, V6)
 
 #Statistically different clusters
-stats <- UMAPV@statistic[UMAPV@statistic$comparison == "V6 vs. V1",]
+stats <- DataCell@statistic[DataCell@statistic$comparison == "V6 vs. V1",]
 clusters = stats[stats$pvalue<=0.05 & abs(stats$lfc)>log(1.2)/log(2),]$clusters
 
 # Heatmap of abundances
-hm.abun <- plotHmAbundances(UMAPV, 
+hm.abun <- plotHmAbundances(DataCell, 
                             clusters = clusters,
                             samples = samples,
                             rescale = TRUE)
@@ -589,7 +589,7 @@ Here is an example for generating such representation:
 
 ``` r
 # Boxplot for differential analysis
-plotBoxplot(UMAPV, 
+plotBoxplot(DataCell, 
             clusters = clusters,
             samples = NULL,
             observation = "timepoint", 
@@ -624,7 +624,7 @@ Here is an example for generating such representation:
 
 ``` r
 # MDS
-plotMDS(UMAPV, 
+plotMDS(DataCell, 
         levels = "samples", 
         condition.samples = "timepoint", 
         clusters = NULL, 
@@ -656,7 +656,7 @@ condition or timepoint (`condition.samples` parameter)
 
 ``` r
 # PCA
-plotPCA(UMAPV, 
+plotPCA(DataCell, 
         levels = "clusters", 
         clusters = NULL, 
         samples = NULL, 
@@ -679,7 +679,7 @@ Other possible parameters to customize the `plotPCA` are:
 
 # 4. Quality control
 
-The `UMAPVizR` package allows to perform quality control of generated
+The `CellVizR` package allows to perform quality control of generated
 results.
 
 The quality control can be performed:
@@ -721,7 +721,7 @@ corrected using the `renameMarkers` as below:
 
 ``` r
 # Rename markers if necessary
-UMAPV <- renameMarkers(UMAPV, marker.names = c("TCRgd", "NKP44", "HLADR", "NKp30", "NKp46",
+DataCell <- renameMarkers(DataCell, marker.names = c("TCRgd", "NKP44", "HLADR", "NKp30", "NKp46",
                                                "NKG2D", "CD3", "CD16", "CD56", "CD8"))
 ```
 
@@ -795,7 +795,7 @@ The function is as below:
 
 ``` r
 # QC for small clusters 
-QCS <- QCSmallClusters(UMAPV,
+QCS <- QCSmallClusters(DataCell,
                        th.size = 50, 
                        plot.device = TRUE)
 ```
@@ -864,7 +864,7 @@ The function is as below:
 
 ``` r
 # QC for uniform clusters
-QCU <- QCUniformClusters(UMAPV,
+QCU <- QCUniformClusters(DataCell,
                          uniform.test = "both",
                          th.pvalue = 0.05,
                          th.IQR = 2,
@@ -896,7 +896,7 @@ similarity with the centroid.
 The procedure is as follows:
 
 ``` r
-UMAPV <- performUpsampling(UMAPV,
+DataCell <- performUpsampling(DataCell,
                            files = files,
                            transform = "logicle")
 ```
@@ -912,7 +912,7 @@ only the downsampled cells will be extracted.
 With the following method:
 
 ``` r
-export(UMAPV,
+export(DataCell,
        filename = "Analyses_NK_K100.fcs",
        clusters = NULL,
        samples = NULL)
