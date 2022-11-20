@@ -1,8 +1,8 @@
 #' @title Performs the upsampling of downsampled events
 #'
-#' @description This function aims to perform upsample downsampled events based on an existing Celldata object and existing cell events stored in tab-separated or FCS files
+#' @description This function aims to perform the upsampling of downsampled events events based on an existing Celldata object and existing cell events stored in tab-separated or FCS files.
 #'
-#' Importantly, the identification of cell clusters must have been performed prior to this operation
+#' Importantly, the identification of cell clusters must have been performed prior to this operation.
 #'
 #' @param Celldata a Celldata object
 #' @param files a character vector providing the path of the tab-separated or FCS files
@@ -62,4 +62,5 @@ performUpsampling <- function(Celldata,
 
   validObject(Celldata)
   return(Celldata)
+  
 }

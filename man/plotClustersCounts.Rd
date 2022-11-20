@@ -2,7 +2,7 @@
 % Please edit documentation in R/viewer.R
 \name{plotClustersCounts}
 \alias{plotClustersCounts}
-\title{Plots the numbers of cells for each clusters}
+\title{Plots the numbers of cells of each cluster}
 \usage{
 plotClustersCounts(
   Celldata,
@@ -18,13 +18,13 @@ plotClustersCounts(
 
 \item{sort}{a boolean value indicating if clusters must be sorted by the number associated cluster}
 
-\item{legend.max.samples}{a numerical value specifying the maximal number of samples to display in the legend}
+\item{legend.max.samples}{a numerical value specifying the maximal number of samples to display in the graphical legend}
 }
 \value{
 a ggplot2 object
 }
 \description{
-This function aims to visualize the number of cells associated to each clusters.
+This function aims to visualize the number of cells associated to each cluster.
 
 This representation displays the clusters in the X-axis and the total number of associated cells in the Y-axis.
 }

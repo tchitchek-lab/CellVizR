@@ -24,8 +24,8 @@ plotHmStatistics(
 a ggplot2 object
 }
 \description{
-This function aims to visualize the results of differential cell clusters analysis
+This function aims to visualize the results of differential cell clusters analysis.
 
-This representation displays statistical information for each cell cluster for a given comparison of samples
-Different statistics can be visualized, such as the p-value, the log2(fold-change), and effect size
+This representation displays statistical information for each cell cluster for a given comparison of samples.
+Different statistics can be visualized, such as the p-value, the log2(fold-change), and effect size.
 }

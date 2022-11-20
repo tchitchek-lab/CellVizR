@@ -9,6 +9,7 @@ computeStatistics(
   condition,
   ref.condition,
   test.statistics = c("wilcox.test", "t.test"),
+  p.adjust = c("none", "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr"),
   paired = FALSE
 )
 }
@@ -21,16 +22,19 @@ computeStatistics(
 
 \item{test.statistics}{a character value providing the type of statistical test to use. Possible values are: 'wilcoxon' or 't-test'}
 
-\item{paired}{a boolean value indicating if a paired or unpaired comparison should be applied}
+\item{p.adjust}{a character value providing the type of p-value adjustment method to use. Possible values are: 'none', 'holm', 'hochberg', 'hommel', 'bonferroni', 'BH', 'BY', 'fdr'}
+
+\item{paired}{a boolean value indicating if individuals are paired}
 }
 \value{
 a S4 object of class 'Celldata'
 }
 \description{
-This function aims to compute the statistics of Differentially Abundant Clusters 'DAC'.
+This function aims to identify of differentially abundant clusters.
 
-DAC correspond to cell clusters having abundances statistically different between two biological conditions.
+Such clusters correspond to cell clusters having abundances statistically different between two biological conditions.
 The statistical test used for the comparisons can be defined by users.
 For each cluster, the p-value, log2 fold-change and effect size relative to the reference condition are computed.
 Statistical comparison can be performed in a paired and unpaired manner.
+Computed p-values can be corrected for multiple testing.
 }

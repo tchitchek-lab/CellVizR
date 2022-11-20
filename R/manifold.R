@@ -1,16 +1,17 @@
 #' @title Generates a manifold of cell events
 #'
-#' @description This function aims to generate a manifold representation for cell events stored in a Celldata object
+#' @description This function aims to generate a manifold representation for cell events stored in a Celldata object.
 #'
-#' This function allows the use of several non-linear dimension reduction techniques such as UMAP, t-SNE or LargeVis
-#' The whole set of cell markers or specific cell markers can be used during the dimensionality reduction process
+#' This function allows the use UMAP, t-SNE or LargeVis dimension reduction techniques.
+#' The whole set of cell markers or specific cell markers can be used during the dimensionality reduction process.
+#' The random seed can also be defined to allow the reproducibility of generated results.
 #'
 #' @param Celldata a Celldata object
-#' @param type a character value specifying the type of manifold to compute. Possible values are: 'UMAP' for Uniform Manifold Approximation and Projection, 'tSNE' for t Stochastic Neighbor Embedding, and 'lvish' for LargeVis
+#' @param type a character value specifying the type of manifold to compute. Possible values are: 'UMAP' for Uniform Manifold Approximation and Projection, 'tSNE' for t-distributed Stochastic Neighbor Embedding, and 'lvish' for LargeVis
 #' @param markers a character vector providing the cell markers to use for the manifold generation
 #' @param seed a numeric value providing the random seed to use during stochastic operations
 #' @param verbose a boolean value indicating if computational details must be displayed on the console
-#' @param ... Other arguments passed on to methods
+#' @param ... other arguments passed on to manifold methods
 #'
 #' @return a S4 object of class 'Celldata'
 #'
@@ -34,14 +35,16 @@ generateManifold <- function(Celldata,
 
   if (is.null(markers)) {
     markers <- names(matrix.exprs)
-  }
+  } 
 
   matrix.exprs.subset <- matrix.exprs[, names(matrix.exprs)
                                       %in% markers]
 
-  message("Manifold markers are: ", paste0(unlist(markers), collapse = ", "))
+  if(length(unlist(markers))<40){
+	message("Manifold markers are: ", paste0(unlist(markers), collapse = ", "))
+  }
   message("Manifold method is: ", type)
-  cat("\n")
+  message()
 
   switch(type,
          UMAP = {
@@ -77,7 +80,7 @@ generateManifold <- function(Celldata,
 
 # @title Internal - Generates a UMAP manifold of cell events
 #
-# @description This function is used internally a manifold representation based on the UMAP algorithms
+# @description This function is used internally a manifold representation based on the UMAP algorithms.
 #
 # @param exprs a data.frame providing the marker expressions
 # @param n.neighbors a numeric value providing the size of local neighborhood used for manifold approximation (please refer to the function 'umap' of the 'uwot' package)
@@ -89,7 +92,7 @@ generateManifold <- function(Celldata,
 # @param scale a character value providing the scaling to apply (please refer to the function 'umap' of the 'uwot' package)
 # @param seed a numeric value providing the random seed to use in stochastic operation
 # @param verbose a boolean value indicating if computational details must be displayed on the console
-# @param ... Other arguments passed on to methods
+# @param ... other arguments passed on to UMAP method
 #
 # @return a data.frame containing the manifold coordinates
 #
@@ -99,6 +102,7 @@ generateManifoldUMAP <- function(exprs,
                                  ...) {
 
   do.call("set.seed", list(seed))
+  
   umap <- uwot::umap(exprs,
                      verbose = verbose,
                      ...)
@@ -111,7 +115,7 @@ generateManifoldUMAP <- function(exprs,
 
 # @title Internal - Generates a t-SNE manifold of cell events
 #
-# @description This function is used internally to compute a manifold representation based on the t-SNE algorithms
+# @description This function is used internally to compute a manifold representation based on the t-SNE algorithms.
 #
 # @param exprs a data.frame containing the marker expressions
 # @param dims a numeric value providing the output dimensionality (please refer to the function 'Rtsne' of the 'Rtsne' package)
@@ -121,7 +125,7 @@ generateManifoldUMAP <- function(exprs,
 # @param max.iter a numeric value providing number of iterations (please refer to the function 'Rtsne' of the 'Rtsne' package)
 # @param seed a numeric value providing the random seed to use in stochastic operation
 # @param verbose a boolean value indicating if computational details must be displayed on the console (please refer to the function 'Rtsne' of the 'Rtsne' package)
-# @param ... Other arguments passed on to methods
+# @param ... other arguments passed on to t-SNE method
 #
 # @return a data.frame containing the manifold coordinates
 #
@@ -131,6 +135,7 @@ generateManifoldtSNE <- function(exprs,
                                  ...) {
 
   do.call("set.seed", list(seed))
+  
   tSNE <- Rtsne::Rtsne(exprs,
                        verbose = verbose,
                        ...)
@@ -144,7 +149,7 @@ generateManifoldtSNE <- function(exprs,
 
 # @title Internal - Generates a LargeVis manifold of cell events
 #
-# @description This function is used internally to compute a manifold representation based on the LargeVis algorithms
+# @description This function is used internally to compute a manifold representation based on the LargeVis algorithms.
 #
 # @param exprs a data.frame containing the marker expressions
 # @param perplexity a numeric value providing the size of the local neighborhood used (please refer to the function 'lvish' of the 'uwot' package)
@@ -157,7 +162,7 @@ generateManifoldtSNE <- function(exprs,
 # @param scale a character value providing the scaling to apply (please refer to the function 'lvish' of the 'uwot' package)
 # @param seed a numeric value providing the random seed to use in stochastic operation
 # @param verbose a boolean value indicating if computational details must be displayed on the console
-# @param ... Other arguments passed on to methods
+# @param ... other arguments passed on to LargeVis method
 #
 # @return a data.frame containing the manifold coordinates
 #
@@ -167,6 +172,7 @@ generateManifoldlvish <- function(exprs,
                                   ...) {
 
   do.call("set.seed", list(seed))
+  
   lvish <- uwot::lvish(exprs,
                        verbose = verbose,
                        ...)

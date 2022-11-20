@@ -14,15 +14,15 @@ export(Celldata, filename, clusters = NULL, samples = NULL)
 
 \item{filename}{a character value providing the name of the output file}
 
-\item{clusters}{a character vector containing the identifiers of the cell clusters to export. By default, all clusters are extracted}
+\item{clusters}{a character vector containing the identifiers of the cell clusters to export. By default, all clusters are extracted.}
 
-\item{samples}{a character vector containing the names of biological samples to export. By default, all samples are extracted}
+\item{samples}{a character vector containing the names of biological samples to export. By default, all samples are extracted.}
 }
 \value{
 none
 }
 \description{
-Exports cell expresion profiles from a Celldata object to a tab-separated or FCS files
+Exports cell expression profiles from a Celldata object to a tab-separated or FCS files.
 
 Cell expression profiles can be exported for a set of given samples and for a set of given cell clusters
 }

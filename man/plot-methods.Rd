@@ -14,8 +14,8 @@
 a ggplot2 object
 }
 \description{
-Generates a graphical representation for a Celldata object
-The displayed representation depends on the current analysis status of the Celldata object
+Generates a graphical representation for a Celldata object.
+The displayed representation depends on the current analysis status of the Celldata object.
 
 - If the manifold has not been calculated, then the number of cells per sample will be displayed
 

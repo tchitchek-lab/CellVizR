@@ -17,15 +17,15 @@ plotMarkerDensity(
 
 \item{clusters}{a character vector containing the identifier of the cluster to use}
 
-\item{quant.low}{a numeric value providing the number of first quantile}
+\item{quant.low}{a numeric value providing the value of first quantile in the color gradiant}
 
-\item{quant.high}{a numeric value providing the number of last quantile}
+\item{quant.high}{a numeric value providing the value of last quantile in the color gradiant}
 
-\item{dip.th}{a numeric value specifing the p-value threshold of the Hartigan's dip test}
+\item{dip.th}{a numeric value specifying the p-value threshold of the Hartigan's dip test to consider non-unimodal clusters}
 }
 \value{
 a ggplot2 object
 }
 \description{
-This function aims to visualize xxx
+This function aims to visualize the density of marker/gene expressions for a set of given clusters.
 }

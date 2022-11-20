@@ -1,17 +1,19 @@
 #' @title Computes differential analysis statistics for cell clusters
 #'
-#' @description This function aims to compute the statistics of Differentially Abundant Clusters 'DAC'.
+#' @description This function aims to identify of differentially abundant clusters.
 #'
-#' DAC correspond to cell clusters having abundances statistically different between two biological conditions.
+#' Such clusters correspond to cell clusters having abundances statistically different between two biological conditions.
 #' The statistical test used for the comparisons can be defined by users.
 #' For each cluster, the p-value, log2 fold-change and effect size relative to the reference condition are computed.
 #' Statistical comparison can be performed in a paired and unpaired manner.
+#' Computed p-values can be corrected for multiple testing.
 #'
 #' @param Celldata a Celldata object
 #' @param condition a character value providing the name of the condition to be compared
 #' @param ref.condition a character value providing the name of reference condition
 #' @param test.statistics a character value providing the type of statistical test to use. Possible values are: 'wilcoxon' or 't-test'
-#' @param paired a boolean value indicating if a paired or unpaired comparison should be applied
+#' @param p.adjust a character value providing the type of p-value adjustment method to use. Possible values are: 'none', 'holm', 'hochberg', 'hommel', 'bonferroni', 'BH', 'BY', 'fdr'
+#' @param paired a boolean value indicating if individuals are paired
 #'
 #' @return a S4 object of class 'Celldata'
 #'
@@ -22,6 +24,7 @@ computeStatistics <- function(Celldata,
                               condition,
                               ref.condition,
                               test.statistics = c("wilcox.test", "t.test"),
+                              p.adjust = c("none", "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr"),
                               paired = FALSE) {
 
   test.statistics <- match.arg(test.statistics)
@@ -80,7 +83,11 @@ computeStatistics <- function(Celldata,
   stats$pvalue <- as.numeric(stats$pvalue)
   stats$lfc <- as.numeric(stats$lfc)
   stats$effsize <- as.numeric(stats$effsize)
-
+  
+  if(p.adjust!="none"){
+	stats$pvalue = p.adjust(stats$pvalue,method="p.adjust")
+  }
+  
   if (nrow(Celldata@statistic) == 0) {
     Celldata@statistic <- cbind(comparison, stats)
   } else {
@@ -89,4 +96,5 @@ computeStatistics <- function(Celldata,
 
   validObject(Celldata)
   return(Celldata)
+  
 }

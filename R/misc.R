@@ -1,6 +1,6 @@
 # @title Internal - Computes the cell density within the manifold
 #
-# @description This function is used internally to compute the cell density
+# @description This function is used internally to compute the cell density.
 #
 # @param proj a data.frame providing the manifold representation with two columns
 # @param n a numerical providing the number a grid points in each direction (please refer to the function 'kde2d' of the 'MASS' package)
@@ -20,7 +20,7 @@ computeCellDensities <- function(proj,
 
 # @title Internal - Rescales numeric matrix for projection
 #
-# @description This functions is used internally to rescale expression values
+# @description This functions is used internally to rescale expression values.
 #
 # @param proj a data.frame providing the manifold representation
 # @param abs a boolean value specifying if data must be rescaled
@@ -47,21 +47,20 @@ abs.proj <- function(proj,
   return(limits)
 }
 
-#' @title Filter to select samples
+#' @title Select samples based on metadata information
 #'
-#' @description This function aims to select the samples of interest
-
+#' @description This function aims to select biological samples of interest based on provided metadata.
 #'
 #' @param Celldata a Celldata object
-#' @param individual a character vector containing the names of biological individual to use
-#' @param condition a character vector containing the biological condition to use
-#' @param timepoint a character vector containing the timepoint condition to use
+#' @param individual a character vector indicating the individual to select
+#' @param condition a character vector indicating the biological condition to select
+#' @param timepoint a character vector indicating the timepoint to select
 #'
-#' @return a ggplot2 object
+#' @return a character vector
 #'
 #' @export
 #'
-getSamples <- function(Celldata,
+selectSamples <- function(Celldata,
                       individual = NULL,
                       condition = NULL,
                       timepoint = NULL) {
@@ -79,5 +78,6 @@ getSamples <- function(Celldata,
   }
   
   samples <- rownames(metadata)
+  
   return(samples)
 } 

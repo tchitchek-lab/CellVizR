@@ -27,7 +27,7 @@ plotMDS(
 
 \item{samples}{a character vector containing the names of biological samples to use. By default, all samples are used}
 
-\item{plot.text}{a boolean value specifing if adds text directly at the plot}
+\item{plot.text}{a boolean value specifying if adds text directly at the plot}
 }
 \value{
 a ggplot2 object

@@ -14,7 +14,7 @@ plotCoordinates(
 \arguments{
 \item{Celldata}{a Celldata object}
 
-\item{condition.samples}{a character vector containing the variable to be studied for the samples. Possible values are: 'condition' or 'timepoint"}
+\item{condition.samples}{a character vector containing the variables to be studied for the samples. Possible values are: 'condition' or 'timepoint'}
 
 \item{samples}{a character vector containing the names of biological samples to use. By default, all samples are used}
 
@@ -24,6 +24,6 @@ plotCoordinates(
 a ggplot2 object
 }
 \description{
-This function aims to visualize the caracterisitcs of cell clusters using parallels coordinates.
-Each line in the plot corresponds to a biological sample for which marker/gene expression are indicated.
+This function aims to visualize the characteristics of cell clusters using parallels coordinates.
+Each line in the representation corresponds to a biological sample for which marker/gene expressions are displayed.
 }

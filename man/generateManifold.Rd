@@ -16,7 +16,7 @@ generateManifold(
 \arguments{
 \item{Celldata}{a Celldata object}
 
-\item{type}{a character value specifying the type of manifold to compute. Possible values are: 'UMAP' for Uniform Manifold Approximation and Projection, 'tSNE' for t Stochastic Neighbor Embedding, and 'lvish' for LargeVis}
+\item{type}{a character value specifying the type of manifold to compute. Possible values are: 'UMAP' for Uniform Manifold Approximation and Projection, 'tSNE' for t-distributed Stochastic Neighbor Embedding, and 'lvish' for LargeVis}
 
 \item{markers}{a character vector providing the cell markers to use for the manifold generation}
 
@@ -24,14 +24,15 @@ generateManifold(
 
 \item{verbose}{a boolean value indicating if computational details must be displayed on the console}
 
-\item{...}{Other arguments passed on to methods}
+\item{...}{other arguments passed on to manifold methods}
 }
 \value{
 a S4 object of class 'Celldata'
 }
 \description{
-This function aims to generate a manifold representation for cell events stored in a Celldata object
+This function aims to generate a manifold representation for cell events stored in a Celldata object.
 
-This function allows the use of several non-linear dimension reduction techniques such as UMAP, t-SNE or LargeVis
-The whole set of cell markers or specific cell markers can be used during the dimensionality reduction process
+This function allows the use UMAP, t-SNE or LargeVis dimension reduction techniques.
+The whole set of cell markers or specific cell markers can be used during the dimensionality reduction process.
+The random seed can also be defined to allow the reproducibility of generated results.
 }

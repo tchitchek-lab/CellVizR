@@ -1,16 +1,16 @@
 #' @title Celldata class definition
 #'
-#' @description The Celldata object is a S4 object containing all cytometry expressions.
+#' @description The Celldata object is a S4 object containing all single-cell information.
 #'
 #' @slot samples a character vector containing the names of the biological samples
 #' @slot raw.markers a character vector containing the names of the raw markers
 #' @slot matrix.expression.r a data.frame containing the raw marker expressions of each cell
 #' @slot matrix.expression a data.frame containing the marker expressions of each cell
 #' @slot manifold a data.frame containing the manifold coordinates
-#' @slot manifold.params a list containing the parameters used for manifold creation
-#' @slot identify.clusters a vector containing the identifiers of cell clusters
+#' @slot manifold.params a list containing the parameters used for manifold generation
+#' @slot identify.clusters a vector containing the names of the identified cell clusters
 #' @slot identify.clusters.params a vector containing the parameters used for the identification of the cell clusters
-#' @slot concave.hulls a data.frame containing the coordinates of the cell cluster of the concave hulls for each cluster
+#' @slot concave.hulls a data.frame containing the coordinates of the concave hulls of each cluster
 #' @slot matrix.cell.count a data.frame containing the number of cells associated to each cluster for each sample
 #' @slot matrix.abundance a data.frame containing the percentage of cells associated to each cluster for each sample
 #' @slot statistic a data.frame containing the statistics of cell clusters

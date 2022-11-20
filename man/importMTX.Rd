@@ -4,7 +4,7 @@
 \alias{importMTX}
 \title{Imports of cell expression profiles from MTX files}
 \usage{
-importMTX(mtx = mtx, cells = cells, features = features)
+importMTX(mtx, cells, features, meta, sample.col)
 }
 \arguments{
 \item{mtx}{a character vector specifying the path of the mtx file to load}
@@ -12,6 +12,10 @@ importMTX(mtx = mtx, cells = cells, features = features)
 \item{cells}{a character vector specifying the format of the mtx file to load}
 
 \item{features}{a character vector specifying the format of the mtx file to load}
+
+\item{meta}{a character specifying the name of the tsv metadata file to load}
+
+\item{sample.col}{a character specifying the name of the colmun to use as biological sample in the metadata file}
 }
 \value{
 a S4 object of class 'Celldata'

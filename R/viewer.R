@@ -151,19 +151,19 @@ plotCellCounts <- function(Celldata,
   return(plot)
 }
 
-#' @title Plots the numbers of cells for each clusters
+#' @title Plots the numbers of cells of each cluster
 #'
-#' @description This function aims to visualize the number of cells associated to each clusters.
+#' @description This function aims to visualize the number of cells associated to each cluster.
 #'
 #' This representation displays the clusters in the X-axis and the total number of associated cells in the Y-axis.
 #'
 #' @param Celldata a Celldata object
 #' @param clusters a character vector containing the identifiers of the clusters to use. By default, all clusters are used
 #' @param sort a boolean value indicating if clusters must be sorted by the number associated cluster
-#' @param legend.max.samples a numerical value specifying the maximal number of samples to display in the legend
+#' @param legend.max.samples a numerical value specifying the maximal number of samples to display in the graphical legend
 #'
 #' @return a ggplot2 object
-#'
+#' 
 #' @export
 #'
 plotClustersCounts <- function(Celldata,
@@ -232,13 +232,13 @@ plotClustersCounts <- function(Celldata,
 
 #' @title Plots of phenotype of identified cell clusters
 #'
-#' @description This function aims to visualize xxx
+#' @description This function aims to visualize the density of marker/gene expressions for a set of given clusters.
 #'
 #' @param Celldata a Celldata object
 #' @param clusters a character vector containing the identifier of the cluster to use
-#' @param quant.low a numeric value providing the number of first quantile
-#' @param quant.high a numeric value providing the number of last quantile
-#' @param dip.th a numeric value specifing the p-value threshold of the Hartigan's dip test 
+#' @param quant.low a numeric value providing the value of first quantile in the color gradiant
+#' @param quant.high a numeric value providing the value of last quantile in the color gradiant
+#' @param dip.th a numeric value specifying the p-value threshold of the Hartigan's dip test to consider non-unimodal clusters
 #'
 #' @return a ggplot2 object
 #'
@@ -301,9 +301,7 @@ plotMarkerDensity <- function(Celldata,
                                     colours = expression.color.palette,
                                     na.value = "black") +
       ggplot2::scale_x_continuous(limits = c(-2, 6), breaks = c(-2:6)) +
-      ggplot2::scale_y_continuous(labels = function(x) {
-        format(round(x, 1),
-               nsmall = 1)})
+      ggplot2::scale_y_continuous(labels = function(x) {format(round(x, 1),nsmall = 1)})
     
     plot <- plot +
       ggplot2::theme_bw() +
@@ -331,13 +329,13 @@ plotMarkerDensity <- function(Celldata,
 #' This representation can be used on a Celldata object for which a manifold analysis has been performed.
 #'
 #' If a cell clustering has been performed, then the clusters are delineated using concave hulls.
-#' Additionnaly, the manifold can be colored based on the local cell density or marker expressions.
-#' It is possible to centred ans reduce the values of expressions.
+#' Additionally, the manifold can be colored based on the local cell density or marker expressions.
+#' It is possible to centre and reduce the values of expressions.
 #'
 #' @param Celldata a Celldata object
 #' @param markers a character value providing the name of the marker to use for the colouring. By default, cells are colored based on their local density
 #' @param samples a character vector containing the names of biological samples to use
-#' @param scale a boolean value specifing if expression calue must be rescaled
+#' @param scale a boolean value specifying  if expression values must be rescaled
 #' @param quant.low a numeric value providing the number of first quantile
 #' @param quant.high a numeric value providing the number of last quantile 
 #'
@@ -361,7 +359,7 @@ plotManifold <- function(Celldata,
   proj <- Celldata@manifold
   
   if (length(proj) == 0) {
-    stop("Manifold is null")
+    stop("Manifold is null. Please create manifold.")
   }
   
   colnames(proj) <- c("dim1", "dim2")
@@ -380,6 +378,9 @@ plotManifold <- function(Celldata,
   } else if (markers == "clusters") {
     legend.title <- "cell clusters"
     proj$value <- proj$clusters
+  }else if (markers == "samples") {
+    legend.title <- "samples"
+    proj$value <- Celldata@samples
   } else if (markers == "clusters" && length(clusters) == 0) {
     stop("Clusters is null")
   } else {
@@ -423,8 +424,7 @@ plotManifold <- function(Celldata,
     
   } else if (markers == "clusters") {
     
-    proj.center <- plyr::ddply(proj, "clusters",
-                               function(x) {
+    proj.center <- plyr::ddply(proj, "clusters",function(x) {
                                  c(dim1 = stats::median(x$dim1),
                                    dim2 = stats::median(x$dim2))})
     
@@ -435,6 +435,8 @@ plotManifold <- function(Celldata,
                                       size = 3) +
       ggplot2::guides(color = "none") +
       ggplot2::labs(title = "clusters representation", color = legend.title)
+    
+  }else if (markers == "samples") {
     
   } else {
     
@@ -475,8 +477,8 @@ plotManifold <- function(Celldata,
 #' @param samples a character vector containing the names of biological samples to use. By default, all samples are used
 #' @param components a numeric vector providing the components to display
 #' @param condition.samples a character vector containing the variable to be studied for the samples. Possible values are: 'condition' or 'timepoint"
-#' @param cor.radius.th a numeric value specifing the radius of the correlation plot radius
-#' @param plot.text a boolean value specifing if adds text directly at the plot
+#' @param cor.radius.th a numeric value specifying the radius of the correlation plot radius
+#' @param plot.text a boolean value specifying if adds text directly at the plot
 #'
 #' @return a ggplot2 object
 #'
@@ -648,7 +650,7 @@ plotPCA <- function(Celldata,
 #' @param condition.samples a character vector containing the variable to be studied for the samples. Possible values are: 'condition' or 'timepoint"
 #' @param clusters a character vector containing the identifiers of the clusters to use. By default, all clusters are used
 #' @param samples a character vector containing the names of biological samples to use. By default, all samples are used
-#' @param plot.text a boolean value specifing if adds text directly at the plot
+#' @param plot.text a boolean value specifying if adds text directly at the plot
 #'
 #' @return a ggplot2 object
 #'
@@ -823,8 +825,8 @@ plotMDS <- function(Celldata,
 #' @description This function aims to visualize and compare the cell cluster abundances for each biological condition using boxplot and jitter representations.
 #'
 #' The abundance of a specific cell cluster or a set of cell clusters can be displayed.
-#' The representation can be resticted to a specific set of samples.
-#' Moreover boxplot can be constructed based on sample meta information.
+#' The representation can be restricted to a specific set of samples.
+#' Moreover, boxplot can be constructed based on sample meta information.
 #' Statistic can be computed for all comparisons.
 #'
 #' @param Celldata a Celldata object
@@ -833,7 +835,7 @@ plotMDS <- function(Celldata,
 #' @param observation a character value containing the parameters to use
 #' @param test.statistics a character value providing the type of statistical test to use. Possible values are: 'wilcox.test' or 't.test'
 #' @param paired a boolean value indicating if a paired or unpaired comparison should be applied
-#' @param hide.ns a boolean value indicating if non significant p-value must be hidden
+#' @param hide.ns a boolean value indicating if non-significant p-value must be hidden
 #'
 #' @return a ggplot2 object
 #'
@@ -919,7 +921,8 @@ plotBoxplot <- function(Celldata,
 
 #' @title Plots of a volcano plot of statistical analysis
 #'
-#' @description This function aims to visualize the results of a differentially abundant a analysis using a Volcano plot
+#' @description This function aims to visualize the results of a differentially abundant a analysis using a Volcano plot.
+#'
 #' In such representation, each in dot corresponds to a cell cluster and dots are positioned in two dimensional space where the X-axis represents the log2(fold-change) and the Y-axis represents the -log10 of the p-value.
 #' Un horizontal line is displayed accordingly to the p-value threshold and to vertical lines are displayed accordingly to the fold-change threshold.
 #'
@@ -927,7 +930,7 @@ plotBoxplot <- function(Celldata,
 #' @param comparison a character value containing the comparison to study
 #' @param th.pv a numeric value containing the p-value threshold to use
 #' @param th.fc a numeric value containing the fold-change threshold to use
-#' @param plot.text a boolean value specifing if adds text directly at the plot
+#' @param plot.text a boolean value specifying if adds text directly at the plot
 #'
 #' @return a ggplot2 object
 #'
@@ -1001,20 +1004,19 @@ plotVolcano <- function(Celldata,
 #' @title Plots of a distogram of marker co-expression
 #'
 #' @description This function aims to visualize the pairwise co-expression between all markers using a distogram representation.
-#' Each tile corresponds to the co-expression between two markers and is gradient-colored based on the Pearson correlation
-#'
-#' @details
-#' The Pearson correlation is computed based on the marker expressions
+#' Each tile corresponds to the co-expression between two markers and is gradient-colored based on the Pearson or Spearman correlation
 #'
 #' @param Celldata a Celldata object
 #' @param clusters a character vector containing the identifier of the cluster to use
+#' @param method a character value indicating the name of correlation method to use
 #'
 #' @return a ggplot2 object
 #'
 #' @export
 #'
 plotDistogram <- function(Celldata,
-                          clusters = NULL) {
+                          clusters = NULL,
+						  method = c("pearson","spearman")) {
   
   checkmate::qassert(clusters, c("0", "S+"))
   
@@ -1032,7 +1034,7 @@ plotDistogram <- function(Celldata,
   proj <- proj[, -c(1, 2)]
   proj <- stats::na.omit(proj)
   
-  cormat <- round(stats::cor(proj, method = "pearson"), 2)
+  cormat <- round(stats::cor(proj, method = method), 2)
   dist <- stats::as.dist(1 - cormat)
   hc <- stats::hclust(dist)
   cormat <- cormat[hc$order, hc$order]
@@ -1099,8 +1101,8 @@ plotDistogram <- function(Celldata,
 #' @description This function aims to visualize co-expression between two markers using a scatter representation
 #'
 #' @param Celldata a Celldata object
-#' @param marker1 a character value specifying the first marker to be visualised
-#' @param marker2 a character value specifying the second marker to be visualised
+#' @param marker1 a character value specifying the first marker to be visualized
+#' @param marker2 a character value specifying the second marker to be visualized
 #' @param samples a character vector containing the names of biological samples to use. By default, all samples are used
 #' @param clusters a character vector containing the identifiers of the clusters to use. By default, all clusters are used
 #'
@@ -1163,11 +1165,11 @@ plotScatter <- function(Celldata,
 
 #' @title Plots of phenotype of cell clusters using parallels coordinates
 #'
-#' @description This function aims to visualize the caracterisitcs of cell clusters using parallels coordinates.
-#' Each line in the plot corresponds to a biological sample for which marker/gene expression are indicated.
+#' @description This function aims to visualize the characteristics of cell clusters using parallels coordinates.
+#' Each line in the representation corresponds to a biological sample for which marker/gene expressions are displayed.
 #'
 #' @param Celldata a Celldata object
-#' @param condition.samples a character vector containing the variable to be studied for the samples. Possible values are: 'condition' or 'timepoint"
+#' @param condition.samples a character vector containing the variables to be studied for the samples. Possible values are: 'condition' or 'timepoint'
 #' @param samples a character vector containing the names of biological samples to use. By default, all samples are used
 #' @param clusters a character vector containing the identifiers of the clusters to use
 #'

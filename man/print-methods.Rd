@@ -14,5 +14,5 @@
 none
 }
 \description{
-Prints a preview for a Celldata object
+Prints a preview for a Celldata object.
 }

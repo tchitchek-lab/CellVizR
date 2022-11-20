@@ -20,7 +20,7 @@ plotManifold(
 
 \item{samples}{a character vector containing the names of biological samples to use}
 
-\item{scale}{a boolean value specifing if expression calue must be rescaled}
+\item{scale}{a boolean value specifying  if expression values must be rescaled}
 
 \item{quant.low}{a numeric value providing the number of first quantile}
 
@@ -35,6 +35,6 @@ This function aims to visualize a computed manifold representation for given ana
 This representation can be used on a Celldata object for which a manifold analysis has been performed.
 
 If a cell clustering has been performed, then the clusters are delineated using concave hulls.
-Additionnaly, the manifold can be colored based on the local cell density or marker expressions.
-It is possible to centred ans reduce the values of expressions.
+Additionally, the manifold can be colored based on the local cell density or marker expressions.
+It is possible to centre and reduce the values of expressions.
 }

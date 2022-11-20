@@ -42,14 +42,14 @@ createFlowframe <- function(intensities) {
 
 #' @title Exports cell expression profiles to TSV or FCS files
 #'
-#' @description Exports cell expresion profiles from a Celldata object to a tab-separated or FCS files
+#' @description Exports cell expression profiles from a Celldata object to a tab-separated or FCS files.
 #'
 #' Cell expression profiles can be exported for a set of given samples and for a set of given cell clusters
 #'
 #' @param Celldata a Celldata object
 #' @param filename a character value providing the name of the output file
-#' @param clusters a character vector containing the identifiers of the cell clusters to export. By default, all clusters are extracted
-#' @param samples a character vector containing the names of biological samples to export. By default, all samples are extracted
+#' @param clusters a character vector containing the identifiers of the cell clusters to export. By default, all clusters are extracted.
+#' @param samples a character vector containing the names of biological samples to export. By default, all samples are extracted.
 #'
 #' @return none
 #'

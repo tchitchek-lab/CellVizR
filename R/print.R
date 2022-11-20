@@ -1,6 +1,6 @@
 #' @title Prints information for a given Celldata object
 #'
-#' @description Prints a preview for a Celldata object
+#' @description Prints a preview for a Celldata object.
 #'
 #' @param x a Celldata object
 #'
@@ -10,18 +10,24 @@
 #' @rdname print-methods
 NULL
 #' @rdname print-methods
-
+ 
 setMethod("print", "Celldata",
           function(x) {
             cat("Object class: Celldata\n")
-            cat(paste0("Numbers of markers: ", length(x@matrix.expression[, -1])))
-            cat("\nMarkers: ")
-            cat(paste0(colnames(x@matrix.expression), collapse = ", "))
-            cat("\n")
             cat(paste0("Numbers of samples: ", length(unique(x@samples))))
-            cat("\nSamples: ")
-            cat(paste0(unique(x@samples)[seq(1, 3)], collapse = ", "), "...")
-            cat("\n")
+            cat("\n- Samples: ")
+            if(length(unique(x@samples))>10){
+				cat(paste0(unique(x@samples)[seq(1, 10)], collapse = ", "), "...")
+            }else{
+				cat(paste0(unique(x@samples), collapse = ", "))
+            }
+			cat("\n")
+            cat(paste0("Numbers of markers: ", formatC(length(x@matrix.expression[, -1]), big.mark = ","),"\n"))
+            if(ncol(x@matrix.expression)<40){
+				cat("- Markers: ")
+				cat(paste0(colnames(x@matrix.expression), collapse = ", "))
+				cat("\n")
+			}
             cat("Numbers of cells: ")
             cat(formatC(nrow(x@matrix.expression), big.mark = ","))
             cat("\n")
@@ -47,9 +53,9 @@ setMethod("print", "Celldata",
             } else {
               cat(paste0("Parameters: ", paste0(names(x@manifold.params),
                                                 "=", x@manifold.params,
-                                                collapse = ", ")))
+                                                collapse = ", "),"\n"))
             }
-            cat("\n")
+            #cat("\n")
             cat("- Clustering")
             cat("\n")
             if (length(x@identify.clusters) == 0) {

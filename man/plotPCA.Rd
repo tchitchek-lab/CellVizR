@@ -28,9 +28,9 @@ plotPCA(
 
 \item{condition.samples}{a character vector containing the variable to be studied for the samples. Possible values are: 'condition' or 'timepoint"}
 
-\item{cor.radius.th}{a numeric value specifing the radius of the correlation plot radius}
+\item{cor.radius.th}{a numeric value specifying the radius of the correlation plot radius}
 
-\item{plot.text}{a boolean value specifing if adds text directly at the plot}
+\item{plot.text}{a boolean value specifying if adds text directly at the plot}
 }
 \value{
 a ggplot2 object

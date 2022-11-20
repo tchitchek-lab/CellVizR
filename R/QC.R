@@ -1,6 +1,6 @@
 #' @title Computes the percentage of cell clusters with low number of cells
 #'
-#' @description This function aims to compute and show cell clusters having a number of associated cells lower than a specific threshold
+#' @description This function aims to compute and show cell clusters having a number of associated cells lower than a specific threshold.
 #'
 #' @param Celldata a Celldata object
 #' @param th.size a numeric value providing the minimum number of cells needed for a cluster to be considered a small cluster
@@ -30,8 +30,7 @@ QCSmallClusters <- function(Celldata,
 
 # @title Internal - Computes the percentage of clusters with low number of cells
 #
-# @description This function is used internally to compute the percentage of clusters having a number of associated cells lower than a specific threshold
-#
+# @description This function is used internally to compute the percentage of clusters having a number of associated cells lower than a specific threshold.
 #
 # @param Celldata a Celldata object
 # @param th.size a numeric value providing the minimum number of cells needed for a cluster to be considered a small cluster
@@ -61,7 +60,7 @@ computeSmallClusters <- function(Celldata,
 
 # @title Internal - Plots a representation of QC for small clusters
 #
-# @description This function is used internally to create a representation showing the fraction of clusters having a number associated cell lower than a specific threshold
+# @description This function is used internally to create a representation showing the fraction of clusters having a number associated cell lower than a specific threshold.
 #
 # @param values.small a list providing the small cluster QC information. Such as data.frame containing the boolean values and the percentage computed
 #
@@ -116,9 +115,9 @@ plotSmallClusters <- function(values.small) {
 
 #' @title Computes the percentage of clusters with uniform phenotypes
 #'
-#' @description This function aims to identify and show cell clusters having a uniform phenotype
+#' @description This function aims to identify and show cell clusters having a uniform phenotype.
 #'
-#' A uniform cluster corresponds to a cluster that have a unimodal expression and a low spread of expression for all its markers
+#' A uniform cluster corresponds to a cluster that have a unimodal expression and a low spread of expression for all its markers.
 #'
 #' @details
 #' -'uniform' corresponds to the verification of the unimodal distribution of markers with a Hartigans test
@@ -166,7 +165,7 @@ QCUniformClusters <- function(Celldata,
 # @title Internal - Computes percentage of clusters with uniform phenotype
 #
 # @description This function is used internally to identify cell clusters that have a non-uniform phenotype.
-# A uniform cluster corresponds to clusters that have a unimodal expression and having a low spread of expression for all the markers to compose it
+# A uniform cluster corresponds to clusters that have a unimodal expression and having a low spread of expression for all the markers to compose it.
 #
 # @param Celldata a Celldata object
 # @param uniform.test a character providing the name of test assessment to perform. Possible value are : 'both', 'uniform', 'IQR'
@@ -245,9 +244,9 @@ computeUniformClusters <- function(Celldata,
 
 # @title Internal - Plots a representation of QC for uniform phenotype cluster
 #
-# @description This function is used internally to create a graphic representation
+# @description This function is used internally to create a graphic representation.
 #
-# @param values.uniform a list providing the uniform cluster QC information. Such as data.frame containing the boolean values and the percentage computed
+# @param values.uniform a list providing the uniform cluster QC information. Such as data.frame containing the boolean values and the percentage computed.
 #
 # @return a ggplot2 object
 #

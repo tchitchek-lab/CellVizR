@@ -27,7 +27,7 @@ plotBoxplot(
 
 \item{paired}{a boolean value indicating if a paired or unpaired comparison should be applied}
 
-\item{hide.ns}{a boolean value indicating if non significant p-value must be hidden}
+\item{hide.ns}{a boolean value indicating if non-significant p-value must be hidden}
 }
 \value{
 a ggplot2 object
@@ -36,7 +36,7 @@ a ggplot2 object
 This function aims to visualize and compare the cell cluster abundances for each biological condition using boxplot and jitter representations.
 
 The abundance of a specific cell cluster or a set of cell clusters can be displayed.
-The representation can be resticted to a specific set of samples.
-Moreover boxplot can be constructed based on sample meta information.
+The representation can be restricted to a specific set of samples.
+Moreover, boxplot can be constructed based on sample meta information.
 Statistic can be computed for all comparisons.
 }

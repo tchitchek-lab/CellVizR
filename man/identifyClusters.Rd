@@ -18,7 +18,7 @@ identifyClusters(
 \arguments{
 \item{Celldata}{a Celldata object}
 
-\item{space}{a character value containing the space of clustering method to use. Possible values are: 'manifold' or 'markers'}
+\item{space}{a character value containing the space of the clustering method to use. Possible values are: 'manifold' or 'markers'}
 
 \item{markers}{a character vector providing the cell markers to use for the manifold generation}
 
@@ -30,7 +30,7 @@ identifyClusters(
 
 \item{seed}{a numeric value providing the random seed to use during stochastic operations}
 
-\item{...}{Other arguments passed on to methods}
+\item{...}{other arguments passed on to the methods}
 }
 \value{
 a S4 object of class 'Celldata'
@@ -38,7 +38,7 @@ a S4 object of class 'Celldata'
 \description{
 This function aims to identify cell clusters, which are groups of cells having similar expressions for selected markers, using different unsupervised clustering methods.
 
-Several clustering method are available such as kmeans, kmedian, clara, DBSCAN, HDBSCAN and SOM.
+Several clustering methods are available such as kmeans, kmedian, clara, DBSCAN, HDBSCAN and SOM.
 The cell clustering can be performed on the manifold representation or based on marker expression.
 }
 \details{

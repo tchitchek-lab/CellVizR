@@ -2,20 +2,20 @@
 #'
 #' @description This function aims to identify cell clusters, which are groups of cells having similar expressions for selected markers, using different unsupervised clustering methods.
 #'
-#' Several clustering method are available such as kmeans, kmedian, clara, DBSCAN, HDBSCAN and SOM.
+#' Several clustering methods are available such as kmeans, kmedian, clara, DBSCAN, HDBSCAN and SOM.
 #' The cell clustering can be performed on the manifold representation or based on marker expression.
 #'
 #' @details
 #' For each identify cell cluster, the boundaries of cells belonging to this cluster are delineated using a concave hull
 #'
 #' @param Celldata a Celldata object
-#' @param space a character value containing the space of clustering method to use. Possible values are: 'manifold' or 'markers'
+#' @param space a character value containing the space of the clustering method to use. Possible values are: 'manifold' or 'markers'
 #' @param markers a character vector providing the cell markers to use for the manifold generation
 #' @param method a character value containing the name of the clustering method to use. Possible values are: 'kmeans', 'kmedian', 'clara', 'DBSCAN' and 'SOM'
 #' @param concavity a numeric value providing a relative measure of concavity for the computation of the concave hulls (please refer to the function 'concaveman' of the 'concaveman' package)
 #' @param length.threshold a numeric value providing a threshold of the segment length for the computation of the concave hulls (please refer to the function 'concaveman' of the concaveman package)
 #' @param seed a numeric value providing the random seed to use during stochastic operations
-#' @param ... Other arguments passed on to methods
+#' @param ... other arguments passed on to the methods
 #'
 #' @return a S4 object of class 'Celldata'
 #'
@@ -43,8 +43,8 @@ identifyClusters <- function(Celldata,
   proj  <- Celldata@manifold
   exprs <- Celldata@matrix.expression
 
-  message("Clustering method is: ", method)
-  cat("\n")
+  message(paste0("Clustering method is: ", method))
+  message()
   message("Identifying cell clusters...")
 
   if (space == "manifold") {
@@ -155,7 +155,7 @@ computeConcaveHulls <- function(proj,
 
 # @title Internal - Computes the number of cells for each cluster
 #
-# @description This function is used internally to computes the number of cells for each cluster.
+# @description This function is used internally to computes the number of cells associated to each cluster.
 #
 # @param proj a data.frame providing the manifold representation with two columns
 # @param clusters a character vector providing the cluster to analyse the associated with cell cluster
@@ -199,11 +199,11 @@ computeClusterAbundances <- function(count) {
 
 #' @title Create metaclusters
 #'
-#' @description This function aims to gathered mutliple cell cluster to a large cell cluster
+#' @description This function aims to gathered multiple cell clusters to a large cell cluster
 #'
 #' @param Celldata a Celldata object
-#' @param clusters a character vector containing the identifiers of the clusters to use. By default, all clusters are used
-#' @param metaclusters a character value containing the name of the metacluster to create 
+#' @param clusters a character vector containing the identifiers of the clusters to gather
+#' @param metacluster.name a character value containing the name of the metacluster to create 
 #'
 #' @return a Celldata object
 #'
@@ -211,20 +211,19 @@ computeClusterAbundances <- function(count) {
 #'
 createMetaclusters <- function(Celldata, 
                                clusters,
-                               metaclusters) {
+                               metacluster.name) {
 
   checkmate::qassert(clusters, "S+")
-  checkmate::qassert(metaclusters, "S1")
+  checkmate::qassert(metacluster.name, "S1")
   
   identify.clusters <- Celldata@identify.clusters
   
   matrix.cell.count <- Celldata@matrix.cell.count
-  matrix.cell.count <- cbind(matrix.cell.count, 
-                             "clusters" = rownames(matrix.cell.count))
+  matrix.cell.count <- cbind(matrix.cell.count, "clusters" = rownames(matrix.cell.count))
   
   for (i in clusters) {
-    identify.clusters[identify.clusters == i] <- metaclusters
-    matrix.cell.count$clusters[matrix.cell.count$clusters == i] <- metaclusters
+    identify.clusters[identify.clusters == i] <- metacluster.name
+    matrix.cell.count$clusters[matrix.cell.count$clusters == i] <- metacluster.name
   }
   
   matrix.cell.count <- plyr::ddply(matrix.cell.count, "clusters", function(x){
@@ -233,11 +232,54 @@ createMetaclusters <- function(Celldata,
   })
   
   rownames(matrix.cell.count) <- matrix.cell.count$clusters
-  matrix.cell.count$clusters <- NULL
+  matrix.cell.count$clusters  <- NULL
   
   Celldata@identify.clusters <- identify.clusters
   Celldata@matrix.cell.count <- matrix.cell.count
-  Celldata@matrix.abundance <- computeClusterAbundances(count = matrix.cell.count)
+  Celldata@matrix.abundance  <- computeClusterAbundances(count = matrix.cell.count)
+  
+  return(Celldata)
+}
+
+#' @title Delete cluster
+#'
+#' @description This function aims to delete a set of cell clusters from this analysis
+#'
+#' @param Celldata a Celldata object
+#' @param clusters a character vector containing the identifiers of the clusters to delete
+#'
+#' @return a Celldata object
+#'
+#' @export
+#'
+deleteClusters <- function(Celldata, 
+                               clusters) {
+
+  checkmate::qassert(clusters, "S+")
+  
+  identify.clusters <- Celldata@identify.clusters
+  
+  matrix.cell.count <- Celldata@matrix.cell.count
+  matrix.cell.count <- cbind(matrix.cell.count, "clusters" = rownames(matrix.cell.count))
+  
+  for(i in clusters) {
+    identify.clusters[identify.clusters == i] <- "todel"
+    matrix.cell.count$clusters[matrix.cell.count$clusters == i] <- "todel"
+  }
+  
+  matrix.cell.count <- plyr::ddply(matrix.cell.count, "clusters", function(x){
+    x$clusters = NULL
+    apply(x,2,sum)
+  })
+  
+  matrix.cell.count$todel = NULL
+  
+  rownames(matrix.cell.count) <- matrix.cell.count$clusters
+  matrix.cell.count$clusters  <- NULL
+  
+  Celldata@identify.clusters <- identify.clusters
+  Celldata@matrix.cell.count <- matrix.cell.count
+  Celldata@matrix.abundance  <- computeClusterAbundances(count = matrix.cell.count)
   
   return(Celldata)
 }

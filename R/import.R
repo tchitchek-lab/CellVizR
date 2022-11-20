@@ -49,10 +49,10 @@ import <- function(files,
   if (d.method == "uniform" || d.method == "density") {
     message("Downsampling method is: ", d.method, " and parameters method are: ",
             paste0(names(parameters.method), " = ", parameters.method, collapse = ", "))
-    cat("\n")
+    message()
   } else {
     message("Downsampling method is: ", d.method)
-    cat("\n")
+    message()
   }
 
   for (file in files) {
@@ -162,33 +162,41 @@ import <- function(files,
 #'
 #' @description This function aims to import acquired cell events from single-cell transcriptomic profiling into a Celldata object.
 #'
-#'
 #' @param mtx a character vector specifying the path of the mtx file to load
 #' @param cells a character vector specifying the format of the mtx file to load
 #' @param features a character vector specifying the format of the mtx file to load
+#' @param meta a character specifying the name of the tsv metadata file to load
+#' @param sample.col a character specifying the name of the colmun to use as biological sample in the metadata file
 #'
 #' @return a S4 object of class 'Celldata'
 #'
 #' @export
-#' @import methods
-importMTX <- function(mtx      = mtx,
-                      cells    = cells,
-                      features = features) {
-				   
+#' @import methods 
+importMTX <- function(mtx,
+                      cells,
+                      features,
+					  meta,
+					  sample.col) {
+		
 	expression_matrix <- Seurat::ReadMtx(mtx      = mtx,
 							             cells    = cells,
 							             features = features)
 							 
-	seurat_object <- Seurat:::CreateSeuratObject(counts = expression_matrix)
-	counts        <- Seurat:::GetAssayData(object = seurat_object[["RNA"]], slot = "counts")
+	seurat_object <- Seurat::CreateSeuratObject(counts = expression_matrix)
+	counts        <- Seurat::GetAssayData(object = seurat_object[["RNA"]], slot = "counts")
 	counts        <- t(as.matrix(x = log(counts + 1)))
 	counts        <- counts[order(rownames(counts)),]
 	counts        <- data.frame(counts)
 	
+	meta                <- utils::read.delim(meta,header=TRUE)
+	meta                <- meta[meta$id %in% rownames(counts),]
+	samples             <- meta[,sample.col,drop=TRUE]
+	print(unique(samples))
+	
 	res <- methods::new("Celldata",
                       matrix.expression.r = counts,
                       matrix.expression = counts,
-                      samples = rep("test",nrow(counts)),
+                      samples = samples,
                       raw.markers = colnames(counts),
                       matrix.abundance = data.frame())
 
@@ -336,14 +344,14 @@ renameMarkers <- function(Celldata,
   return(Celldata)
 }
 
-#' @title Assigns meta-information about biological samples
+#' @title Assigns meta-information to biological samples
 #'
-#' @description This function aims to attach meta-information to each biological sample.
+#' @description This function aims to attach meta-information to biological samples.
 #'
-#' Especially, the biological individual, the biological condition and the time point of each sample can be specified for subsequent analyses.
+#' For each biological sample, the biological individual, the biological condition and the time point can be specified for subsequent analyses.
 #'
 #' @param Celldata a Celldata object
-#' @param metadata a data.frame containing contextual information about the biological samples. This data.frame must have 3 columns specifying for each sample the associated individual (column named 'individual'), the biological condition (column named 'condition') and the time point (column named 'timepoint')
+#' @param metadata a data.frame containing contextual information about the biological samples. This data.frame must have 3 columns specifying for each sample the associated individual (column named 'individual'), the biological condition (column named 'condition') and the time point (column named 'timepoint'). Rownames must correspond to biological samples imported within the Celldata object.
 #'
 #' @return a S4 object of class 'Celldata'
 #'

@@ -17,5 +17,5 @@ QCSmallClusters(Celldata, th.size = 50, plot.device = TRUE)
 a numerical value corresponding to the percentage of cell cluster with low number of cells
 }
 \description{
-This function aims to compute and show cell clusters having a number of associated cells lower than a specific threshold
+This function aims to compute and show cell clusters having a number of associated cells lower than a specific threshold.
 }

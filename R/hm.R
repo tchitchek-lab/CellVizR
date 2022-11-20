@@ -1,6 +1,6 @@
 # @title Internal - Rescales marker expression by quantile
 #
-# @description This function is used internally to rescale the marker expression by the quantile method
+# @description This function is used internally to rescale the marker expression by the quantile method.
 #
 # @param exprs a data.frame containing the marker expressions for each cluster
 # @param quant.low a numeric value providing the value of the first quantile
@@ -49,16 +49,16 @@ computeMarkerMedians <- function(exprs) {
 
 #' @title Plots an heatmap of cell marker expressions
 #'
-#' @description This function aims to visualize the cell marker expressions for selected markers and clusters
+#' @description This function aims to visualize the cell marker expressions for selected markers and clusters.
 #'
-#' The mean of median marker expressions is computed for each cluster, and marker expressions displayed using a categorical heatmap (5 categories are defined by default)
-#' The range expression of each cell marker is discretized into several categories between bounds of marker expressions
-#' To hierarchical clustering, shown using dendrogramm, can be computed on both marker and cluster levels
+#' The mean of median marker expressions is computed for each cluster, and marker expressions displayed using a categorical heatmap (5 categories are defined by default).
+#' The range expression of each cell marker is discretized into several categories between bounds of marker expressions.
+#' Hierarchical clustering, represented by dendrogramm, can be computed on both marker and cluster levels.
 #'
 #' @param Celldata a Celldata object
 #' @param markers a character vector providing the marker names to use. By default, all markers are used
 #' @param clusters a character vector containing the identifiers of the clusters to use. By default, all clusters are used
-#' @param method.hclust a character value providing the agglomeration method to be use. Possible values are: 'ward.D', 'ward.D2', 'single', 'complete', 'average', 'mcquitty', 'median' or 'centroid' (please refer to the function 'hclust' of the 'stats' package)
+#' @param method.hclust a character value providing the agglomeration method to be used. Possible values are: 'ward.D', 'ward.D2', 'single', 'complete', 'average', 'mcquitty', 'median' or 'centroid' (please refer to the function 'hclust' of the 'stats' package)
 #' @param nb.cat a numeric specifying the number of categories to use
 #' @param seed a numeric value providing the random seed to use during stochastic operations
 #'
@@ -235,11 +235,11 @@ plotHmExpressions <- function(Celldata,
 
 #' @title Plots an heatmap of cell cluster abundances
 #'
-#' @description This function aims to visualize the abundances of cell clusters using an heatmap representation
+#' @description This function aims to visualize the abundances of cell clusters using an heatmap representation.
 #'
-#' In such heatmap each column corresponds a cell cluster and he row corresponds the different samples
+#' In such heatmap each column corresponds a cell cluster and the row corresponds the different samples.
 #' The heatmap can be restricted to specific cell clusters and samples.
-#' The levels of abundance of each sample in each cluster is represented using a color gradient scale
+#' The levels of abundance of each sample in each cluster is represented using a color gradient scale.
 #' Abundance values can be centered and reduced.
 #'
 #' @param Celldata a Celldata object
@@ -384,10 +384,10 @@ plotHmAbundances <- function(Celldata,
 
 #' @title Plots an heatmap of a statistical analysis results
 #'
-#' @description This function aims to visualize the results of differential cell clusters analysis
+#' @description This function aims to visualize the results of differential cell clusters analysis.
 #'
-#' This representation displays statistical information for each cell cluster for a given comparison of samples
-#' Different statistics can be visualized, such as the p-value, the log2(fold-change), and effect size
+#' This representation displays statistical information for each cell cluster for a given comparison of samples.
+#' Different statistics can be visualized, such as the p-value, the log2(fold-change), and effect size.
 #'
 #' @param Celldata a Celldata object
 #' @param clusters a character vector containing the identifiers of the clusters to use. By default, all clusters are used

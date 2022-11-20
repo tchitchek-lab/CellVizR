@@ -21,7 +21,7 @@ performUpsampling(
 a S4 object of class 'Celldata'
 }
 \description{
-This function aims to perform upsample downsampled events based on an existing Celldata object and existing cell events stored in tab-separated or FCS files
+This function aims to perform the upsampling of downsampled events events based on an existing Celldata object and existing cell events stored in tab-separated or FCS files.
 
-Importantly, the identification of cell clusters must have been performed prior to this operation
+Importantly, the identification of cell clusters must have been performed prior to this operation.
 }

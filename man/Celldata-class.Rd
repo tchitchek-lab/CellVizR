@@ -6,7 +6,7 @@
 \alias{Celldata}
 \title{Celldata class definition}
 \description{
-The Celldata object is a S4 object containing all cytometry expressions.
+The Celldata object is a S4 object containing all single-cell information.
 }
 \section{Slots}{
 
@@ -21,13 +21,13 @@ The Celldata object is a S4 object containing all cytometry expressions.
 
 \item{\code{manifold}}{a data.frame containing the manifold coordinates}
 
-\item{\code{manifold.params}}{a list containing the parameters used for manifold creation}
+\item{\code{manifold.params}}{a list containing the parameters used for manifold generation}
 
-\item{\code{identify.clusters}}{a vector containing the identifiers of cell clusters}
+\item{\code{identify.clusters}}{a vector containing the names of the identified cell clusters}
 
 \item{\code{identify.clusters.params}}{a vector containing the parameters used for the identification of the cell clusters}
 
-\item{\code{concave.hulls}}{a data.frame containing the coordinates of the cell cluster of the concave hulls for each cluster}
+\item{\code{concave.hulls}}{a data.frame containing the coordinates of the concave hulls of each cluster}
 
 \item{\code{matrix.cell.count}}{a data.frame containing the number of cells associated to each cluster for each sample}
 

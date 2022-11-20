@@ -9,9 +9,9 @@ plotScatter(Celldata, marker1, marker2, samples = NULL, clusters = NULL)
 \arguments{
 \item{Celldata}{a Celldata object}
 
-\item{marker1}{a character value specifying the first marker to be visualised}
+\item{marker1}{a character value specifying the first marker to be visualized}
 
-\item{marker2}{a character value specifying the second marker to be visualised}
+\item{marker2}{a character value specifying the second marker to be visualized}
 
 \item{samples}{a character vector containing the names of biological samples to use. By default, all samples are used}
 

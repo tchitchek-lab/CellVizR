@@ -4,18 +4,18 @@
 \alias{createMetaclusters}
 \title{Create metaclusters}
 \usage{
-createMetaclusters(Celldata, clusters, metaclusters)
+createMetaclusters(Celldata, clusters, metacluster.name)
 }
 \arguments{
 \item{Celldata}{a Celldata object}
 
-\item{clusters}{a character vector containing the identifiers of the clusters to use. By default, all clusters are used}
+\item{clusters}{a character vector containing the identifiers of the clusters to gather}
 
-\item{metaclusters}{a character value containing the name of the metacluster to create}
+\item{metacluster.name}{a character value containing the name of the metacluster to create}
 }
 \value{
 a Celldata object
 }
 \description{
-This function aims to gathered mutliple cell cluster to a large cell cluster
+This function aims to gathered multiple cell clusters to a large cell cluster
 }
