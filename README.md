@@ -29,7 +29,7 @@ In the `CellVizR` workflow, an S4 object is created to store data and
 sample information is implemented for analysis. This stored information
 will allow performing the statistics and visualization of the dataset.
 
-<img src="README/figures/workflow.png" width="90%" style="display: block; margin: auto;" />
+<img src="sources_doc/workflow.png" width="90%" style="display: block; margin: auto;" />
 
 *Figure 1: Workflow of CellVizR*
 
@@ -143,7 +143,7 @@ plotCellCounts(DataCell,
                sort = TRUE)
 ```
 
-![](README/figure-markdown_github/plotCellCounts-1.png)
+![](README_files/figure-markdown_github/plotCellCounts-1.png)
 
 ``` r
 # Possible to make it interactive
@@ -288,7 +288,7 @@ plotClustersCounts(DataCell,
                    sort = TRUE)
 ```
 
-![](README/figure-markdown_github/plotClustersCounts-1.png)
+![](README_files/figure-markdown_github/plotClustersCounts-1.png)
 
 ``` r
 # Possible to make it interactive
@@ -318,7 +318,7 @@ plotManifold(DataCell,
              samples = NULL)
 ```
 
-![](README/figure-markdown_github/PlotManifold-1.png)
+![](README_files/figure-markdown_github/PlotManifold-1.png)
 
 If the name of the marker is used, then the intensity of marker
 expression, overlaid on the manifold (e.g. CD8), will be shown as below:
@@ -330,7 +330,7 @@ plotManifold(DataCell,
              samples = NULL)
 ```
 
-![](README/figure-markdown_github/PlotManifold2-1.png)
+![](README_files/figure-markdown_github/PlotManifold2-1.png)
 
 It is possible to specify the biological samples to be displayed in the
 representation using the `samples` argument as below:
@@ -342,7 +342,7 @@ plotManifold(DataCell,
              samples = "V1_10105LA")
 ```
 
-![](README/figure-markdown_github/PlotManifold3-1.png)
+![](README_files/figure-markdown_github/PlotManifold3-1.png)
 
 If the name of the clusters is used, the the clusters number will be
 shown as below:
@@ -353,7 +353,7 @@ plotManifold(DataCell,
              markers = "clusters")
 ```
 
-![](README/figure-markdown_github/PlotManifold4-1.png)
+![](README_files/figure-markdown_github/PlotManifold4-1.png)
 
 ### 2.5.2 Heatmap of cell marker expressions (plotHmExpressions)
 
@@ -375,7 +375,7 @@ hm.exp <- plotHmExpressions(DataCell)
 gridExtra::grid.arrange(hm.exp)
 ```
 
-![](README/figure-markdown_github/PlotHMExpressions-1.png) It is
+![](README_files/figure-markdown_github/PlotHMExpressions-1.png) It is
 possible to customize the `plotHmExpressions` with these parameters:
 
 -   the `markers` argument, which specifies the markers to be displayed
@@ -393,7 +393,7 @@ hm.exp <- plotHmExpressions(DataCell,
 gridExtra::grid.arrange(hm.exp)
 ```
 
-![](README/figure-markdown_github/plotHmExpressions2-1.png)
+![](README_files/figure-markdown_github/plotHmExpressions2-1.png)
 
 ### 2.5.3 Representation of phenotype of identified cell clusters (plotPhenoClusters)
 
@@ -431,7 +431,7 @@ plotMarkerDensity(DataCell,
 
     ## Picking joint bandwidth of 0.0461
 
-![](README/figure-markdown_github/plotMarkerDensity-1.png)
+![](README_files/figure-markdown_github/plotMarkerDensity-1.png)
 
 ### 2.5.4 Representation of phenotype of cell clusters using parallels coordinates (plotCoordinates)
 
@@ -450,7 +450,7 @@ plotCoordinates(DataCell,
 
     ## Using  as id variables
 
-![](README/figure-markdown_github/plotCoordinates-1.png)
+![](README_files/figure-markdown_github/plotCoordinates-1.png)
 
 ``` r
 # Possible to make it interactive
@@ -523,7 +523,7 @@ plotVolcano(DataCell,
             plot.text = TRUE)
 ```
 
-![](README/figure-markdown_github/plotVolcano-1.png)
+![](README_files/figure-markdown_github/plotVolcano-1.png)
 
 ``` r
 # Possible to make it interactive
@@ -551,7 +551,7 @@ hm.stats <- plotHmStatistics(DataCell,
 gridExtra::grid.arrange(hm.stats)
 ```
 
-![](README/figure-markdown_github/plotHmStatistics-1.png)
+![](README_files/figure-markdown_github/plotHmStatistics-1.png)
 
 ## 3.3 Visualisation of cell cluster abundances
 
@@ -584,7 +584,7 @@ hm.abun <- plotHmAbundances(DataCell,
 gridExtra::grid.arrange(hm.abun)
 ```
 
-![](README/figure-markdown_github/plotHmAbundances-1.png)
+![](README_files/figure-markdown_github/plotHmAbundances-1.png)
 
 ### 3.3.2 Cell cluster abundances using a boxplot representation (plotBoxplot)
 
@@ -609,7 +609,7 @@ plotBoxplot(DataCell,
             test.statistics = "t.test")
 ```
 
-![](README/figure-markdown_github/plotBoxplot-1.png)
+![](README_files/figure-markdown_github/plotBoxplot-1.png)
 
 ``` r
 # Possible to make it interactive
@@ -645,7 +645,7 @@ plotMDS(DataCell,
         plot.text = TRUE)
 ```
 
-![](README/figure-markdown_github/plotMDS-1.png)
+![](README_files/figure-markdown_github/plotMDS-1.png)
 
 ``` r
 # Possible to make it interactive
@@ -677,7 +677,7 @@ plotPCA(DataCell,
         plot.text = TRUE)
 ```
 
-![](README/figure-markdown_github/plotPCA-1.png)
+![](README_files/figure-markdown_github/plotPCA-1.png)
 
 ``` r
 # Possible to make it interactive
@@ -813,7 +813,7 @@ QCS <- QCSmallClusters(DataCell,
                        plot.device = TRUE)
 ```
 
-![](README/figure-markdown_github/QCSmallClusters-1.png)
+![](README_files/figure-markdown_github/QCSmallClusters-1.png)
 
     ##      V1_10105LA V1_10209HE V1_10306CG V1_10503DC V1_11204CD V1_20208AA
     ## [1,]       TRUE       TRUE       TRUE      FALSE      FALSE       TRUE
@@ -884,7 +884,7 @@ QCU <- QCUniformClusters(DataCell,
                          plot.device = TRUE)
 ```
 
-![](README/figure-markdown_github/QCUniformClusters-1.png)
+![](README_files/figure-markdown_github/QCUniformClusters-1.png)
 
     ##   clusters markers    pv_dip       IQR passed
     ## 1        1    CD16 0.9969386 0.2651895   TRUE
