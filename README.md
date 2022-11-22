@@ -1,5 +1,4 @@
-1.Introduction
-==============
+# 1.Introduction
 
 Single-cell data, obtained either from high-dimensional cytometry and
 single-cell transcriptomics, are now classically analyzed using
@@ -29,8 +28,7 @@ between biological conditions can be identified using several
 statistical tests. Statistical results can be visualized using volcano
 plots or heatmaps.
 
-1.1 Workflow overview
----------------------
+## 1.1 Workflow overview
 
 In the `CellVizR` workflow, an S4 object is created to store data and
 sample information is implemented for analysis. This stored information
@@ -47,8 +45,7 @@ the Celldata object; and (3) generating the manifold and clustering. The
 computed results can be (4) visualized in different manners and (5)
 analyzed using statistical approaches.*
 
-1.2 Input data
---------------
+## 1.2 Input data
 
 High-dimensional cytometry data can be analyzed by `CellVizR`:
 
@@ -70,11 +67,10 @@ Single-cell transcriptomics data can be analyzed by `CellVizR`:
     analyzed and integrated with `CellVizR` are scRNA-seq data. The
     input files can be in standard MTX file format.
 -   **Cleaning**: Before starting an analysis with `CellVizR`,
-    performing the preprocesing steps for cell count quantiifcation and
+    performing the preprocesing steps for cell count quantification and
     spectral data with conventional software (CellRanger) is necessary.
 
-2. Quick start
-==============
+# 2. Quick start
 
 In this section, the main analysis steps of `CellVizR` are presented.
 
@@ -85,8 +81,7 @@ These steps cover several aspects, such as:
 -   Creating the manifold and clustering
 -   Generating analysis and visualization
 
-2.1 Installation
-----------------
+## 2.1 Installation
 
 To download `CellVizR` it is required `devtools`:
 
@@ -108,8 +103,7 @@ Once installed, `CellVizR` can be loaded using the following command:
 library("CellVizR")
 ```
 
-2.2 Importing cell expression profiles (import)
------------------------------------------------
+## 2.2 Importing cell expression profiles (import)
 
 The `import()` function allows importing the expression matrix of the
 cytometry files into a `Celldata` object.
@@ -124,34 +118,34 @@ files <- list.files(NK_files,
 print(files)
 ```
 
-    ##  [1] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V1_10105LA.fcs"
-    ##  [2] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V1_10209HE.fcs"
-    ##  [3] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V1_10306CG.fcs"
-    ##  [4] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V1_10503DC.fcs"
-    ##  [5] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V1_11204CD.fcs"
-    ##  [6] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V1_20208AA.fcs"
-    ##  [7] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V1_20210RF.fcs"
-    ##  [8] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V6_10105LA.fcs"
-    ##  [9] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V6_10209HE.fcs"
-    ## [10] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V6_10306CG.fcs"
-    ## [11] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V6_10503DC.fcs"
-    ## [12] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V6_11204CD.fcs"
-    ## [13] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V6_20208AA.fcs"
-    ## [14] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V6_20210RF.fcs"
-    ## [15] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V7_10105LA.fcs"
-    ## [16] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V7_10209HE.fcs"
-    ## [17] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V7_10306CG.fcs"
-    ## [18] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V7_10503DC.fcs"
-    ## [19] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V7_11204CD.fcs"
-    ## [20] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V7_20208AA.fcs"
-    ## [21] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V7_20210RF.fcs"
-    ## [22] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V8_10105LA.fcs"
-    ## [23] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V8_10209HE.fcs"
-    ## [24] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V8_10306CG.fcs"
-    ## [25] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V8_10503DC.fcs"
-    ## [26] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V8_11204CD.fcs"
-    ## [27] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V8_20208AA.fcs"
-    ## [28] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V8_20210RF.fcs"
+    ##  [1] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V1_10105LA.fcs"
+    ##  [2] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V1_10209HE.fcs"
+    ##  [3] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V1_10306CG.fcs"
+    ##  [4] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V1_10503DC.fcs"
+    ##  [5] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V1_11204CD.fcs"
+    ##  [6] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V1_20208AA.fcs"
+    ##  [7] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V1_20210RF.fcs"
+    ##  [8] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V6_10105LA.fcs"
+    ##  [9] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V6_10209HE.fcs"
+    ## [10] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V6_10306CG.fcs"
+    ## [11] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V6_10503DC.fcs"
+    ## [12] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V6_11204CD.fcs"
+    ## [13] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V6_20208AA.fcs"
+    ## [14] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V6_20210RF.fcs"
+    ## [15] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V7_10105LA.fcs"
+    ## [16] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V7_10209HE.fcs"
+    ## [17] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V7_10306CG.fcs"
+    ## [18] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V7_10503DC.fcs"
+    ## [19] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V7_11204CD.fcs"
+    ## [20] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V7_20208AA.fcs"
+    ## [21] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V7_20210RF.fcs"
+    ## [22] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V8_10105LA.fcs"
+    ## [23] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V8_10209HE.fcs"
+    ## [24] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V8_10306CG.fcs"
+    ## [25] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V8_10503DC.fcs"
+    ## [26] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V8_11204CD.fcs"
+    ## [27] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V8_20208AA.fcs"
+    ## [28] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V8_20210RF.fcs"
 
 ``` r
 # import the FCS files into a Celldata object 
@@ -187,8 +181,7 @@ The main arguments of the `import()` function are:
 Out note, single-cell transcriptomics data can be imported using the
 `importMT()` function
 
-2.3 Assigning meta-information of biological samples (assignMetadata)
----------------------------------------------------------------------
+## 2.3 Assigning meta-information of biological samples (assignMetadata)
 
 The metadata (information about the biological samples) can be assigned
 to each sample in the dataset. These metadata are then used by the
@@ -221,8 +214,7 @@ DataCell <- assignMetadata(DataCell,
                            metadata = metadata)
 ```
 
-2.4 Vizualization to the number of cells associated to samples
---------------------------------------------------------------
+## 2.4 Vizualization to the number of cells associated to samples
 
 After importing the dataset, the `plotCellCounts()` function allows you
 to see the number of cells in each sample to be displayed as follows:
@@ -234,17 +226,13 @@ plotCellCounts(DataCell,
                sort = TRUE)
 ```
 
-    ## Warning: `aes_string()` was deprecated in ggplot2 3.0.0.
-    ## ℹ Please use tidy evaluation ideoms with `aes()`
-
 ![](README_files/figure-markdown_github/plotCellCounts-1.png)
 
 ``` r
 # Possible to make it interactive
 ```
 
-2.5 Manifold construction and clustering
-----------------------------------------
+## 2.5 Manifold construction and clustering
 
 This section consists in generating the manifold using different
 algorithms combined with cell cluster identification.
@@ -283,28 +271,28 @@ DataCell <- generateManifold(DataCell,
 
     ## 
 
-    ## 08:06:21 UMAP embedding parameters a = 1.896 b = 0.8006
+    ## 09:03:48 UMAP embedding parameters a = 1.896 b = 0.8006
 
-    ## 08:06:21 Converting dataframe to numerical matrix
+    ## 09:03:48 Converting dataframe to numerical matrix
 
-    ## 08:06:21 Read 26722 rows and found 10 numeric columns
+    ## 09:03:48 Read 26722 rows and found 10 numeric columns
 
-    ## 08:06:21 Using Annoy for neighbor search, n_neighbors = 15
+    ## 09:03:48 Using Annoy for neighbor search, n_neighbors = 15
 
-    ## 08:06:22 Building Annoy index with metric = euclidean, n_trees = 50
+    ## 09:03:49 Building Annoy index with metric = euclidean, n_trees = 50
 
     ## 0%   10   20   30   40   50   60   70   80   90   100%
 
     ## [----|----|----|----|----|----|----|----|----|----|
 
     ## **************************************************|
-    ## 08:06:24 Writing NN index file to temp file C:\Users\NTC~1.KAL\AppData\Local\Temp\RtmpcLqyeZ\file3a583d87846
-    ## 08:06:24 Searching Annoy index using 40 threads, search_k = 1500
-    ## 08:06:25 Annoy recall = 100%
-    ## 08:06:25 Commencing smooth kNN distance calibration using 40 threads with target n_neighbors = 15
-    ## 08:06:26 Initializing from normalized Laplacian + noise (using irlba)
-    ## 08:06:27 Commencing optimization for 200 epochs, with 539456 positive edges using 1 thread
-    ## 08:06:53 Optimization finished
+    ## 09:03:51 Writing NN index file to temp file C:\Users\GWMA\AppData\Local\Temp\RtmpwfDugd\file41a072bc20d8
+    ## 09:03:51 Searching Annoy index using 40 threads, search_k = 1500
+    ## 09:03:52 Annoy recall = 100%
+    ## 09:03:52 Commencing smooth kNN distance calibration using 40 threads with target n_neighbors = 15
+    ## 09:03:53 Initializing from normalized Laplacian + noise (using irlba)
+    ## 09:03:53 Commencing optimization for 200 epochs, with 539456 positive edges using 1 thread
+    ## 09:04:11 Optimization finished
 
 The main arguments of the `generateManifold()` function are:
 
@@ -360,8 +348,7 @@ plotClustersCounts(DataCell,
 # Possible to make it interactive
 ```
 
-2.6 Basic Visualization
------------------------
+## 2.6 Basic Visualization
 
 Once the manifold has been generated and cell clusters have been
 identified, it is possible to perform different types of visualization
@@ -384,9 +371,6 @@ plotManifold(DataCell,
              markers = "density",
              samples = NULL)
 ```
-
-    ## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
-    ## ℹ Please use `linewidth` instead.
 
 ![](README_files/figure-markdown_github/PlotManifold-1.png)
 
@@ -481,9 +465,6 @@ plotMarkerDensity(DataCell,
                   clusters = 58)
 ```
 
-    ## Warning: `stat(x)` was deprecated in ggplot2 3.4.0.
-    ## ℹ Please use `after_stat(x)` instead.
-
     ## Picking joint bandwidth of 0.0252
 
     ## Picking joint bandwidth of 0.0465
@@ -529,11 +510,9 @@ plotCoordinates(DataCell,
 # Possible to make it interactive
 ```
 
-3. Statistics and visualization
-===============================
+# 3. Statistics and visualization
 
-3.1 Compute differential abundance analyses
--------------------------------------------
+## 3.1 Compute differential abundance analyses
 
 Once the cell clustering performed, it is possible to do a differential
 analysis of cell cluster abundances to identify relevant cell clusters.
@@ -572,8 +551,7 @@ for (condition in list.conditions) {
 
     ## Computing of the t.test for: V8 vs. V1
 
-3.2 Visualisation of statistical analysis
------------------------------------------
+## 3.2 Visualisation of statistical analysis
 
 ### 3.2.1 Volcano plot of statistical analysis (plotVolcano)
 
@@ -629,8 +607,7 @@ gridExtra::grid.arrange(hm.stats)
 
 ![](README_files/figure-markdown_github/plotHmStatistics-1.png)
 
-3.3 Visualisation of cell cluster abundances
---------------------------------------------
+## 3.3 Visualisation of cell cluster abundances
 
 ### 3.3.1 Heatmap of cell cluster abundances (plotHmAbundances)
 
@@ -722,7 +699,7 @@ plotMDS(DataCell,
         plot.text = TRUE)
 ```
 
-    ## Warning: ggrepel: 4 unlabeled data points (too many overlaps). Consider
+    ## Warning: ggrepel: 27 unlabeled data points (too many overlaps). Consider
     ## increasing max.overlaps
 
 ![](README_files/figure-markdown_github/plotMDS-1.png)
@@ -770,8 +747,7 @@ Other possible parameters to customize the `plotPCA` are:
 -   the `samples` argument, which specifies the biological samples to be
     displayed
 
-4. Quality control
-==================
+# 4. Quality control
 
 The `CellVizR` package allows to perform quality control of generated
 results.
@@ -783,8 +759,7 @@ The quality control can be performed:
 -   on the generated results, to check the quality of the cell
     clustering.
 
-4.1 Quality control of the dataset
-----------------------------------
+## 4.1 Quality control of the dataset
 
 The input dataset can be checked in two ways. The first method checks
 the concordance of the markers names between the different samples.
@@ -872,8 +847,7 @@ QCR <- QCMarkerRanges(files)
     ## V1_11204CD   3.871029 3.441518
     ## V1_20208AA   3.866826 3.284242
 
-4.2 Control quality of the cell clustering result
--------------------------------------------------
+## 4.2 Control quality of the cell clustering result
 
 The quality control of clustering can be checked in two ways.
 
@@ -909,7 +883,7 @@ QCS <- QCSmallClusters(DataCell,
     ## [1,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
     ## [2,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
     ## [3,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [4,]       TRUE       TRUE      FALSE       TRUE       TRUE       TRUE
+    ## [4,]       TRUE       TRUE       TRUE       TRUE      FALSE       TRUE
     ## [5,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
     ## [6,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
     ##      V6_20208AA V6_20210RF V7_10105LA V7_10209HE V7_10306CG V7_10503DC
@@ -970,21 +944,19 @@ QCU <- QCUniformClusters(DataCell,
 ![](README_files/figure-markdown_github/QCUniformClusters-1.png)
 
     ##   clusters markers    pv_dip       IQR passed
-    ## 1        1    CD16 0.7081843 0.2616083   TRUE
-    ## 2        1     CD3 0.9901271 0.3015788   TRUE
-    ## 3        1    CD56 0.8016177 0.3003754   TRUE
-    ## 4        1     CD8 0.9791058 0.2777171   TRUE
-    ## 5        1   HLADR 0.9552378 0.4484164   TRUE
-    ## 6        1   NKG2D 0.8934759 0.2402532   TRUE
+    ## 1        1    CD16 0.9183875 0.2477212   TRUE
+    ## 2        1     CD3 0.9962282 0.2605658   TRUE
+    ## 3        1    CD56 0.8383174 0.3003754   TRUE
+    ## 4        1     CD8 0.9925717 0.2823742   TRUE
+    ## 5        1   HLADR 0.9588102 0.3872350   TRUE
+    ## 6        1   NKG2D 0.4408940 0.2182691   TRUE
 
-5.Advanced graphical representation
-===================================
+# 5.Advanced graphical representation
 
 It is important to note that all generated figures are `ggplot` objects
 and can be modified in different ways
 
-5.1 Modification of generated plot
-----------------------------------
+## 5.1 Modification of generated plot
 
 The first possible modifications are those concerning the `ggplot`
 object such as the title of the axes, or the title of graph
@@ -1007,8 +979,7 @@ plotBoxplot(DataCell,
 # Possible to make it interactive
 ```
 
-5.2 Combined graphical representation
--------------------------------------
+## 5.2 Combined graphical representation
 
 For the different generated `plotManifold` it is possible to assemble
 them into one figure with the `grid.arrange()` function.
@@ -1051,8 +1022,7 @@ plotCombineHM(hm.exp, hm.stats)
     ## 9   9 (20-20, 2-17) arrange    gtable[layout]
     ## 10 10 (21-21, 3-16) arrange gtable[guide-box]
 
-5.3 Interactive graphics
-------------------------
+## 5.3 Interactive graphics
 
 Finally, some figures such as `plotCellCounts`, `plotClustersCounts`,
 `plotCoordinates`, `plotVolcano`, `plotBoxplot`, `plotMDS` and `plotPCA`
@@ -1065,11 +1035,9 @@ plot <- ggiraph::girafe(ggobj = plot,
                                        ggiraph::opts_hover(css = "fill:black;")))
 ```
 
-6. Advanced usage
-=================
+# 6. Advanced usage
 
-6.1 Get samples
----------------
+## 6.1 Get samples
 
 The `selectSamples()` function allows create a vector containing the
 samples of interest according to their name, condition or timepoint.
@@ -1088,8 +1056,7 @@ samples
     ## [1] "V1_10105LA" "V1_10209HE" "V1_10306CG" "V1_10503DC" "V1_11204CD"
     ## [6] "V1_20208AA" "V1_20210RF"
 
-6.2 Upsampling
---------------
+## 6.2 Upsampling
 
 The `performUpsampling()` function allows the data set to be implemented
 if downsampling has been performed.
@@ -1107,8 +1074,7 @@ DataCell <- performUpsampling(DataCell,
                               transform = "logicle")
 ```
 
-6.3 Metadata
-------------
+## 6.3 Metadata
 
 The `createMetaclusters()` function allows clusters to be combined to
 create a metaclusters.
@@ -1125,8 +1091,7 @@ DataCell <- createMetaclusters(DataCell,
                                metaclusters = xx)
 ```
 
-6.4 Export
-----------
+## 6.4 Export
 
 The `export()` function allows extracting of the dataset in FCS or txt
 format with some parameters such as UMAP coordinates and clusters.
