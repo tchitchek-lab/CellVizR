@@ -61,9 +61,9 @@ abs.proj <- function(proj,
 #' @export
 #'
 selectSamples <- function(Celldata,
-                      individual = NULL,
-                      condition = NULL,
-                      timepoint = NULL) {
+                          individual = NULL,
+                          condition = NULL,
+                          timepoint = NULL) {
   
   metadata <- Celldata@metadata
   

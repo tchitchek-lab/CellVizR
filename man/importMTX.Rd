@@ -4,14 +4,14 @@
 \alias{importMTX}
 \title{Imports of cell expression profiles from MTX files}
 \usage{
-importMTX(mtx, cells, features, meta, sample.col)
+importMTX(count, cells, features, meta, sample.col)
 }
 \arguments{
-\item{mtx}{a character vector specifying the path of the mtx file to load}
+\item{count}{a character vector specifying the path of the count mtx file containing the count values}
 
-\item{cells}{a character vector specifying the format of the mtx file to load}
+\item{cells}{a character vector specifying the path of the mtx file containing the cell ids}
 
-\item{features}{a character vector specifying the format of the mtx file to load}
+\item{features}{a character vector specifying the path of the mtx file containing the gene ids}
 
 \item{meta}{a character specifying the name of the tsv metadata file to load}
 

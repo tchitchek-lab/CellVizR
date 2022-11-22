@@ -28,10 +28,12 @@ computeStatistics <- function(Celldata,
                               paired = FALSE) {
 
   test.statistics <- match.arg(test.statistics)
+  p.adjust <- match.arg(p.adjust)
 
   checkmate::qassert(condition, "S1")
   checkmate::qassert(ref.condition, "S+")
   checkmate::qassert(test.statistics, "S1")
+  checkmate::qassert(p.adjust, "S1")
   checkmate::qassert(paired, "B1")
 
   message("Computing of the ", test.statistics, " for: ", condition, " vs. ", ref.condition)

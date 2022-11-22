@@ -1,54 +1,61 @@
-# 1. Introduction
+1.Introduction
+==============
 
-Cytometry data are now classically analyzed using non-linear
-dimensionality reduction approaches, but it is still challenging to
-easily handle the whole pipeline of computational analyses.
+Single-cell data, obtained either from high-dimensional cytometry and
+single-cell transcriptomics, are now classically analyzed using
+non-linear dimensionality reduction approaches, but it is still
+challenging to easily handle the whole pipeline of computational
+analyses.
 
 CellVizR allows the statistical analysis and visualization of
-high-dimensional cytometry data using manifold algorithms and clustering
-methods. Especially, several key analysis steps are available to perform
-data importation, manifold generation, cell cluster identification,
-statistical analyses, cluster visualization, and quality controls of
-generated results.
+single-cell data using manifold algorithms and clustering methods.
+Especially, several key analysis steps are available to perform (i) data
+importation; (ii) manifold generation and visualization; (iii) cell
+cluster identification; (iv) characterization of cell clusters; (v)
+statistical analysis of cell cluster abundances; (vi) multivariate
+analysis using both unsupervised and supervised algorithms; (vii)
+quality controls of input files and generated results.
 
-CellVizR can import cell events from FCS or txt file formats using
+CellVizR can import cell events from FCS, MTX, or txt file formats using
 different transformation, down-sampling, and normalization approaches.
-Manifold representations can be generated using the UMAP, tSNE or
-LargeVis algorithms to project cell events into a lower dimensionality
-space. Cell clusters can be identified using multiple clustering
-algorithms, depending on the user’s assumptions. The characteristics of
-cell clusters can be visualized using scatter plots, categorical heatmap
-of marker expressions, or using parallel coordinates representations.
-Cell clusters having abundances differently expressed between biological
-conditions can be identified using several statistical tests.
-Statistical results can be visualized using volcano plots or heatmaps.
+Manifold representations can be generated using the UMAP, t-SNE or
+LargeVis algorithms to project cell events into a 2-dimensional
+dimensionality space. Cell clusters can be identified using multiple
+clustering algorithms, depending on the user’s assumptions. The
+characteristics of cell clusters can be visualized using scatter plots,
+categorical heatmap of marker expressions, or using parallel coordinates
+representations. Cell clusters having abundances differently expressed
+between biological conditions can be identified using several
+statistical tests. Statistical results can be visualized using volcano
+plots or heatmaps.
 
-## 1.1 Workflow overview
+1.1 Workflow overview
+---------------------
 
 In the `CellVizR` workflow, an S4 object is created to store data and
 sample information is implemented for analysis. This stored information
 will allow performing the statistics and visualization of the dataset.
 
-<img src="sources_doc/workflow.png" width="90%" style="display: block; margin: auto;" />
+<img src="./README_files/workflow.png" width="90%" style="display: block; margin: auto;" />
 
 *Figure 1: Workflow of CellVizR*
 
 *The analysis in CellVizR consists of 5 main steps: (1) importing the
-data in FCS or txt format resulting in the creation of an S4 UMAPdata
-object; (2) assigning the metadata (sample information) into the
-UMAPdata object; and (3) generating the manifold and clustering. The
+data in FCS, MTX, or txt format resulting in the creation of an S4
+Celldata object; (2) assigning the metadata (sample information) into
+the Celldata object; and (3) generating the manifold and clustering. The
 computed results can be (4) visualized in different manners and (5)
 analyzed using statistical approaches.*
 
-## 1.2 Input data
+1.2 Input data
+--------------
 
-The following conditions must be respected to analyze data with
-`CellVizR`:
+High-dimensional cytometry data can be analyzed by `CellVizR`:
 
 -   **Type and format of data**: The cytometry data that can be analyzed
     and integrated with `CellVizR` are flow, mass or spectral cytometry
-    data. The input files can be in standard cytometry format (FCS) or
-    txt format.
+    data. The input files can be in standard cytometry format (FCS), txt
+    format.
 -   **Compensation**: Before starting an analysis with `CellVizR`,
     performing the compensation steps for flow cytometry and spectral
     data with conventional software (FlowJo, Kaluza, etc) is necessary.
@@ -57,18 +64,29 @@ The following conditions must be respected to analyze data with
     population of interest (e.g.lymphocytes, B cells, etc.) can be
     performed.
 
-# 2. Quick start
+Single-cell transcriptomics data can be analyzed by `CellVizR`:
+
+-   **Type and format of data**: The single-cell -omics data can be
+    analyzed and integrated with `CellVizR` are scRNA-seq data. The
+    input files can be in standard MTX file format.
+-   **Cleaning**: Before starting an analysis with `CellVizR`,
+    performing the preprocesing steps for cell count quantiifcation and
+    spectral data with conventional software (CellRanger) is necessary.
+
+2. Quick start
+==============
 
 In this section, the main analysis steps of `CellVizR` are presented.
 
 These steps cover several aspects, such as:
 
 -   Installing the package
--   Importing the data and creating an `UMAPdata` object
+-   Importing the data and creating an `Celldata` object
 -   Creating the manifold and clustering
--   Generating basic visualization
+-   Generating analysis and visualization
 
-## 2.1 Installation
+2.1 Installation
+----------------
 
 To download `CellVizR` it is required `devtools`:
 
@@ -80,7 +98,7 @@ install_github("tchitchek-lab/CellVizR")
 
 The `CellVizR` package automatically downloads the necessary packages
 for its operation such as:
-`checkmate`,`cluster`,`concaveman`,`cowplot`,`dbscan`,`dendextend`,`diptest`,`FactoMineR`,`flowCore`,`FNN`,`ggdendro`,`ggiraph`,`ggnewscale`,`ggplot2`,`ggpubr`,`ggrepel`,`ggridges`,`Gmedian`,`gridExtra`,`gtools`,`kohonen`,`MASS`,`plyr`,`reshape`,`reshape2`,`rstatix`,`Rtsne`,`scales`,`spade`,`stats`,`stringr`,`uwot`,`viridis`.
+`checkmate`,`cluster`,`concaveman`,`cowplot`,`dbscan`,`dendextend`,`diptest`,`FactoMineR`,`flowCore`,`FNN`,`ggdendro`,`ggiraph`,`ggnewscale`,`ggplot2`,`ggpubr`,`ggrepel`,`ggridges`,`Gmedian`,`gridExtra`,`gtools`,`kohonen`,`MASS`,`plyr`,`reshape`,`reshape2`,`rstatix`,`Rtsne`,`scales`,`seurat`,`spade`,`stats`,`stringr`,`uwot`,`viridis`.
 If not, the packages are available on the `CRAN`, except `flowCore`
 which is available on `Bioconductor`.
 
@@ -90,20 +108,53 @@ Once installed, `CellVizR` can be loaded using the following command:
 library("CellVizR")
 ```
 
-## 2.2 Importing cell expression profiles (import)
+2.2 Importing cell expression profiles (import)
+-----------------------------------------------
 
-The `import` function allows importing the expression matrix of the
-cytometry files into a `UMAPdata` object.
+The `import()` function allows importing the expression matrix of the
+cytometry files into a `Celldata` object.
 
-The files to be loaded must be in FCS or txt format. The `import`
+The files to be loaded must be in FCS or txt format. The `import()`
 function is used as below:
 
 ``` r
-# creation of a vector containing the names of the files 
-files <- list.files("C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/", 
+files <- list.files(NK_files, 
                     pattern = "fcs", full.names = TRUE)
 
-# import the FCS files into a UMAPdata object 
+print(files)
+```
+
+    ##  [1] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V1_10105LA.fcs"
+    ##  [2] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V1_10209HE.fcs"
+    ##  [3] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V1_10306CG.fcs"
+    ##  [4] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V1_10503DC.fcs"
+    ##  [5] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V1_11204CD.fcs"
+    ##  [6] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V1_20208AA.fcs"
+    ##  [7] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V1_20210RF.fcs"
+    ##  [8] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V6_10105LA.fcs"
+    ##  [9] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V6_10209HE.fcs"
+    ## [10] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V6_10306CG.fcs"
+    ## [11] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V6_10503DC.fcs"
+    ## [12] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V6_11204CD.fcs"
+    ## [13] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V6_20208AA.fcs"
+    ## [14] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V6_20210RF.fcs"
+    ## [15] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V7_10105LA.fcs"
+    ## [16] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V7_10209HE.fcs"
+    ## [17] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V7_10306CG.fcs"
+    ## [18] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V7_10503DC.fcs"
+    ## [19] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V7_11204CD.fcs"
+    ## [20] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V7_20208AA.fcs"
+    ## [21] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V7_20210RF.fcs"
+    ## [22] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V8_10105LA.fcs"
+    ## [23] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V8_10209HE.fcs"
+    ## [24] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V8_10306CG.fcs"
+    ## [25] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V8_10503DC.fcs"
+    ## [26] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V8_11204CD.fcs"
+    ## [27] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V8_20208AA.fcs"
+    ## [28] "D:/Dropbox/workI3/CellVizR/Panel_03_NK/V8_20210RF.fcs"
+
+``` r
+# import the FCS files into a Celldata object 
 DataCell <- import(files, 
                    filetype = "fcs", 
                    transform = "logicle", 
@@ -113,7 +164,7 @@ DataCell <- import(files,
                    parameters.method = list("target.percent" = 0.1))
 ```
 
-The main arguments of the `import` function are:
+The main arguments of the `import()` function are:
 
 -   the `filetype` argument, which allows defining the data file type
     (`fcs` or `txt`)
@@ -133,23 +184,11 @@ The main arguments of the `import` function are:
     used is `density`, also specify the `exclude.pctile` and
     `target.pctile`,
 
-After importing the dataset, the `plotCellCounts` function allows you to
-see the number of cells in each sample to be displayed as follows:
+Out note, single-cell transcriptomics data can be imported using the
+`importMT()` function
 
-``` r
-plotCellCounts(DataCell, 
-               stats = c("min","median","mean","q75","max"),
-               samples = NULL,
-               sort = TRUE)
-```
-
-![](README_files/figure-markdown_github/plotCellCounts-1.png)
-
-``` r
-# Possible to make it interactive
-```
-
-## 2.3 Assigning meta-information of biological samples (assignMetadata)
+2.3 Assigning meta-information of biological samples (assignMetadata)
+---------------------------------------------------------------------
 
 The metadata (information about the biological samples) can be assigned
 to each sample in the dataset. These metadata are then used by the
@@ -182,7 +221,30 @@ DataCell <- assignMetadata(DataCell,
                            metadata = metadata)
 ```
 
-## 2.4 Manifold construction and clustering
+2.4 Vizualization to the number of cells associated to samples
+--------------------------------------------------------------
+
+After importing the dataset, the `plotCellCounts()` function allows you
+to see the number of cells in each sample to be displayed as follows:
+
+``` r
+plotCellCounts(DataCell, 
+               stats = c("min","median","mean","q75","max"),
+               samples = NULL,
+               sort = TRUE)
+```
+
+    ## Warning: `aes_string()` was deprecated in ggplot2 3.0.0.
+    ## ℹ Please use tidy evaluation ideoms with `aes()`
+
+![](README_files/figure-markdown_github/plotCellCounts-1.png)
+
+``` r
+# Possible to make it interactive
+```
+
+2.5 Manifold construction and clustering
+----------------------------------------
 
 This section consists in generating the manifold using different
 algorithms combined with cell cluster identification.
@@ -195,13 +257,13 @@ Two methods are available, depending on the parameters selected:
 
 In the example below, the first method has been performed.
 
-### 2.4.1 Generating a manifold of cell events (generateManifold)
+### 2.5.1 Generating a manifold of cell events (generateManifold)
 
 The first step is to compute the manifold on the dataset by following
 the instructions below:
 
 ``` r
-# Perform Manifold from the "UMAPdata" object
+# Perform Manifold from the "Celldata" object
 DataCell <- generateManifold(DataCell, 
                              markers = c("TCRgd", "NKP44", "HLADR", "NKp30", "NKp46",
                                          "NKG2D", "CD3", "CD16", "CD56", "CD8"), 
@@ -219,36 +281,38 @@ DataCell <- generateManifold(DataCell,
 
     ## Manifold method is: UMAP
 
-    ## 17:12:26 UMAP embedding parameters a = 1.896 b = 0.8006
+    ## 
 
-    ## 17:12:26 Converting dataframe to numerical matrix
+    ## 08:06:21 UMAP embedding parameters a = 1.896 b = 0.8006
 
-    ## 17:12:26 Read 26722 rows and found 10 numeric columns
+    ## 08:06:21 Converting dataframe to numerical matrix
 
-    ## 17:12:26 Using Annoy for neighbor search, n_neighbors = 15
+    ## 08:06:21 Read 26722 rows and found 10 numeric columns
 
-    ## 17:12:26 Building Annoy index with metric = euclidean, n_trees = 50
+    ## 08:06:21 Using Annoy for neighbor search, n_neighbors = 15
+
+    ## 08:06:22 Building Annoy index with metric = euclidean, n_trees = 50
 
     ## 0%   10   20   30   40   50   60   70   80   90   100%
 
     ## [----|----|----|----|----|----|----|----|----|----|
 
     ## **************************************************|
-    ## 17:12:28 Writing NN index file to temp file C:\Users\GWMA\AppData\Local\Temp\Rtmpea0rjM\file3c5c7a1a12d2
-    ## 17:12:28 Searching Annoy index using 40 threads, search_k = 1500
-    ## 17:12:29 Annoy recall = 100%
-    ## 17:12:29 Commencing smooth kNN distance calibration using 40 threads with target n_neighbors = 15
-    ## 17:12:30 Initializing from normalized Laplacian + noise (using irlba)
-    ## 17:12:31 Commencing optimization for 200 epochs, with 539456 positive edges using 1 thread
-    ## 17:12:49 Optimization finished
+    ## 08:06:24 Writing NN index file to temp file C:\Users\NTC~1.KAL\AppData\Local\Temp\RtmpcLqyeZ\file3a583d87846
+    ## 08:06:24 Searching Annoy index using 40 threads, search_k = 1500
+    ## 08:06:25 Annoy recall = 100%
+    ## 08:06:25 Commencing smooth kNN distance calibration using 40 threads with target n_neighbors = 15
+    ## 08:06:26 Initializing from normalized Laplacian + noise (using irlba)
+    ## 08:06:27 Commencing optimization for 200 epochs, with 539456 positive edges using 1 thread
+    ## 08:06:53 Optimization finished
 
-The main arguments of the `generateManifold` function are:
+The main arguments of the `generateManifold()` function are:
 
 -   the `markers` argument, which specifies the markers to be used for
     the manifold generation
 -   the `type` argument, which specifies the manifold method to use
 
-### 2.4.2 Identifying cell clusters having similar marker expression (identifyClusters)
+### 2.5.2 Identifying cell clusters having similar marker expression (identifyClusters)
 
 The second step is to identify cell clusters by following the
 instructions below:
@@ -264,6 +328,8 @@ DataCell <- identifyClusters(DataCell,
 
     ## Clustering method is: kmeans
 
+    ## 
+
     ## Identifying cell clusters...
 
     ## computing cell clusters boundaries...
@@ -272,15 +338,15 @@ DataCell <- identifyClusters(DataCell,
 
     ## computing cell cluster abundance matrix...
 
-The main arguments of the `identifyClusters` function are:
+The main arguments of the `identifyClusters()` function are:
 
 -   the `space` argument, which determines if the clustering is done on
     the markers or the manifold coordinates
 -   the `method` argument, which specifies the clustering algorithm to
     use
 
-After clustering, the `plotClustersCounts` function allows to visualize
-the cells of each sample in the clusters as follows:
+After clustering, the `plotClustersCounts()` function allows to
+visualize the cells of each sample in the clusters as follows:
 
 ``` r
 plotClustersCounts(DataCell, 
@@ -294,19 +360,20 @@ plotClustersCounts(DataCell,
 # Possible to make it interactive
 ```
 
-## 2.5 Basic Visualization
+2.6 Basic Visualization
+-----------------------
 
 Once the manifold has been generated and cell clusters have been
 identified, it is possible to perform different types of visualization
 which are detailed below.
 
-### 2.5.1 Representation of a computed manifold (PlotManifold)
+### 2.6.1 Representation of a computed manifold (PlotManifold)
 
-The `plotManifold` function displays a computed manifold representation
-for a given analysis. Cell clusters are delimited by black lines on the
-manifold.
+The `plotManifold()` function displays a computed manifold
+representation for a given analysis. Cell clusters are delimited by
+black lines on the manifold.
 
-The main argument of the `plotManifold` function is the `markers`
+The main argument of the `plotManifold()` function is the `markers`
 argument which is used to specify the colour of the cells. If the
 `density` value is used, then a UMAP representation showing the
 distribution of the cell density for all samples will be shown as below:
@@ -317,6 +384,9 @@ plotManifold(DataCell,
              markers = "density",
              samples = NULL)
 ```
+
+    ## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+    ## ℹ Please use `linewidth` instead.
 
 ![](README_files/figure-markdown_github/PlotManifold-1.png)
 
@@ -355,9 +425,9 @@ plotManifold(DataCell,
 
 ![](README_files/figure-markdown_github/PlotManifold4-1.png)
 
-### 2.5.2 Heatmap of cell marker expressions (plotHmExpressions)
+### 2.6.2 Heatmap of cell marker expressions (plotHmExpressions)
 
-The `plotHmExpressions` function shows marker median relative
+The `plotHmExpressions()` function shows marker median relative
 expressions for all clusters in the whole dataset.
 
 The mean of the median expression of each marker is classified into 4
@@ -395,9 +465,9 @@ gridExtra::grid.arrange(hm.exp)
 
 ![](README_files/figure-markdown_github/plotHmExpressions2-1.png)
 
-### 2.5.3 Representation of phenotype of identified cell clusters (plotPhenoClusters)
+### 2.6.3 Representation of phenotype of identified cell clusters (plotPhenoClusters)
 
-The `plotMarkerDensity` function shows marker expression densities for
+The `plotMarkerDensity()` function shows marker expression densities for
 one given cluster.
 
 For each marker distribution, the median expression is represented by a
@@ -411,31 +481,34 @@ plotMarkerDensity(DataCell,
                   clusters = 58)
 ```
 
-    ## Picking joint bandwidth of 0.0159
+    ## Warning: `stat(x)` was deprecated in ggplot2 3.4.0.
+    ## ℹ Please use `after_stat(x)` instead.
 
-    ## Picking joint bandwidth of 0.0294
+    ## Picking joint bandwidth of 0.0252
 
-    ## Picking joint bandwidth of 0.0366
+    ## Picking joint bandwidth of 0.0465
 
-    ## Picking joint bandwidth of 0.0451
+    ## Picking joint bandwidth of 0.0576
 
-    ## Picking joint bandwidth of 0.0378
+    ## Picking joint bandwidth of 0.0712
 
-    ## Picking joint bandwidth of 0.0195
+    ## Picking joint bandwidth of 0.0592
 
-    ## Picking joint bandwidth of 0.0354
+    ## Picking joint bandwidth of 0.0306
 
-    ## Picking joint bandwidth of 0.0254
+    ## Picking joint bandwidth of 0.0565
 
-    ## Picking joint bandwidth of 0.0279
+    ## Picking joint bandwidth of 0.0412
 
-    ## Picking joint bandwidth of 0.0461
+    ## Picking joint bandwidth of 0.0445
+
+    ## Picking joint bandwidth of 0.0731
 
 ![](README_files/figure-markdown_github/plotMarkerDensity-1.png)
 
-### 2.5.4 Representation of phenotype of cell clusters using parallels coordinates (plotCoordinates)
+### 2.6.4 Representation of phenotype of cell clusters using parallels coordinates (plotCoordinates)
 
-The `plotCoordinates` function shows the phenotype of specific cluster
+The `plotCoordinates()` function shows the phenotype of specific cluster
 or a set of combined clusters.
 
 The median marker expression of each sample is represented using
@@ -456,14 +529,16 @@ plotCoordinates(DataCell,
 # Possible to make it interactive
 ```
 
-# 3. Statistics and visualization
+3. Statistics and visualization
+===============================
 
-## 3.1 Compute differential abundance analyses
+3.1 Compute differential abundance analyses
+-------------------------------------------
 
 Once the cell clustering performed, it is possible to do a differential
 analysis of cell cluster abundances to identify relevant cell clusters.
 
-The `computeStatistics` function allows to perform the such operation
+The `computeStatistics()` function allows to perform the such operation
 and several parameters must be taken into consideration:
 
 -   the `condition` argument, which specifies the biological condition
@@ -497,13 +572,14 @@ for (condition in list.conditions) {
 
     ## Computing of the t.test for: V8 vs. V1
 
-## 3.2 Visualisation of statistical analysis
+3.2 Visualisation of statistical analysis
+-----------------------------------------
 
 ### 3.2.1 Volcano plot of statistical analysis (plotVolcano)
 
-The `plotVolcano` function shows the clusters whose number of associated
-cells is statistically different between two biological conditions
-and/or timepoints.
+The `plotVolcano()` function shows the clusters whose number of
+associated cells is statistically different between two biological
+conditions and/or timepoints.
 
 For each cluster, the p-value (indicated by -log10(p-value)) is
 represented on the Y-axis and the cell abundance fold-change (indicated
@@ -531,7 +607,7 @@ plotVolcano(DataCell,
 
 ### 3.2.2 Heatmap of statistical analysis results (plotHmStatistics)
 
-The `plotHmStatistics` function shows the differences in abundance
+The `plotHmStatistics()` function shows the differences in abundance
 between different conditions for each cluster.
 
 For each cluster, the p-value, the log2(fold-change) and the effect size
@@ -553,23 +629,24 @@ gridExtra::grid.arrange(hm.stats)
 
 ![](README_files/figure-markdown_github/plotHmStatistics-1.png)
 
-## 3.3 Visualisation of cell cluster abundances
+3.3 Visualisation of cell cluster abundances
+--------------------------------------------
 
 ### 3.3.1 Heatmap of cell cluster abundances (plotHmAbundances)
 
-The `plotHmAbundances` function shows the cellular distribution of
+The `plotHmAbundances()` function shows the cellular distribution of
 samples within a given cluster.
 
 The more the sample is represented within the cluster, the redder the
 tile. If the sample is not represented in the cluster, then the tile
-will be black. The `plotHmAbundances` function can be interesting to
+will be black. The `plotHmAbundances()` function can be interesting to
 visualize the abundance of statistically different clusters between two
 conditions, as in the following example:
 
 ``` r
 #Samples to study
-samples = getSamples(DataCell, 
-                     timepoint = c("V1", "V6"))
+samples = selectSamples(DataCell, 
+                        timepoint = c("V1", "V6"))
 
 #Statistically different clusters
 stats <- DataCell@statistic[DataCell@statistic$comparison == "V6 vs. V1",]
@@ -588,7 +665,7 @@ gridExtra::grid.arrange(hm.abun)
 
 ### 3.3.2 Cell cluster abundances using a boxplot representation (plotBoxplot)
 
-The `plotBoxPlot` function shows the cell distribution between several
+The `plotBoxPlot()` function shows the cell distribution between several
 biological conditions and/or timepoints for a single cluster or for a
 combined set of clusters.
 
@@ -624,7 +701,7 @@ Other possible parameters to customize the `plotBoxPlot` are:
 
 ### 3.3.3 MDS representation based on cell cluster abundances (plotMDS)
 
-The `plotMDS` function shows similarities between samples or clusters
+The `plotMDS()` function shows similarities between samples or clusters
 based on cell cluster abundances.
 
 Each point represents a sample or a cluster (`levels` parameter) and the
@@ -645,6 +722,9 @@ plotMDS(DataCell,
         plot.text = TRUE)
 ```
 
+    ## Warning: ggrepel: 4 unlabeled data points (too many overlaps). Consider
+    ## increasing max.overlaps
+
 ![](README_files/figure-markdown_github/plotMDS-1.png)
 
 ``` r
@@ -660,7 +740,7 @@ Other possible parameters to customize the `plotMDS` are:
 
 ### 3.3.4 PCA representation based on cell cluster abundances (plotPCA)
 
-The `plotPCA` function shows similarities between samples or clusters
+The `plotPCA()` function shows similarities between samples or clusters
 based on cell cluster abundances.
 
 Each point represents a sample or a cluster (`levels` parameter). It is
@@ -690,7 +770,8 @@ Other possible parameters to customize the `plotPCA` are:
 -   the `samples` argument, which specifies the biological samples to be
     displayed
 
-# 4. Quality control
+4. Quality control
+==================
 
 The `CellVizR` package allows to perform quality control of generated
 results.
@@ -702,7 +783,8 @@ The quality control can be performed:
 -   on the generated results, to check the quality of the cell
     clustering.
 
-## 4.1 Quality control of the dataset
+4.1 Quality control of the dataset
+----------------------------------
 
 The input dataset can be checked in two ways. The first method checks
 the concordance of the markers names between the different samples.
@@ -790,7 +872,8 @@ QCR <- QCMarkerRanges(files)
     ## V1_11204CD   3.871029 3.441518
     ## V1_20208AA   3.866826 3.284242
 
-## 4.2 Control quality of the cell clustering result
+4.2 Control quality of the cell clustering result
+-------------------------------------------------
 
 The quality control of clustering can be checked in two ways.
 
@@ -816,46 +899,46 @@ QCS <- QCSmallClusters(DataCell,
 ![](README_files/figure-markdown_github/QCSmallClusters-1.png)
 
     ##      V1_10105LA V1_10209HE V1_10306CG V1_10503DC V1_11204CD V1_20208AA
-    ## [1,]       TRUE       TRUE       TRUE      FALSE      FALSE       TRUE
-    ## [2,]      FALSE      FALSE       TRUE      FALSE      FALSE      FALSE
+    ## [1,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [2,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
     ## [3,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [4,]      FALSE       TRUE       TRUE       TRUE       TRUE      FALSE
+    ## [4,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
     ## [5,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [6,]       TRUE       TRUE       TRUE      FALSE      FALSE      FALSE
+    ## [6,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
     ##      V1_20210RF V6_10105LA V6_10209HE V6_10306CG V6_10503DC V6_11204CD
-    ## [1,]      FALSE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [2,]      FALSE      FALSE      FALSE      FALSE      FALSE      FALSE
-    ## [3,]      FALSE      FALSE       TRUE       TRUE      FALSE      FALSE
-    ## [4,]      FALSE      FALSE       TRUE       TRUE      FALSE       TRUE
-    ## [5,]       TRUE       TRUE      FALSE      FALSE       TRUE      FALSE
-    ## [6,]       TRUE       TRUE       TRUE      FALSE      FALSE      FALSE
+    ## [1,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [2,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [3,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [4,]       TRUE       TRUE      FALSE       TRUE       TRUE       TRUE
+    ## [5,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [6,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
     ##      V6_20208AA V6_20210RF V7_10105LA V7_10209HE V7_10306CG V7_10503DC
-    ## [1,]       TRUE      FALSE       TRUE       TRUE       TRUE      FALSE
-    ## [2,]      FALSE      FALSE      FALSE      FALSE      FALSE      FALSE
-    ## [3,]      FALSE      FALSE      FALSE       TRUE       TRUE      FALSE
-    ## [4,]      FALSE      FALSE      FALSE       TRUE       TRUE       TRUE
-    ## [5,]      FALSE      FALSE      FALSE      FALSE      FALSE       TRUE
-    ## [6,]      FALSE      FALSE       TRUE       TRUE       TRUE      FALSE
+    ## [1,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [2,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [3,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [4,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [5,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [6,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
     ##      V7_11204CD V7_20208AA V7_20210RF V8_10105LA V8_10209HE V8_10306CG
-    ## [1,]       TRUE      FALSE      FALSE       TRUE       TRUE       TRUE
-    ## [2,]      FALSE      FALSE      FALSE       TRUE      FALSE      FALSE
-    ## [3,]       TRUE      FALSE      FALSE       TRUE       TRUE       TRUE
-    ## [4,]       TRUE       TRUE      FALSE       TRUE       TRUE      FALSE
-    ## [5,]       TRUE       TRUE      FALSE      FALSE      FALSE       TRUE
-    ## [6,]       TRUE      FALSE      FALSE       TRUE       TRUE      FALSE
+    ## [1,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [2,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [3,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [4,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [5,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
+    ## [6,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
     ##      V8_10503DC V8_11204CD V8_20208AA V8_20210RF total.cells
-    ## [1,]      FALSE      FALSE       TRUE      FALSE       FALSE
-    ## [2,]      FALSE      FALSE      FALSE      FALSE       FALSE
-    ## [3,]      FALSE      FALSE       TRUE      FALSE       FALSE
-    ## [4,]       TRUE       TRUE      FALSE      FALSE       FALSE
+    ## [1,]       TRUE       TRUE       TRUE       TRUE       FALSE
+    ## [2,]       TRUE       TRUE       TRUE       TRUE       FALSE
+    ## [3,]       TRUE       TRUE       TRUE       TRUE       FALSE
+    ## [4,]       TRUE       TRUE       TRUE       TRUE       FALSE
     ## [5,]       TRUE       TRUE       TRUE       TRUE       FALSE
-    ## [6,]      FALSE      FALSE      FALSE      FALSE       FALSE
+    ## [6,]       TRUE       TRUE       TRUE       TRUE       FALSE
 
 The second method allows to identify the uniform clusters, i.e.those
 with unimodal expression and low dispersion of expression for all its
 markers.
 
-The most important parameter of the `QCUniformClusters` function is
+The most important parameter of the `QCUniformClusters()` function is
 `uniform.test`, three possibilities:
 
 -   `uniform` corresponds to the verification of the unimodal
@@ -887,35 +970,128 @@ QCU <- QCUniformClusters(DataCell,
 ![](README_files/figure-markdown_github/QCUniformClusters-1.png)
 
     ##   clusters markers    pv_dip       IQR passed
-    ## 1        1    CD16 0.9969386 0.2651895   TRUE
-    ## 2        1     CD3 0.9948315 0.3032393   TRUE
-    ## 3        1    CD56 0.9920345 0.3288604   TRUE
-    ## 4        1     CD8 0.9717085 0.1813187   TRUE
-    ## 5        1   HLADR 0.4625909 0.2673890   TRUE
-    ## 6        1   NKG2D 0.9863257 0.2057160   TRUE
+    ## 1        1    CD16 0.7081843 0.2616083   TRUE
+    ## 2        1     CD3 0.9901271 0.3015788   TRUE
+    ## 3        1    CD56 0.8016177 0.3003754   TRUE
+    ## 4        1     CD8 0.9791058 0.2777171   TRUE
+    ## 5        1   HLADR 0.9552378 0.4484164   TRUE
+    ## 6        1   NKG2D 0.8934759 0.2402532   TRUE
 
-# 5.Advanced graphical representation
+5.Advanced graphical representation
+===================================
 
-## 5.1 Modification of generated plot
+It is important to note that all generated figures are `ggplot` objects
+and can be modified in different ways
 
-Modification titre or axes \## 5.2 Combined graphical representation
-Grid arrange + HM \## 5.3 Interactive graphics ggiraph
+5.1 Modification of generated plot
+----------------------------------
 
-# 6. Advanced usage
+The first possible modifications are those concerning the `ggplot`
+object such as the title of the axes, or the title of graph
 
-## 6.1 Get samples
+As for the example below:
 
-The `getSamples()` function allows xxx
+``` r
+# Boxplot for differential analysis
+plotBoxplot(DataCell, 
+            clusters = "47",
+            samples = NULL,
+            observation = "timepoint", 
+            test.statistics = "t.test") +
+  ggplot2::labs(title = "Boxplot representation for timepoint")
+```
+
+![](README_files/figure-markdown_github/plotBoxplotM-1.png)
+
+``` r
+# Possible to make it interactive
+```
+
+5.2 Combined graphical representation
+-------------------------------------
+
+For the different generated `plotManifold` it is possible to assemble
+them into one figure with the `grid.arrange()` function.
 
 The procedure is as follows:
 
 ``` r
-samples <- getSamples()
+grob1 = list()
+grob1[["density"]] = plotManifold(DataCell, markers = "density")
+grob1[["marker"]] = plotManifold(DataCell, markers = "CD8", scale = FALSE)
+
+gridExtra::grid.arrange(
+  grobs = grob1,
+  layout_matrix = rbind(c(1,2)))
 ```
 
-## 6.2 Upsampling
+![](README_files/figure-markdown_github/PlotcombineManifold-1.png)
 
-The `performUpsampling` function allows the data set to be implemented
+It is also possible to assemble the heatmap together with the
+`plotcombineHM()` function.
+
+As below:
+
+``` r
+plotCombineHM(hm.exp, hm.stats)
+```
+
+![](README_files/figure-markdown_github/PlotcombineHM-1.png)
+
+    ## TableGrob (21 x 18) "arrange": 10 grobs
+    ##     z         cells    name              grob
+    ## 1   1 ( 4-11, 2-17) arrange    gtable[layout]
+    ## 2   2 ( 1- 3, 2-17) arrange    gtable[layout]
+    ## 3   3 ( 4-11, 1- 1) arrange    gtable[layout]
+    ## 4   4 (12-12, 2-17) arrange    gtable[layout]
+    ## 5   5 ( 4-11,18-18) arrange    gtable[layout]
+    ## 6   6 ( 1- 3, 1- 1) arrange gtable[guide-box]
+    ## 7   7 (13-19, 2-17) arrange    gtable[layout]
+    ## 8   8 (13-19,18-18) arrange    gtable[layout]
+    ## 9   9 (20-20, 2-17) arrange    gtable[layout]
+    ## 10 10 (21-21, 3-16) arrange gtable[guide-box]
+
+5.3 Interactive graphics
+------------------------
+
+Finally, some figures such as `plotCellCounts`, `plotClustersCounts`,
+`plotCoordinates`, `plotVolcano`, `plotBoxplot`, `plotMDS` and `plotPCA`
+are interactive when saved in html format with the following command:
+
+``` r
+plot <- ggiraph::girafe(ggobj = plot,
+                        options = list(ggiraph::opts_sizing(width = .9),
+                                       ggiraph::opts_hover_inv(css = "opacity:0.6;"),
+                                       ggiraph::opts_hover(css = "fill:black;")))
+```
+
+6. Advanced usage
+=================
+
+6.1 Get samples
+---------------
+
+The `selectSamples()` function allows create a vector containing the
+samples of interest according to their name, condition or timepoint.
+
+The procedure is as follows:
+
+``` r
+samples <- selectSamples(DataCell, 
+                         individual = NULL, 
+                         condition = NULL, 
+                         timepoint = "V1")
+
+samples
+```
+
+    ## [1] "V1_10105LA" "V1_10209HE" "V1_10306CG" "V1_10503DC" "V1_11204CD"
+    ## [6] "V1_20208AA" "V1_20210RF"
+
+6.2 Upsampling
+--------------
+
+The `performUpsampling()` function allows the data set to be implemented
 if downsampling has been performed.
 
 This function is used after performing the manifold and clustering (Step
@@ -931,26 +1107,28 @@ DataCell <- performUpsampling(DataCell,
                               transform = "logicle")
 ```
 
-## 6.3 Metadata
+6.3 Metadata
+------------
 
 The `createMetaclusters()` function allows clusters to be combined to
 create a metaclusters.
 
 This function should be used as many times as there are metaclusters to
-be created. Be careful, when metaclusters are created, the origianl
+be created. Be careful, when metaclusters are created, the original
 clusters are lost.
 
 The procedure is as follows:
 
 ``` r
-DataCell <- CreateMetaclusters(DataCell, 
+DataCell <- createMetaclusters(DataCell, 
                                clusters = xx, 
                                metaclusters = xx)
 ```
 
-## 6.4 Export
+6.4 Export
+----------
 
-The `export` function allows extracting of the dataset in FCS or txt
+The `export()` function allows extracting of the dataset in FCS or txt
 format with some parameters such as UMAP coordinates and clusters.
 
 Please note that if downsampling and upsampling have been performed,

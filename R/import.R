@@ -42,7 +42,6 @@ import <- function(files,
 
   exprs.r <- data.frame()
   exprs <- data.frame()
-  samples.r <- c()
   samples <- c()
 
   message("Transformation method is: ", transform)
@@ -138,7 +137,6 @@ import <- function(files,
     exprs <- rbind(exprs, exprs.sub)
 
     sample <- gsub(".fcs", "", basename(file))
-    samples.r <- c(samples.r, rep(sample, nrow(exprs.raw)))
     samples <- c(samples, rep(sample, nrow(exprs.sub)))
 
   }
@@ -162,9 +160,9 @@ import <- function(files,
 #'
 #' @description This function aims to import acquired cell events from single-cell transcriptomic profiling into a Celldata object.
 #'
-#' @param mtx a character vector specifying the path of the mtx file to load
-#' @param cells a character vector specifying the format of the mtx file to load
-#' @param features a character vector specifying the format of the mtx file to load
+#' @param count a character vector specifying the path of the count mtx file containing the count values
+#' @param cells a character vector specifying the path of the mtx file containing the cell ids
+#' @param features a character vector specifying the path of the mtx file containing the gene ids
 #' @param meta a character specifying the name of the tsv metadata file to load
 #' @param sample.col a character specifying the name of the colmun to use as biological sample in the metadata file
 #'
@@ -172,13 +170,13 @@ import <- function(files,
 #'
 #' @export
 #' @import methods 
-importMTX <- function(mtx,
+importMTX <- function(count,
                       cells,
                       features,
 					  meta,
 					  sample.col) {
 		
-	expression_matrix <- Seurat::ReadMtx(mtx      = mtx,
+	expression_matrix <- Seurat::ReadMtx(mtx      = count,
 							             cells    = cells,
 							             features = features)
 							 
@@ -191,7 +189,6 @@ importMTX <- function(mtx,
 	meta                <- utils::read.delim(meta,header=TRUE)
 	meta                <- meta[meta$id %in% rownames(counts),]
 	samples             <- meta[,sample.col,drop=TRUE]
-	print(unique(samples))
 	
 	res <- methods::new("Celldata",
                       matrix.expression.r = counts,
