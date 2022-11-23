@@ -50,4 +50,4 @@ Suggests:
 License: GPL-3 | file LICENSE
 VignetteBuilder: knitr
 biocViews: Clustering, DataImport, FlowCytometry, Normalization, StatisticalMethod, Software, Visualization, SingleCell, Transcriptomics
-RoxygenNote: 7.2.2
+RoxygenNote: 7.2.1

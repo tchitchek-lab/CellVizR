@@ -250,7 +250,7 @@ plotMarkerDensity <- function(Celldata,
                               quant.high = 0.95,
                               dip.th = 0.01) {
   
-  checkmate::qassert(clusters, "N+")
+  checkmate::qassert(clusters, "S+")
   checkmate::qassert(quant.low, "N1")
   checkmate::qassert(quant.high, "N1")
   checkmate::qassert(dip.th, "N1")

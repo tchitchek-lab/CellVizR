@@ -253,8 +253,8 @@ createMetaclusters <- function(Celldata,
 #' @export
 #'
 deleteClusters <- function(Celldata, 
-                               clusters) {
-
+                           clusters) {
+  
   checkmate::qassert(clusters, "S+")
   
   identify.clusters <- Celldata@identify.clusters
