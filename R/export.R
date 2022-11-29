@@ -109,7 +109,7 @@ methods::setMethod("export", c("Celldata"),
 
                      if (any(tools::file_ext(filename) %in% c("fcs", "FCS"))) {
                        exprs$samples <- as.numeric(factor(exprs$samples))
-                       flowFrame <- suppressWarnings(createFlowframe(exprs))
+                       flowFrame <- createFlowframe(exprs)
                        flowCore::write.FCS(flowFrame, filename = filename)
                      } else {
                        exprs$sample.id <- as.numeric(factor(exprs$samples))
