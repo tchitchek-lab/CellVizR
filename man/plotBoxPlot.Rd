@@ -24,6 +24,8 @@ plotBoxplot(
 
 \item{observation}{a character value containing the parameters to use}
 
+\item{value.y}{a character value containing the parameters to use. Possible value are percentage or absolute.}
+
 \item{test.statistics}{a character value providing the type of statistical test to use. Possible values are: 'wilcox.test' or 't.test'}
 
 \item{paired}{a boolean value indicating if a paired or unpaired comparison should be applied}

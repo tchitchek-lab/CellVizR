@@ -828,6 +828,7 @@ plotMDS <- function(Celldata,
 #' @param clusters a character vector containing the identifiers of the clusters to use
 #' @param samples a character vector containing the names of biological samples to use. By default, all samples are used
 #' @param observation a character value containing the parameters to use
+#' @param value.y a character value containing the parameters to use. Possible value are percentage or absolute.
 #' @param test.statistics a character value providing the type of statistical test to use. Possible values are: 'wilcox.test' or 't.test'
 #' @param paired a boolean value indicating if a paired or unpaired comparison should be applied
 #' @param hide.ns a boolean value indicating if non-significant p-value must be hidden
@@ -1420,7 +1421,7 @@ plotLDA <- function(Celldata,
 #' @param condition.samples a character vector containing the variables to be studied for the samples. Possible values are: 'condition' or 'timepoint'
 #' @param samples a character vector containing the names of biological samples to use. By default, all samples are used
 #' @param clusters a character vector containing the identifiers of the clusters to use. By default, all clusters are used
-#' @param marlers a character vector containing the name of the markers to use
+#' @param markers a character vector containing the name of the markers to use
 #'
 #' @return a ggplot2 object
 #'

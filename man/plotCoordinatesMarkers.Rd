@@ -21,7 +21,7 @@ plotCoordinatesMarkers(
 
 \item{clusters}{a character vector containing the identifiers of the clusters to use. By default, all clusters are used}
 
-\item{marlers}{a character vector containing the name of the markers to use}
+\item{markers}{a character vector containing the name of the markers to use}
 }
 \value{
 a ggplot2 object
