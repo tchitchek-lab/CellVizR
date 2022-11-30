@@ -35,7 +35,7 @@ createFlowframe <- function(intensities) {
   intensities <- as.matrix(intensities)
   dataframe <- methods::as(data.frame(p), "AnnotatedDataFrame")
 
-  flowframe <- suppressWarnings(flowCore::flowFrame(intensities, dataframe, description = description))
+  flowframe <- flowCore::flowFrame(intensities, dataframe, description = description)
 
   return(flowframe)
 }
