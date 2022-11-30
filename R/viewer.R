@@ -258,19 +258,18 @@ plotMarkerDensity <- function(Celldata,
   expression.color.palette <- c("white", "yellow", "orange", "red", "red4")
   
   matrix.exp <- Celldata@matrix.expression
-  samples <- Celldata@samples
   cluster <- Celldata@identify.clusters
   
-  proj <- cbind(samples, matrix.exp, cluster)
+  proj <- cbind(matrix.exp, cluster)
   
   parameters <- colnames(proj)
-  markers <- parameters[!parameters %in% c("samples", "cluster")]
+  markers <- parameters[!parameters %in% c("cluster")]
   
   grob <- list()
   
   for (marker in markers) {
-    exp.values <- proj[, c(marker, "cluster", "samples")]
-    colnames(exp.values) <- c("exp", "clusters", "samples")
+    exp.values <- proj[, c(marker, "cluster")]
+    colnames(exp.values) <- c("exp", "clusters")
     quantiles <- stats::quantile(exp.values$exp, probs = c(quant.low, quant.high))
     exp.values.clusters <- exp.values[exp.values$clusters %in% clusters, ]
     median <- median(exp.values.clusters$exp)
@@ -378,9 +377,6 @@ plotManifold <- function(Celldata,
   } else if (markers == "clusters") {
     legend.title <- "cell clusters"
     proj$value <- proj$clusters
-  }else if (markers == "samples") {
-    legend.title <- "samples"
-    proj$value <- Celldata@samples
   } else if (markers == "clusters" && length(clusters) == 0) {
     stop("Clusters is null")
   } else {
@@ -425,18 +421,17 @@ plotManifold <- function(Celldata,
   } else if (markers == "clusters") {
     
     proj.center <- plyr::ddply(proj, "clusters",function(x) {
-                                 c(dim1 = stats::median(x$dim1),
-                                   dim2 = stats::median(x$dim2))})
+      c(dim1 = stats::median(x$dim1),
+        dim2 = stats::median(x$dim2))})
     
     plot <- plot + ggplot2::geom_text(data = proj.center,
                                       ggplot2::aes_string(x = "dim1",
                                                           y = "dim2",
                                                           label = "clusters"),
                                       size = 3) +
-      ggplot2::guides(color = "none") +
+      # ggplot2::guides(color = "none") +
+      ggplot2::guides(color = ggplot2::guide_legend(override.aes = list(size=3))) +
       ggplot2::labs(title = "clusters representation", color = legend.title)
-    
-  }else if (markers == "samples") {
     
   } else {
     
@@ -721,9 +716,9 @@ plotMDS <- function(Celldata,
       data.matrix <- t(data.matrix)
     }
   }
-
+  
   if (levels == "clusters") {
-
+    
     dist.clusters <- stats::dist(data.matrix)
     fit1 <- MASS::isoMDS(dist.clusters, k = 2, trace = FALSE)
     
@@ -760,7 +755,7 @@ plotMDS <- function(Celldata,
     }
     
   } else {
-
+    
     dist.samples <- stats::dist(t(data.matrix))
     
     fit2 <- MASS::isoMDS(dist.samples, k = 2, trace = FALSE)
@@ -845,6 +840,7 @@ plotBoxplot <- function(Celldata,
                         clusters,
                         samples = NULL,
                         observation = c("individual", "condition", "timepoint"),
+                        value.y = c("percentage", "absolute"),
                         test.statistics = c("wilcox.test", "t.test"),
                         paired = FALSE,
                         hide.ns = TRUE) {
@@ -855,9 +851,14 @@ plotBoxplot <- function(Celldata,
   checkmate::qassert(clusters, "S+")
   checkmate::qassert(samples, c("0", "S+"))
   checkmate::qassert(observation, "S1")
+  checkmate::qassert(value.y, "S1")
   checkmate::qassert(test.statistics, "S1")
   checkmate::qassert(paired, "B1")
   checkmate::qassert(hide.ns, "B1")
+  
+  if (value.y != "percentage" && value.y != "absolute") {
+    stop("The value.y name is invalid")
+  }
   
   matrix.cell.count <- Celldata@matrix.cell.count
   
@@ -869,8 +870,13 @@ plotBoxplot <- function(Celldata,
   
   matrix.cell.count2 <- matrix.cell.count[rownames(matrix.cell.count) %in% clusters, ]
   cells.number <- sum(colSums(matrix.cell.count2))
-  matrix.cell.count2 <- base::apply(matrix.cell.count2, 2, sum)
-  matrix.cell.count <- matrix.cell.count2 / base::apply(matrix.cell.count, 2, sum) * 100
+  matrix.cell.count2 <- colSums(matrix.cell.count2)
+  
+  if (value.y == "percentage") {
+    matrix.cell.count <- matrix.cell.count2 / base::apply(matrix.cell.count, 2, sum) * 100
+  } else {
+    matrix.cell.count <- matrix.cell.count2
+  }
   
   matrix.cell.count <- reshape::melt(matrix.cell.count)
   
@@ -904,8 +910,13 @@ plotBoxplot <- function(Celldata,
     ggpubr::stat_pvalue_manual(stat.test, label = "p.signif", color = "#424242",
                                size = 5, hide.ns = hide.ns, step.increase = 0.1)
   
-  plot <- plot +
-    ggplot2::ylab("abundance of cluster")
+  if (value.y == "percentage") {
+    plot <- plot +
+      ggplot2::ylab("% abundance of cluster")
+  } else {
+    plot <- plot +
+      ggplot2::ylab("absolute abundance of cluster")
+  }
   
   plot <- plot +
     ggplot2::theme_bw() +
@@ -1016,7 +1027,7 @@ plotVolcano <- function(Celldata,
 #'
 plotDistogram <- function(Celldata,
                           clusters = NULL,
-						  method = c("pearson","spearman")) {
+                          method = c("pearson","spearman")) {
   
   checkmate::qassert(clusters, c("0", "S+"))
   
@@ -1177,10 +1188,10 @@ plotScatter <- function(Celldata,
 #'
 #' @export
 #'
-plotCoordinates <- function(Celldata,
-                            condition.samples = c("condition", "timepoint"),
-                            samples = NULL,
-                            clusters) {
+plotCoordinatesClusters <- function(Celldata,
+                                    condition.samples = c("condition", "timepoint"),
+                                    samples = NULL,
+                                    clusters) {
   
   condition.samples <- match.arg(condition.samples)
   
@@ -1366,8 +1377,8 @@ plotLDA <- function(Celldata,
     coeffs$clusters <- factor(coeffs$clusters,
                               levels = coeffs$clusters[order(coeffs$LD1, decreasing = TRUE)])
     
-    mean.condition <- apply(values.condition, 1, sum)
-    mean.ref.condition <- apply(values.ref.condition, 1, sum)
+    mean.condition <- apply(values.condition, 1, mean)
+    mean.ref.condition <- apply(values.ref.condition, 1, mean)
     log2fc <- data.frame(log2fc = log2(mean.condition / mean.ref.condition))
     log2fc$clusters <- rownames(log2fc)
     
@@ -1396,6 +1407,157 @@ plotLDA <- function(Celldata,
                      axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust = 1))
     
   }
+  
+  return(plot)
+}
+
+#' @title Plot a marker for each cluster using parallel coordinates
+#'
+#' @description This function aims to visualise the expression of a given marker in each cluster using parallel coordinates.
+#' Each line in the representation corresponds to a biological sample for which marker/gene expressions are displayed.
+#'
+#' @param Celldata a Celldata object
+#' @param condition.samples a character vector containing the variables to be studied for the samples. Possible values are: 'condition' or 'timepoint'
+#' @param samples a character vector containing the names of biological samples to use. By default, all samples are used
+#' @param clusters a character vector containing the identifiers of the clusters to use. By default, all clusters are used
+#' @param marlers a character vector containing the name of the markers to use
+#'
+#' @return a ggplot2 object
+#'
+#' @export
+#'
+plotCoordinatesMarkers <- function(Celldata,
+                                   condition.samples = c("condition", "timepoint"),
+                                   samples = NULL,
+                                   clusters = NULL,
+                                   markers) {
+  
+  condition.samples <- match.arg(condition.samples)
+  
+  checkmate::qassert(condition.samples, "S1")
+  checkmate::qassert(samples, c("0", "S+"))
+  checkmate::qassert(clusters, c("0", "S+"))
+  checkmate::qassert(markers, "S+")
+  
+  matrix.exp <- Celldata@matrix.expression
+  sample <- Celldata@samples
+  cluster <- Celldata@identify.clusters
+  
+  proj <- cbind(sample, cluster, matrix.exp)
+  colnames(proj) <- c("samples", "clusters", colnames(matrix.exp))
+  
+  melt.matrix <- reshape::melt(proj, id.vars = c("samples","clusters"))
+  
+  if (!is.null(samples)) {
+    melt.matrix <- melt.matrix[melt.matrix$samples %in% samples, ]
+  }
+  if (!is.null(clusters)) {
+    melt.matrix <- melt.matrix[melt.matrix$clusters %in% clusters, ]
+  }
+  
+  melt.matrix <- melt.matrix[melt.matrix$variable %in% markers, ]
+  
+  proj2 <- plyr::ddply(melt.matrix, c("clusters","samples"), function(x) {
+    stats::median(x$value)
+  })
+  colnames(proj2) <- c("clusters", "samples", "value")
+  
+  means <- plyr::ddply(proj2, "clusters",
+                       function(df) {
+                         mean(df$value, na.rm = TRUE)})
+  colnames(means) <- c("clusters", "means")
+  
+  Celldata@metadata$samples <- rownames(Celldata@metadata)
+  proj2 <- merge(proj2, Celldata@metadata, by = "samples")
+  
+  plot <- ggplot2::ggplot() +
+    ggplot2::ggtitle(paste0("Parallel coordinates - Markers: ",
+                            paste0(markers))) +
+    ggiraph::geom_line_interactive(data = proj2,
+                                   ggplot2::aes_string(x = "clusters",
+                                                       y = "value",
+                                                       group = "samples",
+                                                       color = condition.samples,
+                                                       tooltip = "samples",
+                                                       data_id = "individual"),
+                                   size = 0.5, alpha = 1)
+  ggplot2::geom_line(data = means,
+                     ggplot2::aes_string(x = "clusters",
+                                         y = "means"),
+                     group = 1, linetype = "dashed", size = 1)
+  
+  plot <- plot +
+    ggplot2::xlab("clusters") +
+    ggplot2::ylab("expressions")
+  
+  plot <- plot +
+    ggplot2::theme_bw() +
+    ggplot2::theme(plot.title =  ggplot2::element_text(hjust = 0.5),
+                   axis.text.x = ggplot2::element_text(angle = 45, hjust = 1),
+                   panel.grid.minor =  ggplot2::element_blank(),
+                   panel.grid.major =  ggplot2::element_blank(),
+                   legend.position = "bottom")
+  
+  return(plot)
+}
+
+#' @title Plot compare cluster 
+#'
+#' @description This function aims to visualise the expression of a given marker in each cluster.
+#'
+#' @param Celldata a Celldata object
+#' @param clusters1 a character vector containing the identifier of the cluster to use
+#' @param clusters2 a character vector containing the identifier of the cluster to use
+#'
+#' @return a ggplot2 object
+#'
+#' @export
+#'
+plotCompareClusters <- function(Celldata,
+                                clusters1,
+                                clusters2) {
+  
+  checkmate::qassert(clusters1, "S1")
+  checkmate::qassert(clusters2, "S1")
+  
+  matrix.exp <- Celldata@matrix.expression
+  cluster <- Celldata@identify.clusters
+  
+  proj <- cbind(matrix.exp, cluster)
+  
+  parameters <- colnames(proj)
+  markers <- parameters[!parameters %in% c("cluster")]
+  
+  exp.values.clusters1 <- proj[proj$cluster %in% clusters1, ]
+  exp.values.clusters2 <- proj[proj$cluster %in% clusters2, ]
+  
+  exp.values.clusters <- rbind(exp.values.clusters1, exp.values.clusters2)
+  
+  melt.matrix <- reshape::melt(exp.values.clusters, id.vars = c("cluster"))
+  
+  plot <- ggplot2::ggplot() +
+    ggplot2::geom_density(data = melt.matrix,
+                          mapping = ggplot2::aes_string(x = "value",
+                                                        fill = "cluster"),
+                          size = 0.5,
+                          alpha = 0.8) +
+    ggplot2::facet_wrap(~variable)
+  
+  plot <- plot +
+    ggplot2::scale_fill_manual(values = c("#ff0000", "#0000ff")) +
+    ggplot2::scale_x_continuous(limits = c(-2, 6), breaks = c(-2:6)) +
+    ggplot2::scale_y_continuous(labels = function(x) {format(round(x, 1),nsmall = 1)})
+  
+  plot <- plot +
+    ggplot2::theme_bw() +
+    ggplot2::theme(
+      plot.title = ggplot2::element_text(hjust = 0.5, size = 10, face = "bold"),
+      axis.title.x = ggplot2::element_blank(),
+      axis.title.y = ggplot2::element_blank(),
+      panel.grid.minor = ggplot2::element_blank(),
+      panel.grid.major = ggplot2::element_blank(),
+      legend.position = "bottom",
+      legend.key.width = grid::unit(0.35, "cm"))
   
   return(plot)
 }

@@ -9,6 +9,7 @@ plotBoxplot(
   clusters,
   samples = NULL,
   observation = c("individual", "condition", "timepoint"),
+  value.y = c("percentage", "absolute"),
   test.statistics = c("wilcox.test", "t.test"),
   paired = FALSE,
   hide.ns = TRUE

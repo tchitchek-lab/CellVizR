@@ -271,28 +271,28 @@ DataCell <- generateManifold(DataCell,
 
     ## 
 
-    ## 14:31:32 UMAP embedding parameters a = 1.896 b = 0.8006
+    ## 11:32:18 UMAP embedding parameters a = 1.896 b = 0.8006
 
-    ## 14:31:32 Converting dataframe to numerical matrix
+    ## 11:32:18 Converting dataframe to numerical matrix
 
-    ## 14:31:32 Read 26722 rows and found 10 numeric columns
+    ## 11:32:18 Read 26722 rows and found 10 numeric columns
 
-    ## 14:31:32 Using Annoy for neighbor search, n_neighbors = 15
+    ## 11:32:18 Using Annoy for neighbor search, n_neighbors = 15
 
-    ## 14:31:32 Building Annoy index with metric = euclidean, n_trees = 50
+    ## 11:32:18 Building Annoy index with metric = euclidean, n_trees = 50
 
     ## 0%   10   20   30   40   50   60   70   80   90   100%
 
     ## [----|----|----|----|----|----|----|----|----|----|
 
     ## **************************************************|
-    ## 14:31:34 Writing NN index file to temp file C:\Users\GWMA\AppData\Local\Temp\Rtmpam2Lyj\file2f8266f2f99
-    ## 14:31:34 Searching Annoy index using 40 threads, search_k = 1500
-    ## 14:31:35 Annoy recall = 100%
-    ## 14:31:35 Commencing smooth kNN distance calibration using 40 threads with target n_neighbors = 15
-    ## 14:31:36 Initializing from normalized Laplacian + noise (using irlba)
-    ## 14:31:37 Commencing optimization for 200 epochs, with 539456 positive edges using 1 thread
-    ## 14:31:56 Optimization finished
+    ## 11:32:20 Writing NN index file to temp file C:\Users\GWMA\AppData\Local\Temp\RtmpGUgfQO\file2f5469db651c
+    ## 11:32:20 Searching Annoy index using 40 threads, search_k = 1500
+    ## 11:32:21 Annoy recall = 100%
+    ## 11:32:21 Commencing smooth kNN distance calibration using 40 threads with target n_neighbors = 15
+    ## 11:32:22 Initializing from normalized Laplacian + noise (using irlba)
+    ## 11:32:23 Commencing optimization for 200 epochs, with 539456 positive edges using 1 thread
+    ## 11:32:41 Optimization finished
 
 The main arguments of the `generateManifold()` function are:
 
@@ -456,8 +456,8 @@ one given cluster.
 
 For each marker distribution, the median expression is represented by a
 black dashed line. In addition, the Hartigan’s Dip test p-value, which
-indicates whether the distribution is non-unimodal, is indicated by a
-green curve or red if it is non-unimodal.
+indicates whether the distribution is unimodal, is indicated by a green
+curve or red if it is non-unimodal.
 
 ``` r
 # PhenoClusters plot for specific cluster 
@@ -1107,5 +1107,8 @@ export(DataCell,
        clusters = NULL,
        samples = NULL)
 ```
+
+    ## Warning in readFCSdata(con, offsets, txt, transformation, which.lines, scale, : Some data values of 'CD56.BV421' channel exceed its $PnR value 475421.659057617 and will be truncated!
+    ##  To avoid truncation, either fix $PnR before generating FCS or set 'truncate_max_range = FALSE'
 
     ## [1] "Analyses_NK_K100.fcs"
