@@ -8,6 +8,7 @@ computeStatistics(
   Celldata,
   condition,
   ref.condition,
+  comparison = "cmp",
   test.statistics = c("wilcox.test", "t.test"),
   p.adjust = c("none", "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr"),
   paired = FALSE
@@ -19,6 +20,8 @@ computeStatistics(
 \item{condition}{a character value providing the name of the condition to be compared}
 
 \item{ref.condition}{a character value providing the name of reference condition}
+
+\item{comparison}{a character value providing the name of comparison}
 
 \item{test.statistics}{a character value providing the type of statistical test to use. Possible values are: 'wilcoxon' or 't-test'}
 

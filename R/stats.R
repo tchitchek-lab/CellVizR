@@ -11,6 +11,7 @@
 #' @param Celldata a Celldata object
 #' @param condition a character value providing the name of the condition to be compared
 #' @param ref.condition a character value providing the name of reference condition
+#' @param comparison a character value providing the name of comparison
 #' @param test.statistics a character value providing the type of statistical test to use. Possible values are: 'wilcoxon' or 't-test'
 #' @param p.adjust a character value providing the type of p-value adjustment method to use. Possible values are: 'none', 'holm', 'hochberg', 'hommel', 'bonferroni', 'BH', 'BY', 'fdr'
 #' @param paired a boolean value indicating if individuals are paired
@@ -23,6 +24,7 @@
 computeStatistics <- function(Celldata,
                               condition,
                               ref.condition,
+                              comparison = "cmp",
                               test.statistics = c("wilcox.test", "t.test"),
                               p.adjust = c("none", "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr"),
                               paired = FALSE) {
@@ -30,15 +32,14 @@ computeStatistics <- function(Celldata,
   test.statistics <- match.arg(test.statistics)
   p.adjust <- match.arg(p.adjust)
 
-  checkmate::qassert(condition, "S1")
+  checkmate::qassert(condition, "S+")
   checkmate::qassert(ref.condition, "S+")
   checkmate::qassert(test.statistics, "S1")
   checkmate::qassert(p.adjust, "S1")
   checkmate::qassert(paired, "B1")
 
-  message("Computing of the ", test.statistics, " for: ", condition, " vs. ", ref.condition)
+  message("Computing of the ", test.statistics, " for: ", paste(condition,collapse = ","), " vs. ", paste(ref.condition,collapse = ","))
 
-  comparison <- paste0(condition, " vs. ", ref.condition)
   if (comparison %in% unique(Celldata@statistic$comparison)) {
     stop("The statistic slot already exists")
   }
@@ -64,8 +65,8 @@ computeStatistics <- function(Celldata,
 
   stats <- data.frame()
   for (cluster in as.character(rownames(abundances))) {
-    values.condition <- abundances[cluster, grepl(condition, colnames(abundances)), drop = TRUE]
-    values.ref.condition <- abundances[cluster, grepl(ref.condition, colnames(abundances)), drop = TRUE]
+    values.condition <- abundances[cluster, condition, drop = TRUE]
+    values.ref.condition <- abundances[cluster, ref.condition, drop = TRUE]
 
     pv <- do.call(test.statistics, list(x = values.condition,
                                         y = values.ref.condition,
