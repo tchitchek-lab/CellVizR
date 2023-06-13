@@ -962,7 +962,8 @@ plotVolcano <- function(Celldata,
   stats <- stats[stats$comparison == comparison, ]
   
   stats$log10.pvalue <- -log10(stats$pvalue)
-  max.fc <- max(abs(stats$lfc))
+  
+  max.fc <- max(abs(stats$lfc[is.finite(stats$lfc)]))
   
   stats$dir <- "ns"
   stats$dir[stats$log10.pvalue > th.pv & stats$lfc > log2(th.fc)] <- "up" #red

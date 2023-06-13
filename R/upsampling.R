@@ -9,6 +9,9 @@
 #' @param transform a character value containing the type of the transformation to apply. Possible values are: 'logicle', 'arcsinh', 'logarithmic' or 'none'
 #'
 #' @return a S4 object of class 'Celldata'
+#' 
+#' @export
+#'
 performUpsampling <- function(Celldata,
                               files,
                               transform = c("logicle", "arcsinh",
