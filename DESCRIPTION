@@ -41,7 +41,6 @@ Imports:
 	Rtsne,
 	scales,
 	Seurat, 
-	spade,
 	stats,
 	stringr,
 	uwot,
