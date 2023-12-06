@@ -41,13 +41,13 @@ Imports:
 	Rtsne,
 	scales,
 	Seurat,
-	spade,
 	stats,
 	stringr,
 	uwot,
 	viridis
 Suggests: 
-	knitr
+	knitr,
+        spade
 License: GPL-3 | file LICENSE
 VignetteBuilder: knitr
 biocViews: Clustering, DataImport, FlowCytometry, Normalization, StatisticalMethod, Software, Visualization, SingleCell, Transcriptomics
