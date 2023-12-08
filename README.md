@@ -118,34 +118,34 @@ files <- list.files(NK_files,
 print(files)
 ```
 
-    ##  [1] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V1_10105LA.fcs"
-    ##  [2] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V1_10209HE.fcs"
-    ##  [3] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V1_10306CG.fcs"
-    ##  [4] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V1_10503DC.fcs"
-    ##  [5] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V1_11204CD.fcs"
-    ##  [6] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V1_20208AA.fcs"
-    ##  [7] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V1_20210RF.fcs"
-    ##  [8] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V6_10105LA.fcs"
-    ##  [9] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V6_10209HE.fcs"
-    ## [10] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V6_10306CG.fcs"
-    ## [11] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V6_10503DC.fcs"
-    ## [12] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V6_11204CD.fcs"
-    ## [13] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V6_20208AA.fcs"
-    ## [14] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V6_20210RF.fcs"
-    ## [15] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V7_10105LA.fcs"
-    ## [16] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V7_10209HE.fcs"
-    ## [17] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V7_10306CG.fcs"
-    ## [18] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V7_10503DC.fcs"
-    ## [19] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V7_11204CD.fcs"
-    ## [20] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V7_20208AA.fcs"
-    ## [21] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V7_20210RF.fcs"
-    ## [22] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V8_10105LA.fcs"
-    ## [23] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V8_10209HE.fcs"
-    ## [24] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V8_10306CG.fcs"
-    ## [25] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V8_10503DC.fcs"
-    ## [26] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V8_11204CD.fcs"
-    ## [27] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V8_20208AA.fcs"
-    ## [28] "C:/Users/GWMA/Documents/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V8_20210RF.fcs"
+    ##  [1] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V1_10105LA.fcs"
+    ##  [2] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V1_10209HE.fcs"
+    ##  [3] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V1_10306CG.fcs"
+    ##  [4] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V1_10503DC.fcs"
+    ##  [5] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V1_11204CD.fcs"
+    ##  [6] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V1_20208AA.fcs"
+    ##  [7] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V1_20210RF.fcs"
+    ##  [8] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V6_10105LA.fcs"
+    ##  [9] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V6_10209HE.fcs"
+    ## [10] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V6_10306CG.fcs"
+    ## [11] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V6_10503DC.fcs"
+    ## [12] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V6_11204CD.fcs"
+    ## [13] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V6_20208AA.fcs"
+    ## [14] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V6_20210RF.fcs"
+    ## [15] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V7_10105LA.fcs"
+    ## [16] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V7_10209HE.fcs"
+    ## [17] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V7_10306CG.fcs"
+    ## [18] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V7_10503DC.fcs"
+    ## [19] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V7_11204CD.fcs"
+    ## [20] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V7_20208AA.fcs"
+    ## [21] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V7_20210RF.fcs"
+    ## [22] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V8_10105LA.fcs"
+    ## [23] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V8_10209HE.fcs"
+    ## [24] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V8_10306CG.fcs"
+    ## [25] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V8_10503DC.fcs"
+    ## [26] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V8_11204CD.fcs"
+    ## [27] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V8_20208AA.fcs"
+    ## [28] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V8_20210RF.fcs"
 
 ``` r
 # import the FCS files into a Celldata object 
@@ -226,6 +226,9 @@ plotCellCounts(DataCell,
                sort = TRUE)
 ```
 
+    ## Warning: `aes_string()` was deprecated in ggplot2 3.0.0.
+    ## i Please use tidy evaluation ideoms with `aes()`
+
 ![](README_files/figure-markdown_github/plotCellCounts-1.png)
 
 ``` r
@@ -271,28 +274,28 @@ DataCell <- generateManifold(DataCell,
 
     ## 
 
-    ## 11:32:18 UMAP embedding parameters a = 1.896 b = 0.8006
+    ## 16:57:45 UMAP embedding parameters a = 1.896 b = 0.8006
 
-    ## 11:32:18 Converting dataframe to numerical matrix
+    ## 16:57:45 Converting dataframe to numerical matrix
 
-    ## 11:32:18 Read 26722 rows and found 10 numeric columns
+    ## 16:57:45 Read 26722 rows and found 10 numeric columns
 
-    ## 11:32:18 Using Annoy for neighbor search, n_neighbors = 15
+    ## 16:57:45 Using Annoy for neighbor search, n_neighbors = 15
 
-    ## 11:32:18 Building Annoy index with metric = euclidean, n_trees = 50
+    ## 16:57:46 Building Annoy index with metric = euclidean, n_trees = 50
 
     ## 0%   10   20   30   40   50   60   70   80   90   100%
 
     ## [----|----|----|----|----|----|----|----|----|----|
 
     ## **************************************************|
-    ## 11:32:20 Writing NN index file to temp file C:\Users\GWMA\AppData\Local\Temp\RtmpGUgfQO\file2f5469db651c
-    ## 11:32:20 Searching Annoy index using 40 threads, search_k = 1500
-    ## 11:32:21 Annoy recall = 100%
-    ## 11:32:21 Commencing smooth kNN distance calibration using 40 threads with target n_neighbors = 15
-    ## 11:32:22 Initializing from normalized Laplacian + noise (using irlba)
-    ## 11:32:23 Commencing optimization for 200 epochs, with 539456 positive edges using 1 thread
-    ## 11:32:41 Optimization finished
+    ## 16:57:49 Writing NN index file to temp file C:\Users\Gwenou\AppData\Local\Temp\RtmpAHxLt7\file411c647a510c
+    ## 16:57:49 Searching Annoy index using 40 threads, search_k = 1500
+    ## 16:57:51 Annoy recall = 100%
+    ## 16:57:51 Commencing smooth kNN distance calibration using 40 threads with target n_neighbors = 15
+    ## 16:57:52 Initializing from normalized Laplacian + noise (using irlba)
+    ## 16:57:53 Commencing optimization for 200 epochs, with 539456 positive edges using 1 thread
+    ## 16:58:18 Optimization finished
 
 The main arguments of the `generateManifold()` function are:
 
@@ -342,6 +345,9 @@ plotClustersCounts(DataCell,
                    sort = TRUE)
 ```
 
+    ## Warning: Using the `size` aesthetic in this geom was deprecated in ggplot2 3.4.0.
+    ## i Please use `linewidth` in the `default_aes` field and elsewhere instead.
+
 ![](README_files/figure-markdown_github/plotClustersCounts-1.png)
 
 ``` r
@@ -371,6 +377,9 @@ plotManifold(DataCell,
              markers = "density",
              samples = NULL)
 ```
+
+    ## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+    ## i Please use `linewidth` instead.
 
 ![](README_files/figure-markdown_github/PlotManifold-1.png)
 
@@ -403,8 +412,8 @@ shown as below:
 
 ``` r
 # Display manifold overlay by 'cluster' 
-plotManifold(DataCell, 
-             markers = "clusters")
+plotManifold(DataCell, markers = "clusters") + 
+  ggplot2::guides(color = "none")
 ```
 
 ![](README_files/figure-markdown_github/PlotManifold4-1.png)
@@ -425,7 +434,8 @@ This function is used as below:
 
 ``` r
 # Heatmap of expression markers 
-hm.exp <- plotHmExpressions(DataCell)
+hm.exp <- plotHmExpressions(DataCell, 
+                            N.metaclusters = 6)
 gridExtra::grid.arrange(hm.exp)
 ```
 
@@ -443,7 +453,8 @@ following example:
 # Heatmap of expression markers 
 hm.exp <- plotHmExpressions(DataCell, 
                             markers = c("NKP44", "NKp30", "NKp46", "NKG2D"), 
-                            clusters = c(1:50))
+                            clusters = c(1:50),
+                            N.metaclusters = 6)
 gridExtra::grid.arrange(hm.exp)
 ```
 
@@ -464,6 +475,9 @@ curve or red if it is non-unimodal.
 plotMarkerDensity(DataCell, 
                   clusters = "58")
 ```
+
+    ## Warning: `stat(x)` was deprecated in ggplot2 3.4.0.
+    ## i Please use `after_stat(x)` instead.
 
     ## Picking joint bandwidth of 0.0252
 
@@ -498,8 +512,9 @@ Y-axis represents the marker expressions.
 
 ``` r
 # Coordinates plot for specific cluster 
-plotCoordinates(DataCell, 
-                clusters = "58")
+plotCoordinatesClusters(DataCell, 
+                        condition.samples = c("timepoint"),
+                        clusters = "10")
 ```
 
     ## Using  as id variables
@@ -533,23 +548,30 @@ This function is used as follows:
 
 ``` r
 # Compute statistics 
-baseline = "V1"
-list.conditions <- c("V6", "V7", "V8")
+DataCell@statistic <- data.frame()
 
-for (condition in list.conditions) {
+V1 = selectSamples(DataCell, 
+                   timepoint = "V1")
+ 
+list.conditions <- list("V6" = selectSamples(DataCell, timepoint = "V6"),
+                        "V7" = selectSamples(DataCell, timepoint = "V7"),
+                        "V8" = selectSamples(DataCell, timepoint = "V8"))
+
+for (condition in 1:length(list.conditions)) {
   DataCell <- computeStatistics(DataCell, 
-                                condition = paste0(condition), 
-                                ref.condition = paste0(baseline),
+                                condition = list.conditions[[condition]], 
+                                ref.condition = V1,
+                                comparison = paste0(names(list.conditions)[condition], " vs. V1"), 
                                 test.statistics = "t.test",
                                 paired = FALSE)
 }
 ```
 
-    ## Computing of the t.test for: V6 vs. V1
+    ## Computing of the t.test for: V6_10105LA,V6_10209HE,V6_10306CG,V6_10503DC,V6_11204CD,V6_20208AA,V6_20210RF vs. V1_10105LA,V1_10209HE,V1_10306CG,V1_10503DC,V1_11204CD,V1_20208AA,V1_20210RF
 
-    ## Computing of the t.test for: V7 vs. V1
+    ## Computing of the t.test for: V7_10105LA,V7_10209HE,V7_10306CG,V7_10503DC,V7_11204CD,V7_20208AA,V7_20210RF vs. V1_10105LA,V1_10209HE,V1_10306CG,V1_10503DC,V1_11204CD,V1_20208AA,V1_20210RF
 
-    ## Computing of the t.test for: V8 vs. V1
+    ## Computing of the t.test for: V8_10105LA,V8_10209HE,V8_10306CG,V8_10503DC,V8_11204CD,V8_20208AA,V8_20210RF vs. V1_10105LA,V1_10209HE,V1_10306CG,V1_10503DC,V1_11204CD,V1_20208AA,V1_20210RF
 
 ## 3.2 Visualisation of statistical analysis
 
@@ -659,6 +681,7 @@ Here is an example for generating such representation:
 plotBoxplot(DataCell, 
             clusters = clusters,
             samples = NULL,
+            value.y = "percentage",
             observation = "timepoint", 
             test.statistics = "t.test")
 ```
@@ -969,6 +992,7 @@ plotBoxplot(DataCell,
             clusters = "47",
             samples = NULL,
             observation = "timepoint", 
+            value.y = "percentage",
             test.statistics = "t.test") +
   ggplot2::labs(title = "Boxplot representation for timepoint")
 ```
@@ -1009,18 +1033,19 @@ plotCombineHM(hm.exp, hm.stats)
 
 ![](README_files/figure-markdown_github/PlotcombineHM-1.png)
 
-    ## TableGrob (21 x 18) "arrange": 10 grobs
+    ## TableGrob (22 x 18) "arrange": 11 grobs
     ##     z         cells    name              grob
-    ## 1   1 ( 4-11, 2-17) arrange    gtable[layout]
+    ## 1   1 ( 5-12, 2-17) arrange    gtable[layout]
     ## 2   2 ( 1- 3, 2-17) arrange    gtable[layout]
-    ## 3   3 ( 4-11, 1- 1) arrange    gtable[layout]
-    ## 4   4 (12-12, 2-17) arrange    gtable[layout]
-    ## 5   5 ( 4-11,18-18) arrange    gtable[layout]
-    ## 6   6 ( 1- 3, 1- 1) arrange gtable[guide-box]
-    ## 7   7 (13-19, 2-17) arrange    gtable[layout]
-    ## 8   8 (13-19,18-18) arrange    gtable[layout]
-    ## 9   9 (20-20, 2-17) arrange    gtable[layout]
-    ## 10 10 (21-21, 3-16) arrange gtable[guide-box]
+    ## 3   3 ( 5-12, 1- 1) arrange    gtable[layout]
+    ## 4   4 (13-13, 2-17) arrange    gtable[layout]
+    ## 5   5 ( 5-12,18-18) arrange    gtable[layout]
+    ## 6   6 ( 4- 4, 2-17) arrange    gtable[layout]
+    ## 7   7 ( 1- 3, 1- 1) arrange gtable[guide-box]
+    ## 8   8 (14-20, 2-17) arrange    gtable[layout]
+    ## 9   9 (14-20,18-18) arrange    gtable[layout]
+    ## 10 10 (21-21, 2-17) arrange    gtable[layout]
+    ## 11 11 (22-22, 3-16) arrange gtable[guide-box]
 
 ## 5.3 Interactive graphics
 
@@ -1107,8 +1132,5 @@ export(DataCell,
        clusters = NULL,
        samples = NULL)
 ```
-
-    ## Warning in readFCSdata(con, offsets, txt, transformation, which.lines, scale, : Some data values of 'CD56.BV421' channel exceed its $PnR value 475421.659057617 and will be truncated!
-    ##  To avoid truncation, either fix $PnR before generating FCS or set 'truncate_max_range = FALSE'
 
     ## [1] "Analyses_NK_K100.fcs"

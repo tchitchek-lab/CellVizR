@@ -1249,24 +1249,26 @@ plotCoordinatesClusters <- function(Celldata,
   
   plot <- ggplot2::ggplot() +
     ggplot2::ggtitle(paste0("Parallel coordinates - clusters: ",
-                            paste0(clusters, collapse = ", "), " (", cells.number, " cells)")) +
+                            paste0(clusters, collapse = ", "), " (", cells.number, " cells)"))  +
     ggplot2::geom_ribbon(data = quantile,
                          ggplot2::aes_string(x = "marker",
                                              ymin = "lower.bound",
                                              ymax = "upper.bound"),
                          alpha = 0.1, group = 1, fill = "grey20") +
-    ggiraph::geom_line_interactive(data = proj,
+    ggplot2::geom_line(data = proj,
                                    ggplot2::aes_string(x = "variable",
                                                        y = "value",
                                                        group = "samples",
-                                                       color = condition.samples,
-                                                       tooltip = "samples",
-                                                       data_id = "individual"),
+                                                       color = condition.samples),
+                                                       # tooltip = "samples",
+                                                       # data_id = "individual"),
                                    size = 0.5, alpha = 1) +
     ggplot2::geom_line(data = means,
                        ggplot2::aes_string(x = "marker",
                                            y = "means"),
                        group = 1, linetype = "dashed", size = 1)
+  
+  # Element ggiraph::geom_line_interactive retire
   
   plot <- plot +
     ggplot2::xlab("markers") +
