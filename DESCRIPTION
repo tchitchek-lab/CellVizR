@@ -20,6 +20,7 @@ Imports:
 	FactoMineR,
 	flowCore,
 	FNN,
+	FlowSOM,
 	ggdendro,
 	ggiraph,
 	ggnewscale,
@@ -51,4 +52,4 @@ Suggests:
 License: GPL-3 | file LICENSE
 VignetteBuilder: knitr
 biocViews: Clustering, DataImport, FlowCytometry, Normalization, StatisticalMethod, Software, Visualization, SingleCell, Transcriptomics
-RoxygenNote: 7.2.1
+RoxygenNote: 7.3.0

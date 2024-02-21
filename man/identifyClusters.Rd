@@ -8,7 +8,7 @@ identifyClusters(
   Celldata,
   space = c("manifold", "markers"),
   markers = NULL,
-  method = c("kmeans", "kmedian", "clara", "DBSCAN", "SOM"),
+  method = c("kmeans", "kmedian", "clara", "DBSCAN", "FlowSOM"),
   concavity = 2,
   length.threshold = 0,
   seed = 42,
@@ -22,7 +22,7 @@ identifyClusters(
 
 \item{markers}{a character vector providing the cell markers to use for the manifold generation}
 
-\item{method}{a character value containing the name of the clustering method to use. Possible values are: 'kmeans', 'kmedian', 'clara', 'DBSCAN' and 'SOM'}
+\item{method}{a character value containing the name of the clustering method to use. Possible values are: 'kmeans', 'kmedian', 'clara', 'DBSCAN' and 'FlowSOM'}
 
 \item{concavity}{a numeric value providing a relative measure of concavity for the computation of the concave hulls (please refer to the function 'concaveman' of the 'concaveman' package)}
 
@@ -38,7 +38,7 @@ a S4 object of class 'Celldata'
 \description{
 This function aims to identify cell clusters, which are groups of cells having similar expressions for selected markers, using different unsupervised clustering methods.
 
-Several clustering methods are available such as kmeans, kmedian, clara, DBSCAN, HDBSCAN and SOM.
+Several clustering methods are available such as kmeans, kmedian, clara, DBSCAN, HDBSCAN and FlowSOM.
 The cell clustering can be performed on the manifold representation or based on marker expression.
 }
 \details{

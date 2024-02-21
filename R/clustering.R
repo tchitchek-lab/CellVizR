@@ -2,7 +2,7 @@
 #'
 #' @description This function aims to identify cell clusters, which are groups of cells having similar expressions for selected markers, using different unsupervised clustering methods.
 #'
-#' Several clustering methods are available such as kmeans, kmedian, clara, DBSCAN, HDBSCAN and SOM.
+#' Several clustering methods are available such as kmeans, kmedian, clara, DBSCAN, HDBSCAN and FlowSOM.
 #' The cell clustering can be performed on the manifold representation or based on marker expression.
 #'
 #' @details
@@ -11,7 +11,7 @@
 #' @param Celldata a Celldata object
 #' @param space a character value containing the space of the clustering method to use. Possible values are: 'manifold' or 'markers'
 #' @param markers a character vector providing the cell markers to use for the manifold generation
-#' @param method a character value containing the name of the clustering method to use. Possible values are: 'kmeans', 'kmedian', 'clara', 'DBSCAN' and 'SOM'
+#' @param method a character value containing the name of the clustering method to use. Possible values are: 'kmeans', 'kmedian', 'clara', 'DBSCAN' and 'FlowSOM'
 #' @param concavity a numeric value providing a relative measure of concavity for the computation of the concave hulls (please refer to the function 'concaveman' of the 'concaveman' package)
 #' @param length.threshold a numeric value providing a threshold of the segment length for the computation of the concave hulls (please refer to the function 'concaveman' of the concaveman package)
 #' @param seed a numeric value providing the random seed to use during stochastic operations
@@ -24,29 +24,29 @@
 identifyClusters <- function(Celldata,
                              space = c("manifold", "markers"),
                              markers = NULL,
-                             method = c("kmeans", "kmedian", "clara", "DBSCAN", "SOM"),
+                             method = c("kmeans", "kmedian", "clara", "DBSCAN", "FlowSOM"),
                              concavity = 2,
                              length.threshold = 0,
                              seed = 42,
                              ...) {
-
+  
   space <- match.arg(space)
   method <- match.arg(method)
-
+  
   checkmate::qassert(space, "S1")
   checkmate::qassert(markers, c("0", "S*"))
   checkmate::qassert(method, "S1")
   checkmate::qassert(concavity, "N1")
   checkmate::qassert(length.threshold, "N1")
   checkmate::qassert(seed, "N1")
-
+  
   proj  <- Celldata@manifold
   exprs <- Celldata@matrix.expression
-
+  
   message(paste0("Clustering method is: ", method))
   message()
   message("Identifying cell clusters...")
-
+  
   if (space == "manifold") {
     data <- proj
     clustering.markers <- Celldata@manifold.params$markers
@@ -58,7 +58,7 @@ identifyClusters <- function(Celldata,
                   %in% markers]
     clustering.markers <- markers
   }
-
+  
   do.call("set.seed", list(seed))
   switch(method,
          kmeans = {
@@ -73,21 +73,22 @@ identifyClusters <- function(Celldata,
          DBSCAN = {
            clusters <- dbscan::dbscan(data, ...)$cluster
          },
-         SOM = {
-           clusters <- kohonen::som(as.matrix(data), ...)$unit.classif
+         FlowSOM = {
+           Flow <- FlowSOM::FlowSOM(as.matrix(data), colsToUse = clustering.markers, ...)
+           clusters <- FlowSOM::GetMetaclusters(Flow)
          })
-
+  
   clusters <- as.vector(clusters)
   clusters <- as.character(clusters)
-
+  
   Celldata@identify.clusters <- clusters
-
+  
   identify.Clusters.params <- list(...,
                                    concavity = concavity,
                                    length.threshold = length.threshold,
                                    clustering.markers = clustering.markers)
   Celldata@identify.clusters.params <- identify.Clusters.params
-
+  
   if (space == "manifold") {
     message("computing cell clusters boundaries...")
     Celldata@concave.hulls <- computeConcaveHulls(proj = proj,
@@ -95,20 +96,20 @@ identifyClusters <- function(Celldata,
                                                   concavity = concavity,
                                                   length.threshold = length.threshold)
   }
-
+  
   samples <- Celldata@samples
-
+  
   message("computing cell cluster count matrix...")
   Celldata@matrix.cell.count <- computeCellCounts(proj = data,
                                                   samples = samples,
                                                   clusters = clusters)
-
+  
   message("computing cell cluster abundance matrix...")
   count <- Celldata@matrix.cell.count
   Celldata@matrix.abundance <- computeClusterAbundances(count = count)
-
+  
   validObject(Celldata)
-
+  
   return(Celldata)
 }
 
@@ -128,10 +129,10 @@ computeConcaveHulls <- function(proj,
                                 clusters,
                                 concavity = 2,
                                 length.threshold = 0) {
-
+  
   proj <- cbind(proj, clusters)
   colnames(proj) <- c("dim1", "dim2", "clusters")
-
+  
   concave.hulls <- data.frame()
   for (k in sort(unique(proj$clusters))) {
     sub.exprs <- proj[proj$clusters == k, ]
@@ -140,16 +141,16 @@ computeConcaveHulls <- function(proj,
     lines.sub <- concaveman::concaveman(cbind(xcoord, ycoord),
                                         concavity = concavity,
                                         length_threshold = length.threshold)
-
+    
     concave.hulls <- rbind(concave.hulls, cbind(lines.sub, k = k))
   }
-
+  
   concave.hulls <- data.frame(concave.hulls)
   colnames(concave.hulls) <- c("dim1", "dim2", "clusters")
-
+  
   concave.hulls$dim1 <- as.numeric(concave.hulls$dim1)
   concave.hulls$dim2 <- as.numeric(concave.hulls$dim2)
-
+  
   return(concave.hulls)
 }
 
@@ -166,9 +167,9 @@ computeConcaveHulls <- function(proj,
 computeCellCounts <- function(proj,
                               clusters,
                               samples) {
-
+  
   data <- cbind(proj, clusters, samples)
-
+  
   cell.count <- plyr::ddply(data, c("clusters", "samples"), nrow)
   colnames(cell.count) <- c("clusters", "samples", "number")
   cell.count <- reshape::cast(cell.count, clusters ~ samples, value = "number")
@@ -176,7 +177,7 @@ computeCellCounts <- function(proj,
   rownames(cell.count) <- cell.count$clusters
   cell.count$clusters <- NULL
   cell.count <- data.frame(cell.count)
-
+  
   return(cell.count)
 }
 
@@ -189,11 +190,11 @@ computeCellCounts <- function(proj,
 # @return a data.frame containing the abundance of cells to each clusters for each sample
 #
 computeClusterAbundances <- function(count) {
-
+  
   matrix.abundance <- apply(count, 2, function(df) {
     df / sum(df) }) * 100
   matrix.abundance <- data.frame(matrix.abundance)
-
+  
   return(matrix.abundance)
 }
 
@@ -212,7 +213,7 @@ computeClusterAbundances <- function(count) {
 createMetaclusters <- function(Celldata, 
                                clusters,
                                metacluster.name) {
-
+  
   checkmate::qassert(clusters, "S+")
   checkmate::qassert(metacluster.name, "S1")
   
