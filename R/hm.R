@@ -219,7 +219,7 @@ plotHmExpressions <- function(Celldata,
   grob[["label.col"]] <- label.col
   grob[["label.row"]] <- label.row
   grob[["tile.col"]] <- tile.col
-  grob[["legend"]] <- cowplot::get_legend(plot)
+  grob[["legend"]] <- ggpubr::get_legend(plot)
 
   
   hm.exp <- gridExtra::arrangeGrob(
@@ -388,7 +388,7 @@ plotHmAbundances <- function(Celldata,
   grob[["hm.abundances"]] <- plot + ggplot2::theme(legend.position = "none")
   grob[["label.row"]] <- label.row
   grob[["label.col"]] <- label.col
-  grob[["legend"]] <- cowplot::get_legend(plot)
+  grob[["legend"]] <- ggpubr::get_legend(plot)
   
   hm.abundance <- gridExtra::arrangeGrob(
     grobs = grob,
@@ -524,7 +524,7 @@ plotHmStatistics <- function(Celldata,
   grob[["hm.stats"]] <- plot + ggplot2::theme(legend.position = "none")
   grob[["label.row"]] <- label.row
   grob[["label.col"]] <- label.col
-  grob[["legend"]] <- cowplot::get_legend(plot)
+  grob[["legend"]] <- ggpubr::get_legend(plot)
   
   hm.stats <- gridExtra::arrangeGrob(
     grobs = grob,
