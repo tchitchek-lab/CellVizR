@@ -2,7 +2,7 @@
 % Please edit documentation in R/import.R
 \name{importMTX}
 \alias{importMTX}
-\title{Imports of cell expression profiles from MTX files}
+\title{Imports cell expression profiles from MTX files}
 \usage{
 importMTX(count, cells, features, meta, sample.col)
 }

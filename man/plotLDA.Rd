@@ -24,7 +24,7 @@ plotLDA(
 \item{clusters}{a character vector containing the identifiers of the clusters to use. By default, all clusters are used}
 }
 \value{
-xx
+a ggplot2 object
 }
 \description{
 This function aims to represent a Linear Discriminant Analysis representation based on cell cluster abundances

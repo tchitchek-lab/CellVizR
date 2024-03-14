@@ -2,7 +2,6 @@
 % Please edit documentation in R/print.R
 \name{print}
 \alias{print}
-\alias{print,Celldata-method}
 \title{Prints information for a given Celldata object}
 \usage{
 \S4method{print}{Celldata}(x)

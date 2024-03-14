@@ -35,8 +35,8 @@ QCSmallClusters <- function(Celldata,
 # @param Celldata a Celldata object
 # @param th.size a numeric value providing the minimum number of cells needed for a cluster to be considered a small cluster
 #
-# @return a list containing QC information for small clusters
-# Returns a data.frame with a boolean value indicating if the number of associated cells is greater or less than the threshold
+# @return a list containing QC information for small clusters.
+# Returns a data.frame with a boolean value indicating if the number of associated cells is greater or less than the threshold.
 # In addition, returns the percentage of the calculation
 #
 # @export
@@ -83,13 +83,13 @@ plotSmallClusters <- function(values.small) {
   plot <- ggplot2::ggplot() +
     ggplot2::ggtitle(bquote(atop(.(title), atop(italic(.(subtitle)), "")))) +
     ggplot2::geom_tile(data = data.melted,
-                       ggplot2::aes_string(x = "samples", y = "clusters",
-                                           fill = "small"), colour = "black") +
+                       ggplot2::aes(x = samples, y = clusters,
+                                           fill = small), colour = "black") +
     ggplot2::scale_fill_manual(labels = c("TRUE" = "Small clusters"),
                                values = c("TRUE" = "red"),
                                na.value = "grey60") +
     ggplot2::geom_vline(xintercept = (length(unique(data.melted$samples)) - 0.5),
-                        colour = "black", size = 2)
+                        colour = "black", linewidth = 2)
   
   plot <- plot +
     ggplot2::scale_x_discrete(expand = c(0, 0)) +
@@ -262,8 +262,8 @@ plotUniformClusters <- function(values.uniform) {
   plot <- ggplot2::ggplot() +
     ggplot2::ggtitle(bquote(atop(.(title), atop(italic(.(subtitle)), "")))) +
     ggplot2::geom_tile(data = res, 
-                       ggplot2::aes_string(x = "markers", y = "clusters",
-                                           fill = "passed"), colour = "black") +
+                       ggplot2::aes(x = markers, y = clusters,
+                                           fill = passed), colour = "black") +
     ggplot2::scale_fill_manual(labels = c("FALSE" = "No uniform"),
                                values = c("FALSE" = "red"),
                                na.value = "grey70")
@@ -381,8 +381,8 @@ plotCorrelationManifold <- function(values.correlation) {
   plot <- ggplot2::ggplot() +
     ggplot2::ggtitle(bquote(atop(.(title), atop(italic(.(subtitle)), "")))) +
     ggplot2::geom_boxplot(data = matrix.dist,
-                          ggplot2::aes_string(x = "OR", 
-                                              y = "DR"),
+                          ggplot2::aes(x = OR, 
+                                              y = DR),
                           fill="slateblue", alpha=0.2)
   plot <- plot +
     ggplot2::xlab("Distance cuts in original space") + 
@@ -461,7 +461,7 @@ QCKnnManifold <- function(Celldata,
 
 QCKncManifold <- function(Celldata, 
                           KNC = 5, 
-                          downsampling = 50 ){
+                          downsampling = 50){
   
   checkmate::qassert(downsampling, "N1")
   checkmate::qassert(KNC, "N1")

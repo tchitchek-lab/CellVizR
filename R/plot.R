@@ -15,8 +15,6 @@
 #'
 #' @name plot
 #' @rdname plot-methods
-NULL
-#' @rdname plot-methods
 
 setMethod("plot", "Celldata",
           function(x) {

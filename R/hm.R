@@ -58,7 +58,7 @@ computeMarkerMedians <- function(exprs) {
 #' @param Celldata a Celldata object
 #' @param markers a character vector providing the marker names to use. By default, all markers are used
 #' @param clusters a character vector containing the identifiers of the clusters to use. By default, all clusters are used
-#' @param N.metaclusters a numeric value providing the number of metaclusters expected. By default, one metaclusters are used
+#' @param metaclusters a numeric value providing the number of metaclusters expected. By default, one metaclusters are used
 #' @param method.hclust a character value providing the agglomeration method to be used. Possible values are: 'ward.D', 'ward.D2', 'single', 'complete', 'average', 'mcquitty', 'median' or 'centroid' (please refer to the function 'hclust' of the 'stats' package)
 #' @param nb.cat a numeric specifying the number of categories to use
 #' @param seed a numeric value providing the random seed to use during stochastic operations
@@ -70,7 +70,7 @@ computeMarkerMedians <- function(exprs) {
 plotHmExpressions <- function(Celldata,
                               markers = NULL,
                               clusters = NULL,
-                              N.metaclusters = 1,
+                              metaclusters = 1,
                               method.hclust = c("ward.D", "ward.D2", "single",
                                                 "complete", "average", "mcquitty",
                                                 "median", "centroid"),
@@ -88,7 +88,7 @@ plotHmExpressions <- function(Celldata,
   rainbow.color.palette <- c("white", "yellow", "orange", "red", "red4")
   rainbow.color.palette <- grDevices::colorRampPalette(rainbow.color.palette)(nb.cat)
   
-  meta.color.palette2 <- grDevices::rainbow(N.metaclusters)
+  meta.color.palette2 <- grDevices::rainbow(metaclusters)
   
   if (!is.null(markers)) {
     exp.markers <- Celldata@matrix.expression[, markers]
@@ -128,8 +128,8 @@ plotHmExpressions <- function(Celldata,
   labels.col <- hclust.col$labels[hclust.col$order]
   proj.melt$clusters <- factor(proj.melt$clusters, levels = labels.col)
 
-  cutree.col = stats::cutree(hclust.col, k = N.metaclusters)
-  orderMC.col = seq(1, N.metaclusters)
+  cutree.col = stats::cutree(hclust.col, k = metaclusters)
+  orderMC.col = seq(1, metaclusters)
   names(orderMC.col) = unique(as.character(as.vector(cutree.col[labels.col])))
     
   MC.col = data.frame("MC" = orderMC.col[as.character(cutree.col[labels.col])],
@@ -139,8 +139,8 @@ plotHmExpressions <- function(Celldata,
   linesMC.col = plyr::ddply(MC.col, "MC", plyr::summarise, pos = max(as.numeric(clust)) + 0.5)
   
   plot <- ggplot2::ggplot(proj.melt,
-                          ggplot2::aes_string(x = "clusters", y = "marker")) +
-    ggplot2::geom_tile(ggplot2::aes_string(fill = "med"), color = "black", size = 0.1) +
+                          ggplot2::aes(x = clusters, y = marker)) +
+    ggplot2::geom_tile(ggplot2::aes(fill = med), color = "black", linewidth = 0.1) +
     ggplot2::scale_x_discrete(expand = c(0, 0)) +
     ggplot2::scale_y_discrete(expand = c(0, 0))
   
@@ -155,15 +155,15 @@ plotHmExpressions <- function(Celldata,
   
   dend.data <- ggdendro::dendro_data(stats::as.dendrogram(hclust.row), type = "rectangle")
   dendro.row <- ggplot2::ggplot(dend.data$segments) +
-    ggplot2::geom_segment(ggplot2::aes_string(x = "x", y = "y",
-                                              xend = "xend", yend = "yend")) +
+    ggplot2::geom_segment(ggplot2::aes(x = x, y = y,
+                                              xend = xend, yend = yend)) +
     ggplot2::scale_x_continuous(expand = c(0.5 / length(unique(proj.melt$marker)),
                                            0.5 / length(unique(proj.melt$marker)))) +
     ggplot2::coord_flip() +
     ggplot2::scale_y_reverse() +
     ggplot2::theme_void()
   label.row <- ggplot2::ggplot() +
-    ggplot2::geom_text(data = dend.data$labels, ggplot2::aes_string(x = "x", label = "label"),
+    ggplot2::geom_text(data = dend.data$labels, ggplot2::aes(x = x, label = label),
                        size = 3, y = 0, hjust = 0, vjust = 0.5, angle = 0) +
     ggplot2::scale_x_continuous(expand = c(0.5 / length(unique(proj.melt$marker)),
                                            0.5 / length(unique(proj.melt$marker)))) +
@@ -172,15 +172,15 @@ plotHmExpressions <- function(Celldata,
   
   dend.data <- ggdendro::dendro_data(stats::as.dendrogram(hclust.col), type = "rectangle")
   dendro.col <- ggplot2::ggplot(dend.data$segments) +
-    ggplot2::geom_segment(ggplot2::aes_string(x = "x", y = "y",
-                                              xend = "xend", yend = "yend")) +
+    ggplot2::geom_segment(ggplot2::aes(x = x, y = y,
+                                              xend = xend, yend = yend)) +
     ggplot2::scale_x_continuous(expand = c(0.5 / length(unique(proj.melt$clusters)),
                                            0.5 / length(unique(proj.melt$clusters)))) +
     ggplot2::theme_void() +
     ggplot2::theme(
       plot.title = ggplot2::element_text(hjust = 0.5, size = 12, face = "bold"))
   label.col <- ggplot2::ggplot() +
-    ggplot2::geom_text(data = dend.data$labels, ggplot2::aes_string(x = "x", label = "label"),
+    ggplot2::geom_text(data = dend.data$labels, ggplot2::aes(x = x, label = label),
                        size = 2, y = 1, hjust = 0, vjust = 0.5, angle = -90) +
     ggplot2::scale_x_continuous(expand = c(0.5 / length(unique(proj.melt$clusters)),
                                            0.5 / length(unique(proj.melt$clusters)))) +
@@ -190,22 +190,22 @@ plotHmExpressions <- function(Celldata,
   
   tile.col <- ggplot2::ggplot() +
     ggplot2::geom_tile(data = MC.col, 
-                       ggplot2::aes_string(x = "clust",
+                       ggplot2::aes(x = clust,
                                            y = 1,
-                                           fill = "MC")) +
+                                           fill = MC)) +
     ggplot2::scale_fill_gradientn(colours = meta.color.palette2, na.value = "black") +
     ggplot2::geom_text(data = labelsMC.col, 
-                       mapping = ggplot2::aes_string(x = "pos", 
-                                                     label = "MC"),
+                       mapping = ggplot2::aes(x = pos, 
+                                                     label = MC),
                        y = 1, size=3, angle = -90) +
     ggplot2::scale_x_discrete(expand = c(0,0)) +
     ggplot2::scale_y_continuous(expand = c(0,0)) +
     ggplot2::geom_vline(xintercept = linesMC.col$pos, 
-                        color = "black", size=0.1) +
+                        color = "black", linewidth=0.1) +
     ggplot2::geom_vline(xintercept = 0.5, 
-                        color="black", size=0.1) +
+                        color="black", linewidth=0.1) +
     ggplot2::geom_hline(yintercept=c(0.5,1.5), 
-                        color = "black", size=0.1) +
+                        color = "black", linewidth=0.1) +
     ggplot2::theme_void() +
     ggplot2::theme(axis.title=ggplot2::element_blank(),
                    axis.ticks=ggplot2::element_blank(),
@@ -336,30 +336,48 @@ plotHmAbundances <- function(Celldata,
   
   abundances.melt$samples <- factor(abundances.melt$samples, levels = rev(unique(abundances.melt$samples)))
   
-  abundances.melt$value[abundances.melt$value > saturation] <- saturation
-  abundances.melt$value[abundances.melt$value < (-saturation)] <- -saturation
-  
+  if(rescale == TRUE)
+  {
+    
+    abundances.melt$value[abundances.melt$value > saturation] <- saturation
+    abundances.melt$value[abundances.melt$value < (-saturation)] <- -saturation
+    
+  }
+ 
   abundances.melt$label <- as.numeric(as.vector(abundances.melt$clusters))
   abundances.melt$label <- stringr::str_pad(abundances.melt$label, 3, pad = "0")
   
   plot <- ggplot2::ggplot() +
     ggplot2::geom_tile(data = abundances.melt,
-                       ggplot2::aes_string(x = "clusters", y = "samples",
-                                           fill = "value"),
-                       color = NA, size = 2)
+                       ggplot2::aes(x = clusters, y = samples,
+                                           fill = value),
+                       color = NA, linewidth = 2)
   
   plot <- plot +
-    ggplot2::labs(fill = "abundance") +
-    ggplot2::scale_fill_gradientn(colours = c("green", "black", "red"),
+    ggplot2::labs(fill = "abundance")
+  
+  if(rescale == TRUE)
+  {
+    plot = plot + ggplot2::scale_fill_gradientn(colours = c("green", "black", "red"),
                                   limits = c(-saturation, saturation),
-                                  breaks = c(-saturation, saturation)) +
-    ggplot2::scale_x_discrete(expand = c(0, 0)) +
+                                  breaks = c(-saturation, saturation))
+  } else
+  {
+    
+    plot = plot + ggplot2::scale_fill_gradientn(colours = c("yellow", "blue"),
+                                  limits = c(min(abundances.melt$value), max(abundances.melt$value)),
+                                  breaks = c(min(abundances.melt$value), max(abundances.melt$value)))
+  }
+    
+  plot = plot + ggplot2::scale_x_discrete(expand = c(0, 0)) +
     ggplot2::scale_y_discrete(expand = c(0, 0))
   
   plot <- plot +
     ggplot2::theme_void() +
     ggplot2::theme(
       legend.position = "bottom",
+      legend.title.position = "top",
+      legend.title = ggplot2::element_text(hjust = 0.5),
       axis.title.x = ggplot2::element_blank(),
       axis.text.x = ggplot2::element_blank(),
       axis.text.y = ggplot2::element_blank(),
@@ -367,7 +385,7 @@ plotHmAbundances <- function(Celldata,
   
   label.row <- ggplot2::ggplot() +
     ggplot2::geom_text(data = abundances.melt,
-                       ggplot2::aes_string(x = "samples", label = "samples"),
+                       ggplot2::aes(x = samples, label = samples),
                        size = 3, y = 0, hjust = 0, vjust = 0.5, angle = 0) +
     ggplot2::scale_x_discrete(expand = c(0.5 / length(unique(abundances.melt$samples)),
                                          0.5 / length(unique(abundances.melt$samples)))) +
@@ -376,7 +394,7 @@ plotHmAbundances <- function(Celldata,
   
   label.col <- ggplot2::ggplot() +
     ggplot2::geom_text(data = abundances.melt,
-                       ggplot2::aes_string(x = "clusters", label = "clusters"),
+                       ggplot2::aes(x = clusters, label = clusters),
                        size = 2, y = 1, hjust = 0, vjust = 0.5, angle = -90) +
     ggplot2::scale_x_discrete(expand = c(0.5 / length(unique(abundances.melt$clusters)),
                                          0.5 / length(unique(abundances.melt$clusters)))) +
@@ -389,7 +407,7 @@ plotHmAbundances <- function(Celldata,
   grob[["label.row"]] <- label.row
   grob[["label.col"]] <- label.col
   grob[["legend"]] <- ggpubr::get_legend(plot)
-  
+
   hm.abundance <- gridExtra::arrangeGrob(
     grobs = grob,
     layout_matrix = rbind(
@@ -433,6 +451,7 @@ plotHmAbundances <- function(Celldata,
 #' @param clusters a character vector containing the identifiers of the clusters to use. By default, all clusters are used
 #' @param statistics a character value providing the name of the statistic to display. Possible values are: 'pvalue' for p-value, 'lfc' for log2 fold change or 'eff' for effect size
 #' @param saturation a numeric value providing the saturation value for statistics to display
+#' @param pval.thr a numeric value defining the p-value threshold below which an asterisk is displayed in a tile 
 #'
 #' @return a ggplot2 object
 #'
@@ -441,7 +460,8 @@ plotHmAbundances <- function(Celldata,
 plotHmStatistics <- function(Celldata,
                              clusters = NULL,
                              statistics = c("pvalue", "lfc", "effsize"),
-                             saturation = 3) {
+                             saturation = 3,
+                             pval.thr = 0.05) {
   
   statistics <- match.arg(statistics)
   
@@ -464,6 +484,11 @@ plotHmStatistics <- function(Celldata,
   if (statistics == "pvalue") {
     stats$value <- -log(stats$value) / log(10)
     stats$value <- stats$value * sign(stats$lfc)
+    
+    stats$displayStat = ""
+    statsToDisplayID = which(stats$pvalue < pval.thr)
+    stats$displayStat[statsToDisplayID] = "*"
+    
   }
   
   stats$value[stats$value > saturation] <- saturation
@@ -474,12 +499,16 @@ plotHmStatistics <- function(Celldata,
   stats$label <- as.numeric(as.vector(stats$clusters))
   stats$label <- stringr::str_pad(stats$label, 3, pad = "0")
   
-  plot <- ggplot2::ggplot() +
-    ggplot2::geom_tile(data = stats,
-                       ggplot2::aes_string(x = "clusters", y = "comparison",
-                                           fill = "value"),
-                       color = "black", size = 0.1)
+  plot <- ggplot2::ggplot(data = stats,
+                          ggplot2::aes(x = clusters, y = comparison,
+                                       fill = value)) +
+    ggplot2::geom_tile(color = "black", linewidth = 0.1) 
   
+  if (statistics == "pvalue") {
+    plot = plot + ggplot2::geom_text(ggplot2::aes(label = displayStat))
+    }
+             
+               
   plot <- plot +
     ggplot2::labs(fill = statistics) +
     ggplot2::guides(color = "none") +
@@ -495,15 +524,16 @@ plotHmStatistics <- function(Celldata,
     ggplot2::theme_void() +
     ggplot2::theme(
       legend.position = "bottom",
+      legend.title.position = "top",
+      legend.title = ggplot2::element_text(hjust = 0.5),
       axis.title.x = ggplot2::element_blank(),
       axis.text.x = ggplot2::element_blank(),
       axis.title.y = ggplot2::element_blank(),
-      axis.text.y = ggplot2::element_blank()
-    )
+      axis.text.y = ggplot2::element_blank())
   
   label.row <- ggplot2::ggplot() +
     ggplot2::geom_text(data = stats,
-                       ggplot2::aes_string(x = "comparison", label = "comparison"),
+                       ggplot2::aes(x = comparison, label = comparison),
                        size = 3, y = 0, hjust = 0, vjust = 0.5, angle = 0) +
     ggplot2::scale_x_discrete(expand = c(0.5 / length(unique(stats$comparison)),
                                          0.5 / length(unique(stats$comparison)))) +
@@ -512,7 +542,7 @@ plotHmStatistics <- function(Celldata,
   
   label.col <- ggplot2::ggplot() +
     ggplot2::geom_text(data = stats,
-                       ggplot2::aes_string(x = "clusters", label = "clusters"),
+                       ggplot2::aes(x = clusters, label = clusters),
                        size = 2, y = 1, hjust = 0, vjust = 0.5, angle = -90) +
     ggplot2::scale_x_discrete(expand = c(0.5 / length(unique(stats$clusters)),
                                          0.5 / length(unique(stats$clusters)))) +

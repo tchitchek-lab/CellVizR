@@ -35,8 +35,12 @@ createFlowframe <- function(intensities) {
   intensities <- as.matrix(intensities)
   dataframe <- methods::as(data.frame(p), "AnnotatedDataFrame")
 
-  flowframe <- suppressWarnings(flowCore::flowFrame(intensities, dataframe, description = description))
-
+  flowframe = suppressMessages(new("flowFrame",
+      exprs = intensities,
+      parameters = dataframe,
+      description = description
+  ))
+  
   return(flowframe)
 }
 
@@ -93,7 +97,7 @@ methods::setMethod("export", c("Celldata"),
                      }
 
                      if (length(Celldata@identify.clusters) != 0) {
-                       exprs <- cbind(exprs, cluster = as.numeric(Celldata@identify.clusters))
+                       exprs <- suppressWarnings(cbind(exprs, cluster = as.numeric(Celldata@identify.clusters)))
                      }
 
                      exprs <- cbind(exprs, samples = Celldata@samples)

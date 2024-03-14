@@ -10,7 +10,8 @@ plotManifold(
   samples = NULL,
   scale = FALSE,
   quant.low = 0.05,
-  quant.high = 0.95
+  quant.high = 0.95,
+  downsampling = NULL
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ plotManifold(
 \item{quant.low}{a numeric value providing the number of first quantile}
 
 \item{quant.high}{a numeric value providing the number of last quantile}
+
+\item{downsampling}{a numeric value providing the number of cells to keep for uniform downsampling. A value set to NULL equals to no downsampling.}
 }
 \value{
 a ggplot2 object

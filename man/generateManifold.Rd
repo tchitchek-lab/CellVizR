@@ -6,7 +6,7 @@
 \usage{
 generateManifold(
   Celldata,
-  type = c("UMAP", "tSNE", "lvish"),
+  method = c("UMAP", "tSNE", "lvish"),
   markers = NULL,
   seed = 42,
   verbose = TRUE,
@@ -16,7 +16,7 @@ generateManifold(
 \arguments{
 \item{Celldata}{a Celldata object}
 
-\item{type}{a character value specifying the type of manifold to compute. Possible values are: 'UMAP' for Uniform Manifold Approximation and Projection, 'tSNE' for t-distributed Stochastic Neighbor Embedding, and 'lvish' for LargeVis}
+\item{method}{a character value specifying the type of manifold to compute. Possible values are: 'UMAP' for Uniform Manifold Approximation and Projection, 'tSNE' for t-distributed Stochastic Neighbor Embedding, and 'lvish' for LargeVis}
 
 \item{markers}{a character vector providing the cell markers to use for the manifold generation}
 

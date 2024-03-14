@@ -2,7 +2,7 @@
 % Please edit documentation in R/viewer.R
 \name{plotMarkerDensity}
 \alias{plotMarkerDensity}
-\title{Plots of phenotype of identified cell clusters}
+\title{Plots the phenotype of identified cell clusters}
 \usage{
 plotMarkerDensity(
   Celldata,

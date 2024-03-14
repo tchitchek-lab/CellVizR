@@ -8,8 +8,6 @@
 #'
 #' @name print
 #' @rdname print-methods
-NULL
-#' @rdname print-methods
  
 setMethod("print", "Celldata",
           function(x) {
@@ -80,9 +78,6 @@ setMethod("print", "Celldata",
 #' @return none
 #'
 #' @name show
-#' @rdname show-methods
-NULL
-
 #' @rdname show-methods
 
 setMethod("show", "Celldata",

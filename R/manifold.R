@@ -7,7 +7,7 @@
 #' The random seed can also be defined to allow the reproducibility of generated results.
 #'
 #' @param Celldata a Celldata object
-#' @param type a character value specifying the type of manifold to compute. Possible values are: 'UMAP' for Uniform Manifold Approximation and Projection, 'tSNE' for t-distributed Stochastic Neighbor Embedding, and 'lvish' for LargeVis
+#' @param method a character value specifying the type of manifold to compute. Possible values are: 'UMAP' for Uniform Manifold Approximation and Projection, 'tSNE' for t-distributed Stochastic Neighbor Embedding, and 'lvish' for LargeVis
 #' @param markers a character vector providing the cell markers to use for the manifold generation
 #' @param seed a numeric value providing the random seed to use during stochastic operations
 #' @param verbose a boolean value indicating if computational details must be displayed on the console
@@ -18,15 +18,15 @@
 #' @export
 #'
 generateManifold <- function(Celldata,
-                             type = c("UMAP", "tSNE", "lvish"),
+                             method = c("UMAP", "tSNE", "lvish"),
                              markers = NULL,
                              seed = 42,
                              verbose = TRUE,
                              ...) {
 
-  type <- match.arg(type)
+  method <- match.arg(method)
 
-  checkmate::qassert(type, "S1")
+  checkmate::qassert(method, "S1")
   checkmate::qassert(markers, c("0", "S*"))
   checkmate::qassert(seed, "N1")
   checkmate::qassert(verbose, "B1")
@@ -43,10 +43,10 @@ generateManifold <- function(Celldata,
   if(length(unlist(markers))<40){
 	message("Manifold markers are: ", paste0(unlist(markers), collapse = ", "))
   }
-  message("Manifold method is: ", type)
+  message("Manifold method is: ", method)
   message()
 
-  switch(type,
+  switch(method,
          UMAP = {
            generate.manifold <- generateManifoldUMAP(matrix.exprs.subset,
                                                      seed = seed,
@@ -68,7 +68,7 @@ generateManifold <- function(Celldata,
 
   Celldata@manifold <- generate.manifold
 
-  manifold.params <- list(type = type,
+  manifold.params <- list(method = method,
                           markers = markers,
                           verbose = verbose,
                           ...)

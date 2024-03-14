@@ -66,22 +66,22 @@ plotCellCounts <- function(Celldata,
   
   plot <- ggplot2::ggplot() +
     ggplot2::geom_segment(data = nb.cells,
-                          ggplot2::aes_string(x = "samples",
-                                              xend = "samples",
-                                              yend = "nb"),
+                          ggplot2::aes(x = samples,
+                                              xend = samples,
+                                              yend = nb),
                           y = 0, color = "gray50") +
     ggiraph::geom_point_interactive(data = nb.cells,
-                                    ggplot2::aes_string(x = "samples",
-                                                        y = "nb",
-                                                        tooltip = "nb"),
+                                    ggplot2::aes(x = samples,
+                                                        y = nb,
+                                                        tooltip = nb),
                                     size = 2)
   
   if ("min" %in% stats) {
     plot <- plot +
       ggplot2::geom_hline(yintercept = min, color = "blue") +
       ggplot2::geom_text(data = nb.cells,
-                         ggplot2::aes_string(x = "xscale.middle",
-                                             y = "min"),
+                         x = xscale.middle,
+                         y = min,
                          label = paste0("min: ", format(min, scientific = FALSE,
                                                         big.mark = ",")),
                          color = "blue", vjust = 0)
@@ -91,8 +91,8 @@ plotCellCounts <- function(Celldata,
     plot <- plot +
       ggplot2::geom_hline(yintercept = max, color = "blue") +
       ggplot2::geom_text(data = nb.cells,
-                         ggplot2::aes_string(x = "xscale.middle",
-                                             y = "max"),
+                         x = xscale.middle,
+                         y = max,
                          label = paste0("max: ", format(max, scientific = FALSE,
                                                         big.mark = ",")),
                          color = "blue", vjust = 0)
@@ -102,8 +102,8 @@ plotCellCounts <- function(Celldata,
     plot <- plot +
       ggplot2::geom_hline(yintercept = median, color = "red") +
       ggplot2::geom_text(data = nb.cells,
-                         ggplot2::aes_string(x = "xscale.middle",
-                                             y = "median"),
+                         x = xscale.middle,
+                         y = median,
                          label = paste0("median: ", format(median, scientific = FALSE,
                                                            big.mark = ",")),
                          color = "red", vjust = 0)
@@ -113,8 +113,8 @@ plotCellCounts <- function(Celldata,
     plot <- plot +
       ggplot2::geom_hline(yintercept = mean, color = "orange") +
       ggplot2::geom_text(data = nb.cells,
-                         ggplot2::aes_string(x = "xscale.middle",
-                                             y = "mean"),
+                         x = xscale.middle,
+                         y = mean,
                          label = paste0("mean: ", format(mean, scientific = FALSE,
                                                          big.mark = ",")),
                          color = "orange", vjust = 0)
@@ -124,8 +124,8 @@ plotCellCounts <- function(Celldata,
     plot <- plot +
       ggplot2::geom_hline(yintercept = q75, color = "purple") +
       ggplot2::geom_text(data = nb.cells,
-                         ggplot2::aes_string(x = "xscale.middle",
-                                             y = "q75"),
+                         x = xscale.middle,
+                         y = q75,
                          label = paste0("q75: ", format(q75, scientific = FALSE,
                                                         big.mark = ",")),
                          color = "purple", vjust = 0)
@@ -203,11 +203,11 @@ plotClustersCounts <- function(Celldata,
     ggplot2::ggtitle(paste0("Count viewer (", format(cells.number,
                                                      big.mark = " "), " cells)", sep = "")) +
     ggiraph::geom_bar_interactive(data = data.melted[data.melted$samples != "sum.of.samples", ],
-                                  ggplot2::aes_string(x = "clusters",
-                                                      y = "values",
-                                                      fill = "samples",
-                                                      tooltip = "samples",
-                                                      data_id = "samples"),
+                                  ggplot2::aes(x = clusters,
+                                                      y = values,
+                                                      fill = samples,
+                                                      tooltip = samples,
+                                                      data_id = samples),
                                   stat = "identity", position = "stack", color = "black")
   
   plot <- plot +
@@ -230,7 +230,7 @@ plotClustersCounts <- function(Celldata,
   return(plot)
 }
 
-#' @title Plots of phenotype of identified cell clusters
+#' @title Plots the phenotype of identified cell clusters
 #'
 #' @description This function aims to visualize the density of marker/gene expressions for a set of given clusters.
 #'
@@ -283,16 +283,17 @@ plotMarkerDensity <- function(Celldata,
     }
     
     plot <- ggplot2::ggplot() +
+      ggplot2::labs(subtitle = paste("Hartigan\'s Dip test p-value: ", round(dip$p.value, 4), sep = "")) +
       ggplot2::ggtitle(marker) +
       ggridges::geom_density_ridges_gradient(data = exp.values,
-                                             ggplot2::aes_string(x = "exp",
-                                                                 y = "0",
-                                                                 fill = "stat(x)")) +
+                                             ggplot2::aes(x = exp,
+                                                                 y = 0,
+                                                                 fill = ggplot2::after_stat(x))) +
       ggplot2::geom_density(data = exp.values.clusters,
-                            ggplot2::aes_string(x = "exp"),
+                            ggplot2::aes(x = exp),
                             color = color,
                             fill = NA,
-                            size = 0.75) +
+                            linewidth = 0.75) +
       ggplot2::geom_vline(xintercept = median, linetype = "dashed", color = "gray20")
     
     plot <- plot +
@@ -306,17 +307,21 @@ plotMarkerDensity <- function(Celldata,
       ggplot2::theme_bw() +
       ggplot2::theme(
         plot.title = ggplot2::element_text(hjust = 0.5, size = 10, face = "bold"),
+        plot.subtitle = ggplot2::element_text(hjust = 0.5, size = 8),
         axis.title.x = ggplot2::element_blank(),
         axis.title.y = ggplot2::element_blank(),
         panel.grid.minor = ggplot2::element_blank(),
         panel.grid.major = ggplot2::element_blank(),
         legend.position = "none",
         legend.key.width = grid::unit(0.35, "cm"))
+      
     
     grob[[marker]] <- plot
   }
   
-  all.plot <- gridExtra::grid.arrange(grobs = grob)
+  
+  
+  all.plot <- suppressMessages(gridExtra::grid.arrange(grobs = grob))
   
   return(grid::grid.draw(all.plot))
 }
@@ -337,6 +342,7 @@ plotMarkerDensity <- function(Celldata,
 #' @param scale a boolean value specifying  if expression values must be rescaled
 #' @param quant.low a numeric value providing the number of first quantile
 #' @param quant.high a numeric value providing the number of last quantile 
+#' @param downsampling a numeric value providing the number of cells to keep for uniform downsampling. A value set to NULL equals to no downsampling. 
 #'
 #' @return a ggplot2 object
 #'
@@ -347,13 +353,16 @@ plotManifold <- function(Celldata,
                          samples = NULL,
                          scale = FALSE,
                          quant.low = 0.05,
-                         quant.high = 0.95) {
+                         quant.high = 0.95,
+                         downsampling = NULL) {
   
   checkmate::qassert(markers, "S1")
   checkmate::qassert(samples, c("0", "S*"))
   checkmate::qassert(scale, "B1")
   checkmate::qassert(quant.low, "N1")
   checkmate::qassert(quant.high, "N1")
+  
+  ## NTC: I don"t know what the previous lines actually do. I need you to explain a bit to me. Please add the same line for the new downsampling argument
   
   proj <- Celldata@manifold
   
@@ -384,6 +393,16 @@ plotManifold <- function(Celldata,
     proj$value <- Celldata@matrix.expression[, markers]
   }
   
+  if(is.null(downsampling) == FALSE)
+  {
+    if(downsampling > 0)
+    {
+      
+      proj = proj[sample(1:nrow(proj), downsampling), ]
+      
+    }
+  }
+  
   plot <- ggplot2::ggplot()
   
   if (!is.null(samples)) {
@@ -391,25 +410,25 @@ plotManifold <- function(Celldata,
     proj <- proj[Celldata@samples %in% samples, ]
     plot <- plot +
       ggplot2::geom_point(data = proj.ref,
-                          ggplot2::aes_string(x = "dim1",
-                                              y = "dim2"),
+                          ggplot2::aes(x = dim1,
+                                              y = dim2),
                           color = "gray", size = 0.0001) +
       ggnewscale::new_scale_color()
   }
   
   plot <- plot +
     ggplot2::geom_point(data = proj,
-                        ggplot2::aes_string(x = "dim1",
-                                            y = "dim2",
-                                            color = "value"),
+                        ggplot2::aes(x = dim1,
+                                            y = dim2,
+                                            color = value),
                         size = 0.0001)
   
   if (nrow(lines) != 0) {
     plot <- plot + ggplot2::geom_path(data = lines,
-                                      ggplot2::aes_string(x = "dim1",
-                                                          y = "dim2",
-                                                          group = "clusters"),
-                                      color = "black", size = 0.2)
+                                      ggplot2::aes(x = dim1,
+                                                          y = dim2,
+                                                          group = clusters),
+                                      color = "black", linewidth = 0.2)
   }
   
   if (markers == "density") {
@@ -425,9 +444,9 @@ plotManifold <- function(Celldata,
         dim2 = stats::median(x$dim2))})
     
     plot <- plot + ggplot2::geom_text(data = proj.center,
-                                      ggplot2::aes_string(x = "dim1",
-                                                          y = "dim2",
-                                                          label = "clusters"),
+                                      ggplot2::aes(x = dim1,
+                                                          y = dim2,
+                                                          label = clusters),
                                       size = 3) +
       # ggplot2::guides(color = "none") +
       ggplot2::guides(color = ggplot2::guide_legend(override.aes = list(size=3))) +
@@ -448,8 +467,8 @@ plotManifold <- function(Celldata,
     ggplot2::scale_y_continuous(expand = c(0.01, 0.01))
   
   plot <- plot +
-    ggplot2::xlab(paste0(Celldata@manifold.params$type, "1")) + 
-    ggplot2::ylab(paste0(Celldata@manifold.params$type, "2")) + 
+    ggplot2::xlab(paste0(Celldata@manifold.params$method, "1")) + 
+    ggplot2::ylab(paste0(Celldata@manifold.params$method, "2")) + 
     ggplot2::theme_bw() +
     ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5),
                    aspect.ratio = 1,
@@ -549,27 +568,27 @@ plotPCA <- function(Celldata,
   
   if (levels == "clusters" || levels == "both") {
     plot <- plot +
-      ggplot2::geom_hline(yintercept = 0, linetype = "dashed", size = 0.2) +
-      ggplot2::geom_vline(xintercept = 0, linetype = "dashed", size = 0.2) +
+      ggplot2::geom_hline(yintercept = 0, linetype = "dashed", linewidth = 0.2) +
+      ggplot2::geom_vline(xintercept = 0, linetype = "dashed", linewidth = 0.2) +
       ggplot2::geom_path(data = circle1,
-                         ggplot2::aes_string(x = "x", y = "y"),
-                         size = 0.2, color = "gray") +
+                         ggplot2::aes(x = x, y = y),
+                         linewidth = 0.2, color = "gray") +
       ggplot2::geom_path(data = circle2,
-                         ggplot2::aes_string(x = "x", y = "y"),
-                         size = 0.2, linetype = "dashed", color = "gray") +
+                         ggplot2::aes(x = x, y = y),
+                         linewidth = 0.2, linetype = "dashed", color = "gray") +
       ggiraph::geom_point_interactive(data = data.clusters,
-                                      ggplot2::aes_string(x = "x", y = "y",
-                                                          tooltip = "id",
-                                                          data_id = "id"),
+                                      ggplot2::aes(x = x, y = y,
+                                                          tooltip = id,
+                                                          data_id = id),
                                       shape = 21, size = 2,
                                       stroke = 0.1, fill = "black", color = "black")
     
     if (plot.text == TRUE) {
       plot <- plot +
         ggrepel::geom_text_repel(data = data.clusters,
-                                 ggplot2::aes_string(x = "x",
-                                                     y = "y",
-                                                     label = "id"),
+                                 ggplot2::aes(x = x,
+                                                     y = y,
+                                                     label = id),
                                  size = 3,
                                  color = "black",
                                  max.overlaps = Inf,
@@ -581,17 +600,17 @@ plotPCA <- function(Celldata,
   
   if (levels == "samples" || levels == "both") {
     plot <- plot +
-      ggplot2::geom_hline(yintercept = 0, linetype = "dashed", size = 0.2) +
-      ggplot2::geom_vline(xintercept = 0, linetype = "dashed", size = 0.2) +
+      ggplot2::geom_hline(yintercept = 0, linetype = "dashed", linewidth = 0.2) +
+      ggplot2::geom_vline(xintercept = 0, linetype = "dashed", linewidth = 0.2) +
       ggplot2::geom_path(data = circle1,
-                         ggplot2::aes_string(x = "x", y = "y"),
-                         size = 0.2, color = "gray") +
+                         ggplot2::aes(x = x, y = y),
+                         linewidth = 0.2, color = "gray") +
       ggplot2::geom_path(data = circle2,
-                         ggplot2::aes_string(x = "x", y = "y"),
-                         size = 0.2, linetype = "dashed", color = "gray") +
+                         ggplot2::aes(x = x, y = y),
+                         linewidth = 0.2, linetype = "dashed", color = "gray") +
       ggiraph::geom_point_interactive(data = data.variables,
-                                      ggplot2::aes_string(x = "x", y = "y",
-                                                          fill = condition.samples,
+                                      ggplot2::aes(x = x, y = y,
+                                                          fill = get(condition.samples),
                                                           tooltip = "id",
                                                           data_id = "individual"),
                                       shape = 21, size = 2,
@@ -600,8 +619,8 @@ plotPCA <- function(Celldata,
     if (plot.text == TRUE) {
       plot <- plot +
         ggrepel::geom_text_repel(data = data.variables,
-                                 ggplot2::aes_string(x = "x", y = "y",
-                                                     label = "id"),
+                                 ggplot2::aes(x = x, y = y,
+                                                     label = id),
                                  size = 3,
                                  color = "black",
                                  max.overlaps = Inf,
@@ -628,7 +647,10 @@ plotPCA <- function(Celldata,
       axis.ticks = ggplot2::element_blank(),
       panel.background = ggplot2::element_rect(color = NA),
       panel.grid.minor = ggplot2::element_blank(),
-      panel.grid.major = ggplot2::element_blank())
+      panel.grid.major = ggplot2::element_blank()) +
+    ggplot2::theme(legend.position = "bottom", plot.title = ggplot2::element_text(hjust = 0.5)) +
+    
+    ggplot2::guides(fill = ggplot2::guide_legend(title = NULL))
   
   return(plot)
 }
@@ -739,19 +761,19 @@ plotMDS <- function(Celldata,
       ggplot2::geom_hline(yintercept = (min.lim + max.lim) / 2, linetype = "dashed") +
       ggplot2::geom_vline(xintercept = (min.lim + max.lim) / 2, linetype = "dashed") +
       ggiraph::geom_point_interactive(data = proj.clusters,
-                                      ggplot2::aes_string(x = "x", y = "y",
-                                                          fill = "clusters",
-                                                          tooltip = "clusters",
-                                                          data_id = "clusters"),
+                                      ggplot2::aes(x = x, y = y,
+                                                          fill = clusters,
+                                                          tooltip = clusters,
+                                                          data_id = clusters),
                                       shape = 21, fill = "black", color = "black")
     
     if (plot.text == TRUE) {
       plot <- plot +
         ggrepel::geom_text_repel(data = proj.clusters,
-                                 ggplot2::aes_string(x = "x",
-                                                     y = "y",
-                                                     label = "clusters"),
-                                 size = 3)
+                                 ggplot2::aes(x = x,
+                                                     y = y,
+                                                     label = clusters),
+                                 size = 3, max.overlaps = Inf)
     }
     
   } else {
@@ -779,19 +801,21 @@ plotMDS <- function(Celldata,
       ggplot2::geom_hline(yintercept = (min.lim + max.lim) / 2, linetype = "dashed") +
       ggplot2::geom_vline(xintercept = (min.lim + max.lim) / 2, linetype = "dashed") +
       ggiraph::geom_point_interactive(data = proj.samples,
-                                      ggplot2::aes_string(x = "x",
-                                                          y = "y",
-                                                          fill = condition.samples,
-                                                          tooltip = "samples",
-                                                          data_id = "individual"),
+                                      ggplot2::aes(x = x,
+                                                          y = y,
+                                                          fill = get(condition.samples),
+                                                          tooltip = samples,
+                                                          data_id = individual),
                                       shape = 21, color = "black")
     
     if (plot.text == TRUE) {
       plot <- plot +
         ggrepel::geom_text_repel(data = proj.samples,
-                                 ggplot2::aes_string(x = "x",
-                                                     y = "y",
-                                                     label = "samples"),
+                                 ggplot2::aes(x = x,
+                                                     y = y,
+                                                     label = samples
+                                              ),
+                                 max.overlaps = Inf,
                                  size = 3)
     }
   }
@@ -810,7 +834,8 @@ plotMDS <- function(Celldata,
                    panel.background = ggplot2::element_blank(),
                    panel.border = ggplot2::element_rect(fill = NA),
                    panel.grid.minor = ggplot2::element_blank(),
-                   panel.grid.major = ggplot2::element_blank())
+                   panel.grid.major = ggplot2::element_blank()) +
+    ggplot2::guides(fill = ggplot2::guide_legend(title = NULL))
   
   return(plot)
 }
@@ -897,15 +922,15 @@ plotBoxplot <- function(Celldata,
                   subtitle = paste0("Clusters: ", paste0(clusters, collapse = ", "),
                                     " (", cells.number, " cells)")) +
     ggplot2::geom_boxplot(data = matrix.cell.count,
-                          ggplot2::aes_string(x = observation,
-                                              y = "value",
-                                              fill = observation),
+                          ggplot2::aes(x = get(observation),
+                                              y = value,
+                                              fill = get(observation)),
                           outlier.shape = NA, size = 0.2, fatten = 1) +
     ggiraph::geom_jitter_interactive(data = matrix.cell.count,
-                                     ggplot2::aes_string(x = observation,
-                                                         y = "value",
-                                                         tooltip = "Row.names",
-                                                         data_id = "individual"),
+                                     ggplot2::aes(x = get(observation),
+                                                         y = value,
+                                                         tooltip = Row.names,
+                                                         data_id = individual),
                                      color = "grey80", shape = 16, size = 1.5,
                                      position = position_jitter) +
     ggpubr::stat_pvalue_manual(stat.test, label = "p.signif", color = "#424242",
@@ -919,6 +944,8 @@ plotBoxplot <- function(Celldata,
       ggplot2::ylab("absolute abundance of cluster")
   }
   
+  plot = plot + ggplot2::xlab(NULL)
+  
   plot <- plot +
     ggplot2::theme_bw() +
     ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5),
@@ -931,7 +958,7 @@ plotBoxplot <- function(Celldata,
   return(plot)
 }
 
-#' @title Plots of a volcano plot of statistical analysis
+#' @title Plots a volcano plot relative to a statistical analysis
 #'
 #' @description This function aims to visualize the results of a differentially abundant a analysis using a Volcano plot.
 #'
@@ -976,11 +1003,11 @@ plotVolcano <- function(Celldata,
     ggplot2::labs(title = "Volcano plot representation",
                   subtitle = comparison) +
     ggiraph::geom_point_interactive(data = stats,
-                                    ggplot2::aes_string(x = "lfc",
-                                                        y = "log10.pvalue",
-                                                        fill = "dir",
-                                                        tooltip = "clusters",
-                                                        data_id = "clusters"),
+                                    ggplot2::aes(x = lfc,
+                                                        y = log10.pvalue,
+                                                        fill = dir,
+                                                        tooltip = clusters,
+                                                        data_id = clusters),
                                     shape = 21, color = "black") +
     ggplot2::geom_hline(yintercept = th.pv, linetype = "dashed") +
     ggplot2::geom_vline(xintercept = c(log2(th.fc), -log2(th.fc)), linetype = "dashed")
@@ -988,12 +1015,13 @@ plotVolcano <- function(Celldata,
   if (plot.text == TRUE) {
     plot <- plot +
       ggrepel::geom_text_repel(data = stats.diff,
-                               ggplot2::aes_string(x = "lfc",
-                                                   y = "log10.pvalue",
-                                                   label = "clusters"),
+                               ggplot2::aes(x = lfc,
+                                                   y = log10.pvalue,
+                                                   label = clusters),
                                size = 3,
                                box.padding = grid::unit(0.35, "lines"),
-                               point.padding = grid::unit(0.3, "lines"))
+                               point.padding = grid::unit(0.3, "lines"),
+                               max.overlaps = Inf)
   }
   
   plot <- plot +
@@ -1014,7 +1042,7 @@ plotVolcano <- function(Celldata,
   return(plot)
 }
 
-#' @title Plots of a distogram of marker co-expression
+#' @title Plots a distogram of marker co-expression
 #'
 #' @description This function aims to visualize the pairwise co-expression between all markers using a distogram representation.
 #' Each tile corresponds to the co-expression between two markers and is gradient-colored based on the Pearson or Spearman correlation
@@ -1058,9 +1086,9 @@ plotDistogram <- function(Celldata,
   melted.cormat <- reshape2::melt(cormat)
   
   plot <- ggplot2::ggplot(data = melted.cormat,
-                          ggplot2::aes_string(x = "Var1",
-                                              y = "Var2",
-                                              fill = "value")) +
+                          ggplot2::aes(x = Var1,
+                                              y = Var2,
+                                              fill = value)) +
     ggplot2::ggtitle("Distogram") +
     ggplot2::geom_tile(color = "white")
   
@@ -1109,7 +1137,7 @@ plotDistogram <- function(Celldata,
   return(plot)
 }
 
-#' @title Plots of a scatter plot of marker co-expression
+#' @title Plots a scatter plot of marker co-expression
 #'
 #' @description This function aims to visualize co-expression between two markers using a scatter representation
 #'
@@ -1155,9 +1183,9 @@ plotScatter <- function(Celldata,
   
   plot <- ggplot2::ggplot() +
     ggplot2::geom_point(data = proj,
-                        ggplot2::aes_string(x = "marker1",
-                                            y = "marker2",
-                                            color = "value"))
+                        ggplot2::aes(x = marker1,
+                                            y = marker2,
+                                            color = value))
   
   plot <- plot +
     ggplot2::scale_color_gradient(low = "yellow",
@@ -1176,9 +1204,9 @@ plotScatter <- function(Celldata,
   return(plot)
 }
 
-#' @title Plots of phenotype of cell clusters using parallels coordinates
+#' @title Plots the phenotype of cell clusters using parallel coordinates
 #'
-#' @description This function aims to visualize the characteristics of cell clusters using parallels coordinates.
+#' @description This function aims to visualize the characteristics of cell clusters using parallel coordinates.
 #' Each line in the representation corresponds to a biological sample for which marker/gene expressions are displayed.
 #'
 #' @param Celldata a Celldata object
@@ -1208,7 +1236,7 @@ plotCoordinatesClusters <- function(Celldata,
   proj <- cbind(sample, cluster, matrix.exp)
   colnames(proj) <- c("samples", "clusters", colnames(matrix.exp))
   
-  melt.matrix <- reshape::melt(matrix.exp,variables="id")
+  melt.matrix <- reshape::melt(matrix.exp, id.vars = NULL)
   
   quantile <- plyr::ddply(melt.matrix, "variable",
                           function(x) {
@@ -1251,22 +1279,22 @@ plotCoordinatesClusters <- function(Celldata,
     ggplot2::ggtitle(paste0("Parallel coordinates - clusters: ",
                             paste0(clusters, collapse = ", "), " (", cells.number, " cells)"))  +
     ggplot2::geom_ribbon(data = quantile,
-                         ggplot2::aes_string(x = "marker",
-                                             ymin = "lower.bound",
-                                             ymax = "upper.bound"),
+                         ggplot2::aes(x = marker,
+                                             ymin = lower.bound,
+                                             ymax = upper.bound),
                          alpha = 0.1, group = 1, fill = "grey20") +
     ggplot2::geom_line(data = proj,
-                                   ggplot2::aes_string(x = "variable",
-                                                       y = "value",
-                                                       group = "samples",
-                                                       color = condition.samples),
+                                   ggplot2::aes(x = variable,
+                                                       y = value,
+                                                       group = samples,
+                                                       color = get(condition.samples)),
                                                        # tooltip = "samples",
                                                        # data_id = "individual"),
-                                   size = 0.5, alpha = 1) +
+                                   linewidth = 0.5, alpha = 1) +
     ggplot2::geom_line(data = means,
-                       ggplot2::aes_string(x = "marker",
-                                           y = "means"),
-                       group = 1, linetype = "dashed", size = 1)
+                       ggplot2::aes(x = marker,
+                                           y = means),
+                       group = 1, linetype = "dashed", linewidth = 1)
   
   # Element ggiraph::geom_line_interactive retire
   
@@ -1281,7 +1309,8 @@ plotCoordinatesClusters <- function(Celldata,
     ggplot2::theme(plot.title =  ggplot2::element_text(hjust = 0.5),
                    panel.grid.minor =  ggplot2::element_blank(),
                    panel.grid.major =  ggplot2::element_blank(),
-                   legend.position = "bottom")
+                   legend.position = "bottom") +
+    ggplot2::guides(col = ggplot2::guide_legend(title = NULL))
   
   return(plot)
 }
@@ -1296,7 +1325,7 @@ plotCoordinatesClusters <- function(Celldata,
 #' @param condition a character value providing the name of the condition to be compared
 #' @param clusters a character vector containing the identifiers of the clusters to use. By default, all clusters are used
 #'
-#' @return xx
+#' @return a ggplot2 object
 #'
 #' @export
 #'
@@ -1354,9 +1383,9 @@ plotLDA <- function(Celldata,
     plot <- ggplot2::ggplot() +
       ggplot2::ggtitle("Linear discriminant analysis - class predictions") +
       ggplot2::geom_col(data = coeffs,
-                        ggplot2::aes_string(x = "sample",
-                                            y = "probability",
-                                            fill = "class"),
+                        ggplot2::aes(x = sample,
+                                            y = probability,
+                                            fill = class),
                         color = "black")
     
     plot <- plot +
@@ -1391,9 +1420,9 @@ plotLDA <- function(Celldata,
     plot <- ggplot2::ggplot() +
       ggplot2::ggtitle("Linear discriminant analysis - cluster coefficients") +
       ggplot2::geom_col(data = coeffs,
-                        ggplot2::aes_string(x = "clusters",
-                                            y = "LD1",
-                                            fill = "log2fc"))
+                        ggplot2::aes(x = clusters,
+                                            y = LD1,
+                                            fill = log2fc))
     
     plot <- plot +
       ggplot2::xlab("") +
@@ -1415,7 +1444,7 @@ plotLDA <- function(Celldata,
   return(plot)
 }
 
-#' @title Plot a marker for each cluster using parallel coordinates
+#' @title Plots a marker for each cluster using parallel coordinates
 #'
 #' @description This function aims to visualise the expression of a given marker in each cluster using parallel coordinates.
 #' Each line in the representation corresponds to a biological sample for which marker/gene expressions are displayed.
@@ -1478,16 +1507,16 @@ plotCoordinatesMarkers <- function(Celldata,
     ggplot2::ggtitle(paste0("Parallel coordinates - Markers: ",
                             paste0(markers))) +
     ggiraph::geom_line_interactive(data = proj2,
-                                   ggplot2::aes_string(x = "clusters",
-                                                       y = "value",
-                                                       group = "samples",
-                                                       color = condition.samples,
-                                                       tooltip = "samples",
-                                                       data_id = "individual"),
+                                   ggplot2::aes(x = clusters,
+                                                       y = value,
+                                                       group = samples,
+                                                       color = get(condition.samples),
+                                                       tooltip = samples,
+                                                       data_id = individual),
                                    size = 0.5, alpha = 1)
   ggplot2::geom_line(data = means,
-                     ggplot2::aes_string(x = "clusters",
-                                         y = "means"),
+                     ggplot2::aes(x = clusters,
+                                         y = means),
                      group = 1, linetype = "dashed", size = 1)
   
   plot <- plot +
@@ -1507,7 +1536,7 @@ plotCoordinatesMarkers <- function(Celldata,
 
 #' @title Plot compare cluster 
 #'
-#' @description This function aims to visualise the expression of a given marker in each cluster.
+#' @description This function aims to visualize the expression of a given marker in each cluster.
 #'
 #' @param Celldata a Celldata object
 #' @param clusters1 a character vector containing the identifier of the cluster to use
@@ -1541,8 +1570,8 @@ plotCompareClusters <- function(Celldata,
   
   plot <- ggplot2::ggplot() +
     ggplot2::geom_density(data = melt.matrix,
-                          mapping = ggplot2::aes_string(x = "value",
-                                                        fill = "cluster"),
+                          mapping = ggplot2::aes(x = value,
+                                                        fill = cluster),
                           size = 0.5,
                           alpha = 0.8) +
     ggplot2::facet_wrap(~variable)

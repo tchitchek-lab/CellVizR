@@ -55,7 +55,8 @@ QCMarkerRanges <- function(files,
 
   table.check.min <- data.frame()
   table.check.max <- data.frame()
-
+  table.check.median = data.frame()
+  
   for (file in files) {
 
     fcs <- flowCore::read.FCS(file)
@@ -68,23 +69,77 @@ QCMarkerRanges <- function(files,
                              names(flowCore::markernames(fcs))]
 
     ranges <- apply(data.expr, 2, stats::quantile, probs = probs)
-
+    medians = apply(data.expr, 2, stats::median)
+    
     table.check.min <- rbind(table.check.min, ranges[1, ])
     table.check.max <- rbind(table.check.max, ranges[2, ])
-
+    table.check.median = rbind(table.check.median, medians)
   }
 
   markernames <- flowCore::markernames(fcs)
 
   colnames(table.check.min) <-  markernames
   colnames(table.check.max) <-  markernames
+  colnames(table.check.median) <-  markernames
+  
   rownames(table.check.min) <- gsub(".fcs", "", basename(files))
   rownames(table.check.max) <- gsub(".fcs", "", basename(files))
-
-  res <- list(table.check.min, table.check.max)
+  rownames(table.check.median) <- gsub(".fcs", "", basename(files))
+  
+  res <- list(table.check.min, table.check.max, table.check.median)
 
   names(res)[1] <- paste0("quantiles_", probs[1])
   names(res)[2] <- paste0("quantiles_", probs[2])
-
-  return(res)
+  names(res)[3] <- "medians"
+  
+  
+  
+  graphData = NULL
+  
+  
+  for(d in 1:length(res))
+  {
+    
+    
+    currentTable = data.frame(t(res[[d]]))
+    
+    for(s in 1:ncol(currentTable))
+    {
+      currentElement = data.frame(matrix(0, ncol = 4, nrow = nrow(currentTable)))
+      colnames(currentElement) = c("value", "sample", "marker", "data")
+      
+      
+      currentElement$value = currentTable[, s]
+      currentElement$sample = colnames(currentTable)[s]
+      currentElement$marker = rownames(currentTable)
+      currentElement$data = names(res)[d]
+      
+      graphData = rbind(graphData, currentElement)
+    }
+    
+    
+    
+  }
+  
+  # graphData = graphData[order(graphData$marker), ]
+  
+  plot <- ggplot2::ggplot(graphData, ggplot2::aes(x = value, y = marker, color = data, shape = data)) +
+    
+    ggplot2::geom_point(size = 1.5, alpha = 1) +
+    ggplot2::geom_jitter(size = 1.5) +
+    ggplot2::geom_boxplot(color = "grey20", linewidth = 0.75, alpha = 0,  position = ggplot2::position_dodge(width = 0)) +
+    ggplot2::scale_color_discrete(labels = c("Median", "5th percentile", "95th percentile")) +
+    ggplot2::scale_shape_discrete(labels = c("Median", "5th percentile", "95th percentile")) +
+    
+    ggplot2::labs(title = "Individualized marker ranges", x = "MFI/MSI", y = NULL) +
+    ggplot2::theme_classic() +
+    
+    ggplot2::theme(legend.position = "bottom", plot.title = ggplot2::element_text(hjust = 0.5)) +
+  
+    ggplot2::guides(shape = ggplot2::guide_legend(title = NULL), col = ggplot2::guide_legend(title = NULL))
+  
+  
+  
+  
+  return(plot)
 }

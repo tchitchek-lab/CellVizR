@@ -2,7 +2,7 @@
 % Please edit documentation in R/viewer.R
 \name{plotCoordinatesMarkers}
 \alias{plotCoordinatesMarkers}
-\title{Plot a marker for each cluster using parallel coordinates}
+\title{Plots a marker for each cluster using parallel coordinates}
 \usage{
 plotCoordinatesMarkers(
   Celldata,

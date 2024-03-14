@@ -8,7 +8,7 @@ plotHmExpressions(
   Celldata,
   markers = NULL,
   clusters = NULL,
-  N.metaclusters = 1,
+  metaclusters = 1,
   method.hclust = c("ward.D", "ward.D2", "single", "complete", "average", "mcquitty",
     "median", "centroid"),
   nb.cat = 5,
@@ -22,7 +22,7 @@ plotHmExpressions(
 
 \item{clusters}{a character vector containing the identifiers of the clusters to use. By default, all clusters are used}
 
-\item{N.metaclusters}{a numeric value providing the number of metaclusters expected. By default, one metaclusters are used}
+\item{metaclusters}{a numeric value providing the number of metaclusters expected. By default, one metaclusters are used}
 
 \item{method.hclust}{a character value providing the agglomeration method to be used. Possible values are: 'ward.D', 'ward.D2', 'single', 'complete', 'average', 'mcquitty', 'median' or 'centroid' (please refer to the function 'hclust' of the 'stats' package)}
 

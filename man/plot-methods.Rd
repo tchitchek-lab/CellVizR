@@ -2,7 +2,6 @@
 % Please edit documentation in R/plot.R
 \name{plot}
 \alias{plot}
-\alias{plot,Celldata,ANY-method}
 \title{Plots graphics for all Celldata objects}
 \usage{
 \S4method{plot}{Celldata,ANY}(x)

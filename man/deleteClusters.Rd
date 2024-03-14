@@ -2,7 +2,7 @@
 % Please edit documentation in R/clustering.R
 \name{deleteClusters}
 \alias{deleteClusters}
-\title{Delete cluster}
+\title{Deletes cluster}
 \usage{
 deleteClusters(Celldata, clusters)
 }

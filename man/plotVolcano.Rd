@@ -2,7 +2,7 @@
 % Please edit documentation in R/viewer.R
 \name{plotVolcano}
 \alias{plotVolcano}
-\title{Plots of a volcano plot of statistical analysis}
+\title{Plots a volcano plot relative to a statistical analysis}
 \usage{
 plotVolcano(Celldata, comparison, th.pv = 1.3, th.fc = 1.5, plot.text = TRUE)
 }

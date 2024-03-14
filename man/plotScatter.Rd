@@ -2,7 +2,7 @@
 % Please edit documentation in R/viewer.R
 \name{plotScatter}
 \alias{plotScatter}
-\title{Plots of a scatter plot of marker co-expression}
+\title{Plots a scatter plot of marker co-expression}
 \usage{
 plotScatter(Celldata, marker1, marker2, samples = NULL, clusters = NULL)
 }

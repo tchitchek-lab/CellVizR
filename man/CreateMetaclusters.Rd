@@ -2,7 +2,7 @@
 % Please edit documentation in R/clustering.R
 \name{createMetaclusters}
 \alias{createMetaclusters}
-\title{Create metaclusters}
+\title{Creates metaclusters}
 \usage{
 createMetaclusters(Celldata, clusters, metacluster.name)
 }

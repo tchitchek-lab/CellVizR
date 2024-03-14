@@ -20,8 +20,25 @@ performUpsampling <- function(Celldata,
   checkmate::qassert(files, "S*")
 
   sample_files <- sub(pattern = "(.*)\\..*$", replacement = "\\1", basename(files))
-  files <- files[sample_files %in% unique(Celldata@samples)]
+  # files <- files[sample_files %in% unique(Celldata@samples)]
   Celldata.reload <- import(files, transform = transform)
+  
+  
+  # Renaming samples in Celldata.reload@samples slot based on what was already done in Celldata@samples original object
+  
+  for(s in unique(Celldata.reload@samples))
+  {
+    replaceValueID = which(unique(Celldata.reload@samples) == s)
+    
+    replaceValue = unique(Celldata@samples)[replaceValueID]
+    originalValue = unique(Celldata.reload@samples)[replaceValueID]
+    
+    Celldata.reload@samples[Celldata.reload@samples == originalValue] = replaceValue
+    
+    
+  }
+  
+  
   downsampled.exp <- Celldata@matrix.expression
   newmarkersnames <- colnames(downsampled.exp)
   colnames(downsampled.exp) <- Celldata@raw.markers

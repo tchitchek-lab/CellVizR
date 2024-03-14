@@ -2,15 +2,14 @@
 % Please edit documentation in R/import.R
 \name{import}
 \alias{import}
-\title{Imports of cell expression profiles from TSV or FCS files}
+\title{Imports cell expression profiles from TSV or FCS files}
 \usage{
 import(
   files,
   filetype = "fcs",
   transform = c("logicle", "arcsinh", "logarithmic", "none"),
-  d.method = c("none", "uniform", "density"),
-  parameters.method = list(exclude.pctile = 0.01, target.pctile = 0.05, target.number =
-    NULL, target.percent = 0.1),
+  d.method = c("none", "uniform"),
+  parameters.method = list(target.number = NULL, target.percent = 0.1),
   exclude.markers = NULL,
   seed = 42
 )
@@ -22,7 +21,7 @@ import(
 
 \item{transform}{a character value containing the type of the transformation to apply. Possible values are: 'logicle', 'arcsinh', 'logarithmic' or 'none'}
 
-\item{d.method}{a character value containing the type of the downsampling to apply. Possible values are: 'none', 'uniform' or 'density'}
+\item{d.method}{a character value containing the type of the downsampling to apply. Possible values are: 'none' or 'uniform'}
 
 \item{parameters.method}{a list value containing the parameters to use for downsampling}
 

@@ -104,9 +104,33 @@ identifyClusters <- function(Celldata,
                                                   samples = samples,
                                                   clusters = clusters)
   
+  # Renaming samples in Celldata@samples slot to accomodate the modifications made by computeCellCounts
+  
+  for(s in colnames(Celldata@matrix.cell.count))
+  {
+    replaceValueID = which(colnames(Celldata@matrix.cell.count) == s)
+    
+    replaceValue = unique(colnames(Celldata@matrix.cell.count))[replaceValueID]
+    originalValue = unique(Celldata@samples)[replaceValueID]
+    
+    Celldata@samples[Celldata@samples == originalValue] = replaceValue
+    
+    
+  }
+  
+  
   message("computing cell cluster abundance matrix...")
   count <- Celldata@matrix.cell.count
   Celldata@matrix.abundance <- computeClusterAbundances(count = count)
+  
+  
+  # Renaming samples in Celldata@matrix.abundance slot to accomodate the modifications made by computeClusterAbundances
+  
+  colnames(Celldata@matrix.abundance) = colnames(Celldata@matrix.cell.count)
+  
+  # Renaming samples in Celldata@metadata slot to accomodate the modifications made by the previous tasks
+  
+  rownames(Celldata@metadata) = colnames(Celldata@matrix.cell.count)
   
   validObject(Celldata)
   
@@ -198,7 +222,7 @@ computeClusterAbundances <- function(count) {
   return(matrix.abundance)
 }
 
-#' @title Create metaclusters
+#' @title Creates metaclusters
 #'
 #' @description This function aims to gathered multiple cell clusters to a large cell cluster
 #'
@@ -242,7 +266,7 @@ createMetaclusters <- function(Celldata,
   return(Celldata)
 }
 
-#' @title Delete cluster
+#' @title Deletes cluster
 #'
 #' @description This function aims to delete a set of cell clusters from this analysis
 #'

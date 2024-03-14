@@ -30,9 +30,10 @@ plots or heatmaps.
 
 ## 1.1 Workflow overview
 
-In the `CellVizR` workflow, an S4 object is created to store data and
-sample information is implemented for analysis. This stored information
-will allow performing the statistics and visualization of the dataset.
+In the `CellVizR` workflow, an S4 object is created to store data,
+sample information as well as the different performed analyses. This
+stored information will allow performing the statistics and
+visualization of the dataset.
 
 <img src="./README_files/workflow.png" width="90%" style="display: block; margin: auto;" />
 
@@ -51,24 +52,26 @@ High-dimensional cytometry data can be analyzed by `CellVizR`:
 
 -   **Type and format of data**: The cytometry data that can be analyzed
     and integrated with `CellVizR` are flow, mass or spectral cytometry
-    data. The input files can be in standard cytometry format (FCS), txt
-    format.
+    data. The input files can be in standard cytometry format (FCS) or
+    in txt format.
 -   **Compensation**: Before starting an analysis with `CellVizR`,
     performing the compensation steps for flow cytometry and spectral
-    data with conventional software (FlowJo, Kaluza, etc) is necessary.
--   **Cleaning and gating**: It is recommended to remove debris, dead
-    cells and doublets before the analysis. A pre-gating on a cell
-    population of interest (e.g.lymphocytes, B cells, etc.) can be
-    performed.
+    data with conventional software (such as FlowJo, Kaluza, etc) is
+    mandatory.
+-   **Cleaning and gating**: It is highly recommended to remove debris,
+    dead cells and doublets before the analysis. A pre-gating on a cell
+    population of interest (e.g.lymphocytes, B cells, etc.) can also be
+    performed, which will help to drastically reduce the computation
+    time.
 
-Single-cell transcriptomics data can be analyzed by `CellVizR`:
+Single-cell transcriptomics data can also be analyzed by `CellVizR`:
 
--   **Type and format of data**: The single-cell -omics data can be
-    analyzed and integrated with `CellVizR` are scRNA-seq data. The
-    input files can be in standard MTX file format.
+-   **Type and format of data**: Single-cell RNA sequencing (scRNA-Seq)
+    can also be analyzed and integrated with `CellVizR`. The input files
+    can be in standard MTX file format.
 -   **Cleaning**: Before starting an analysis with `CellVizR`,
     performing the preprocesing steps for cell count quantification and
-    spectral data with conventional software (CellRanger) is necessary.
+    spectral data with conventional software (CellRanger) is mandatory.
 
 # 2. Quick start
 
@@ -79,7 +82,7 @@ These steps cover several aspects, such as:
 -   Installing the package
 -   Importing the data and creating an `Celldata` object
 -   Creating the manifold and clustering
--   Generating analysis and visualization
+-   Generating analyses and visualizations
 
 ## 2.1 Installation
 
@@ -93,7 +96,7 @@ install_github("tchitchek-lab/CellVizR")
 
 The `CellVizR` package automatically downloads the necessary packages
 for its operation such as:
-`checkmate`,`cluster`,`concaveman`,`cowplot`,`dbscan`,`dendextend`,`diptest`,`FactoMineR`,`flowCore`,`FNN`,`ggdendro`,`ggiraph`,`ggnewscale`,`ggplot2`,`ggpubr`,`ggrepel`,`ggridges`,`Gmedian`,`gridExtra`,`gtools`,`kohonen`,`MASS`,`plyr`,`reshape`,`reshape2`,`rstatix`,`Rtsne`,`scales`,`seurat`,`spade`,`stats`,`stringr`,`uwot`,`viridis`.
+`checkmate`,`cluster`,`concaveman`,`cowplot`,`dbscan`,`dendextend`,`diptest`,`FactoMineR`,`flowCore`,`FNN`,`ggdendro`,`ggiraph`,`ggnewscale`,`ggplot2`,`ggpubr`,`ggrepel`,`ggridges`,`Gmedian`,`gridExtra`,`gtools`,`kohonen`,`MASS`,`plyr`,`reshape`,`reshape2`,`rstatix`,`Rtsne`,`scales`,`seurat`,`stats`,`stringr`,`uwot`,`viridis`.
 If not, the packages are available on the `CRAN`, except `flowCore`
 which is available on `Bioconductor`.
 
@@ -103,7 +106,7 @@ Once installed, `CellVizR` can be loaded using the following command:
 library("CellVizR")
 ```
 
-## 2.2 Importing cell expression profiles (import)
+## 2.2 Importing cell expression profiles
 
 The `import()` function allows importing the expression matrix of the
 cytometry files into a `Celldata` object.
@@ -113,41 +116,8 @@ function is used as below:
 
 ``` r
 files <- list.files(NK_files, 
-                    pattern = "fcs", full.names = TRUE)
+                    pattern = "fcs", full.names = TRUE) # Replace NK_files with your own path to FCS files
 
-print(files)
-```
-
-    ##  [1] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V1_10105LA.fcs"
-    ##  [2] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V1_10209HE.fcs"
-    ##  [3] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V1_10306CG.fcs"
-    ##  [4] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V1_10503DC.fcs"
-    ##  [5] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V1_11204CD.fcs"
-    ##  [6] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V1_20208AA.fcs"
-    ##  [7] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V1_20210RF.fcs"
-    ##  [8] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V6_10105LA.fcs"
-    ##  [9] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V6_10209HE.fcs"
-    ## [10] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V6_10306CG.fcs"
-    ## [11] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V6_10503DC.fcs"
-    ## [12] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V6_11204CD.fcs"
-    ## [13] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V6_20208AA.fcs"
-    ## [14] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V6_20210RF.fcs"
-    ## [15] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V7_10105LA.fcs"
-    ## [16] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V7_10209HE.fcs"
-    ## [17] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V7_10306CG.fcs"
-    ## [18] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V7_10503DC.fcs"
-    ## [19] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V7_11204CD.fcs"
-    ## [20] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V7_20208AA.fcs"
-    ## [21] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V7_20210RF.fcs"
-    ## [22] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V8_10105LA.fcs"
-    ## [23] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V8_10209HE.fcs"
-    ## [24] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V8_10306CG.fcs"
-    ## [25] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V8_10503DC.fcs"
-    ## [26] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V8_11204CD.fcs"
-    ## [27] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V8_20208AA.fcs"
-    ## [28] "C:/Users/Gwenou/Documents/05_I3/02_CellVizR_package/Transreg/03_Kaluza_exports_renamed/Panel_03_NK/V8_20210RF.fcs"
-
-``` r
 # import the FCS files into a Celldata object 
 DataCell <- import(files, 
                    filetype = "fcs", 
@@ -170,18 +140,120 @@ The main arguments of the `import()` function are:
 -   the `exclude_markers` argument, which is used to remove the
     irrelevant channels
 -   the `d.method` argument, which allows choosing the type of
-    downsampling to apply to the data. Possible values are: `none`,
-    `uniform` and `density`
+    downsampling to apply to the data. Possible values are: `none` or
+    `uniform`. With `d.method` set to `uniform`, each cell has the same
+    probability to be selected.
 -   the `parameters.method` argument, which allows choosing the
     parameters for downsampling to apply to the data. Possible values
-    are: `target.number`, `target.percent`. If, the downsampling method
-    used is `density`, also specify the `exclude.pctile` and
-    `target.pctile`,
+    are: `target.number`, `target.percent`.
 
-Out note, single-cell transcriptomics data can be imported using the
-`importMT()` function
+Of note, single-cell transcriptomics data can be imported using the
+`importMT()` function.
 
-## 2.3 Assigning meta-information of biological samples (assignMetadata)
+To correctly write down the markers to exlcude (if any), we invite users
+to run the following commands to list the marker names which are present
+in the loaded dataset:
+
+``` r
+# Retrieving of the marker names
+QCN <- QCMarkerNames(files)
+colnames(QCN)[-1]
+```
+
+    ##  [1] "FS-H"   "FS-A"   "FS-W"   "SS-H"   "SS-A"   "SS-W"   "FL1-A"  "FL2-A" 
+    ##  [9] "FL3-A"  "FL4-A"  "FL5-A"  "FL6-A"  "FL7-A"  "FL8-A"  "FL9-A"  "FL10-A"
+
+Once the `DataCell` object is created, users can print a lot of useful
+information about it with:
+
+``` r
+print(DataCell)
+```
+
+    ## Object class: Celldata
+    ## Numbers of samples: 28
+    ## - Samples: V1_10105LA, V1_10209HE, V1_10306CG, V1_10503DC, V1_11204CD, V1_20208AA, V1_20210RF, V6_10105LA, V6_10209HE, V6_10306CG ...
+    ## Numbers of markers: 9
+    ## - Markers: TCR gd-FITC, NKP44-PE, DR-ECD, NKp30-Pcy5, NKp46-Pcy7, NKG2D-APC, CD3-A700, CD16-A750, CD56-BV421, CD8-KO
+    ## Numbers of cells: 26,722
+    ## - Metadata: 
+    ## - Manifold
+    ## No manifold
+    ## - Clustering
+    ## No clustering
+
+## 2.3 Quality control of the dataset
+
+The `CellVizR` package allows to perform quality control of the imported
+dataset, notably to check the names and range expression of the markers
+of each sample.
+
+The input dataset can be checked in two ways.
+
+The first method checks the concordance of the markers names between the
+different samples.
+
+Here is an example of generating such quality control:
+
+``` r
+# Check for marker concordance
+QCN <- QCMarkerNames(files)
+```
+
+    ##            nb_cells FS-H FS-A FS-W SS-H SS-A SS-W       FL1-A    FL2-A  FL3-A
+    ## V1_10105LA     5768 FS-H FS-A FS-W SS-H SS-A SS-W TCR gd-FITC NKP44-PE DR-ECD
+    ## V1_10209HE     4944 FS-H FS-A FS-W SS-H SS-A SS-W TCR gd-FITC NKP44-PE DR-ECD
+    ## V1_10306CG     4746 FS-H FS-A FS-W SS-H SS-A SS-W TCR gd-FITC NKP44-PE DR-ECD
+    ## V1_10503DC     5877 FS-H FS-A FS-W SS-H SS-A SS-W TCR gd-FITC NKP44-PE DR-ECD
+    ## V1_11204CD     5194 FS-H FS-A FS-W SS-H SS-A SS-W TCR gd-FITC NKP44-PE DR-ECD
+    ## V1_20208AA     9435 FS-H FS-A FS-W SS-H SS-A SS-W TCR gd-FITC NKP44-PE DR-ECD
+    ##                 FL4-A      FL5-A     FL6-A    FL7-A     FL8-A      FL9-A FL10-A
+    ## V1_10105LA NKp30-Pcy5 NKp46-Pcy7 NKG2D-APC CD3-A700 CD16-A750 CD56-BV421 CD8-KO
+    ## V1_10209HE NKp30-Pcy5 NKp46-Pcy7 NKG2D-APC CD3-A700 CD16-A750 CD56-BV421 CD8-KO
+    ## V1_10306CG NKp30-Pcy5 NKp46-Pcy7 NKG2D-APC CD3-A700 CD16-A750 CD56-BV421 CD8-KO
+    ## V1_10503DC NKp30-Pcy5 NKp46-Pcy7 NKG2D-APC CD3-A700 CD16-A750 CD56-BV421 CD8-KO
+    ## V1_11204CD NKp30-Pcy5 NKp46-Pcy7 NKG2D-APC CD3-A700 CD16-A750 CD56-BV421 CD8-KO
+    ## V1_20208AA NKp30-Pcy5 NKp46-Pcy7 NKG2D-APC CD3-A700 CD16-A750 CD56-BV421 CD8-KO
+
+If the marker names are not the same for each sample, they can be
+corrected using the `renameMarkers` as below:
+
+``` r
+# Rename markers if necessary
+DataCell <- renameMarkers(DataCell, marker.names = c("TCRgd", "NKP44", "HLADR", "NKp30", "NKp46",
+                                                     "NKG2D", "CD3", "CD16", "CD56", "CD8"))
+```
+
+The second method computes the median, the 5th percentile and the 95th
+percentile expression values for each marker of each sample:
+
+``` r
+# Check the expression values for markers
+QCR <- QCMarkerRanges(files)
+```
+
+These data then can be displayed in order to evaluate if some markers
+and/or samples deviate strongly from the most frequent observations:
+
+![](README_files/figure-markdown_github/unnamed-chunk-13-1.png)
+
+Please note that at any moment, users can decide to generate interactive
+versions of the plots generated throughout this workflow. They just need
+to save the plot in a variable then call `girafe` function like in the
+following commands:
+
+``` r
+plot = QCMarkerRanges(files)
+
+plot <- ggiraph::girafe(ggobj = plot,
+                          options = list(ggiraph::opts_sizing(width = .9),
+                                         ggiraph::opts_hover_inv(css = "opacity:0.6;"),
+                                         ggiraph::opts_hover(css = "fill:black;")))
+  
+plot
+```
+
+## 2.4 Assigning meta-information of biological samples
 
 The metadata (information about the biological samples) can be assigned
 to each sample in the dataset. These metadata are then used by the
@@ -189,9 +261,9 @@ different visualization methods to properly represent biological
 conditions, timepoints, and individuals. The metadata argument must be a
 dataframe that contains exclusively the following column names:
 
--   individual: corresponds to the sample identifier,
--   condition: corresponds to the biological condition of the sample,
--   timepoint: corresponds to the timepoint of the sample (optional).
+-   `individual`: corresponds to the sample identifier,
+-   `condition`: corresponds to the biological condition of the sample,
+-   `timepoint`: corresponds to the timepoint of the sample (optional).
 
 Here is an example of a metadata assignment:
 
@@ -209,12 +281,18 @@ Important: The rownames column of metadata must match the name of the
 samples when imported.
 
 ``` r
+rownames(metadata) = gsub("(\\.fcs)", "", list.files(NK_files, 
+                                pattern = "fcs",
+                                full.names = FALSE)) # Replace NK_files with your own path to FCS files
+```
+
+``` r
 # assign the dataframe 
 DataCell <- assignMetadata(DataCell, 
                            metadata = metadata)
 ```
 
-## 2.4 Vizualization to the number of cells associated to samples
+## 2.5 Visualization to the number of cells associated to samples
 
 After importing the dataset, the `plotCellCounts()` function allows you
 to see the number of cells in each sample to be displayed as follows:
@@ -226,16 +304,9 @@ plotCellCounts(DataCell,
                sort = TRUE)
 ```
 
-    ## Warning: `aes_string()` was deprecated in ggplot2 3.0.0.
-    ## i Please use tidy evaluation ideoms with `aes()`
-
 ![](README_files/figure-markdown_github/plotCellCounts-1.png)
 
-``` r
-# Possible to make it interactive
-```
-
-## 2.5 Manifold construction and clustering
+## 2.6 Manifold construction and clustering
 
 This section consists in generating the manifold using different
 algorithms combined with cell cluster identification.
@@ -248,7 +319,7 @@ Two methods are available, depending on the parameters selected:
 
 In the example below, the first method has been performed.
 
-### 2.5.1 Generating a manifold of cell events (generateManifold)
+### 2.6.1 Generating a manifold of cell events
 
 The first step is to compute the manifold on the dataset by following
 the instructions below:
@@ -258,12 +329,12 @@ the instructions below:
 DataCell <- generateManifold(DataCell, 
                              markers = c("TCRgd", "NKP44", "HLADR", "NKp30", "NKp46",
                                          "NKG2D", "CD3", "CD16", "CD56", "CD8"), 
-                             type = "UMAP", 
+                             method = "UMAP", 
                              n_neighbors = 15,
                              n_components = 2,
                              metric = "euclidean",
                              n_epochs = NULL,
-                             n_threads = 40, 
+                             n_threads = 1, 
                              n_sgd_threads = 1,
                              scale = FALSE)
 ```
@@ -274,36 +345,36 @@ DataCell <- generateManifold(DataCell,
 
     ## 
 
-    ## 16:57:45 UMAP embedding parameters a = 1.896 b = 0.8006
+    ## 11:47:09 UMAP embedding parameters a = 1.896 b = 0.8006
 
-    ## 16:57:45 Converting dataframe to numerical matrix
+    ## 11:47:09 Converting dataframe to numerical matrix
 
-    ## 16:57:45 Read 26722 rows and found 10 numeric columns
+    ## 11:47:09 Read 26722 rows and found 10 numeric columns
 
-    ## 16:57:45 Using Annoy for neighbor search, n_neighbors = 15
+    ## 11:47:09 Using Annoy for neighbor search, n_neighbors = 15
 
-    ## 16:57:46 Building Annoy index with metric = euclidean, n_trees = 50
+    ## 11:47:10 Building Annoy index with metric = euclidean, n_trees = 50
 
     ## 0%   10   20   30   40   50   60   70   80   90   100%
 
     ## [----|----|----|----|----|----|----|----|----|----|
 
     ## **************************************************|
-    ## 16:57:49 Writing NN index file to temp file C:\Users\Gwenou\AppData\Local\Temp\RtmpAHxLt7\file411c647a510c
-    ## 16:57:49 Searching Annoy index using 40 threads, search_k = 1500
-    ## 16:57:51 Annoy recall = 100%
-    ## 16:57:51 Commencing smooth kNN distance calibration using 40 threads with target n_neighbors = 15
-    ## 16:57:52 Initializing from normalized Laplacian + noise (using irlba)
-    ## 16:57:53 Commencing optimization for 200 epochs, with 539456 positive edges using 1 thread
-    ## 16:58:18 Optimization finished
+    ## 11:47:11 Writing NN index file to temp file C:\Users\PRE.LAB\AppData\Local\Temp\RtmpqwPHBh\file17104dc34f43
+    ## 11:47:11 Searching Annoy index using 1 thread, search_k = 1500
+    ## 11:47:16 Annoy recall = 100%
+    ## 11:47:16 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 15
+    ## 11:47:17 Initializing from normalized Laplacian + noise (using irlba)
+    ## 11:47:17 Commencing optimization for 200 epochs, with 539456 positive edges using 1 thread
+    ## 11:47:33 Optimization finished
 
 The main arguments of the `generateManifold()` function are:
 
 -   the `markers` argument, which specifies the markers to be used for
     the manifold generation
--   the `type` argument, which specifies the manifold method to use
+-   the `method` argument, which specifies the manifold method to use
 
-### 2.5.2 Identifying cell clusters having similar marker expression (identifyClusters)
+### 2.6.2 Identifying cell clusters having similar marker expression
 
 The second step is to identify cell clusters by following the
 instructions below:
@@ -345,544 +416,28 @@ plotClustersCounts(DataCell,
                    sort = TRUE)
 ```
 
-    ## Warning: Using the `size` aesthetic in this geom was deprecated in ggplot2 3.4.0.
-    ## i Please use `linewidth` in the `default_aes` field and elsewhere instead.
-
 ![](README_files/figure-markdown_github/plotClustersCounts-1.png)
 
-``` r
-# Possible to make it interactive
-```
-
-## 2.6 Basic Visualization
-
-Once the manifold has been generated and cell clusters have been
-identified, it is possible to perform different types of visualization
-which are detailed below.
-
-### 2.6.1 Representation of a computed manifold (PlotManifold)
-
-The `plotManifold()` function displays a computed manifold
-representation for a given analysis. Cell clusters are delimited by
-black lines on the manifold.
-
-The main argument of the `plotManifold()` function is the `markers`
-argument which is used to specify the colour of the cells. If the
-`density` value is used, then a UMAP representation showing the
-distribution of the cell density for all samples will be shown as below:
-
-``` r
-# Display manifold overlay by 'density' 
-plotManifold(DataCell, 
-             markers = "density",
-             samples = NULL)
-```
-
-    ## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
-    ## i Please use `linewidth` instead.
-
-![](README_files/figure-markdown_github/PlotManifold-1.png)
-
-If the name of the marker is used, then the intensity of marker
-expression, overlaid on the manifold (e.g. CD8), will be shown as below:
-
-``` r
-# Display manifold overlay by 'markers'  
-plotManifold(DataCell, 
-             markers = "CD8",
-             samples = NULL)
-```
-
-![](README_files/figure-markdown_github/PlotManifold2-1.png)
-
-It is possible to specify the biological samples to be displayed in the
-representation using the `samples` argument as below:
-
-``` r
-# Display manifold overlay by 'density' by sample 
-plotManifold(DataCell, 
-             markers = "density",
-             samples = "V1_10105LA")
-```
-
-![](README_files/figure-markdown_github/PlotManifold3-1.png)
-
-If the name of the clusters is used, the the clusters number will be
-shown as below:
-
-``` r
-# Display manifold overlay by 'cluster' 
-plotManifold(DataCell, markers = "clusters") + 
-  ggplot2::guides(color = "none")
-```
-
-![](README_files/figure-markdown_github/PlotManifold4-1.png)
-
-### 2.6.2 Heatmap of cell marker expressions (plotHmExpressions)
-
-The `plotHmExpressions()` function shows marker median relative
-expressions for all clusters in the whole dataset.
-
-The mean of the median expression of each marker is classified into 4
-categories (the number of categories can be changed by users, `nb.cat`
-parameters). Hierarchical clustering is performed at both the marker and
-cluster levels and is represented using dendrograms (the hierarchical
-clustering parameters can be changed by users `method.hclust`
-parameters).
-
-This function is used as below:
-
-``` r
-# Heatmap of expression markers 
-hm.exp <- plotHmExpressions(DataCell, 
-                            N.metaclusters = 6)
-gridExtra::grid.arrange(hm.exp)
-```
-
-![](README_files/figure-markdown_github/PlotHMExpressions-1.png) It is
-possible to customize the `plotHmExpressions` with these parameters:
-
--   the `markers` argument, which specifies the markers to be displayed
--   the `clusters` argument, which specifies the identifiers of the
-    clusters to be displayed
-
-These parameters can be used independently of each other as in the
-following example:
-
-``` r
-# Heatmap of expression markers 
-hm.exp <- plotHmExpressions(DataCell, 
-                            markers = c("NKP44", "NKp30", "NKp46", "NKG2D"), 
-                            clusters = c(1:50),
-                            N.metaclusters = 6)
-gridExtra::grid.arrange(hm.exp)
-```
-
-![](README_files/figure-markdown_github/plotHmExpressions2-1.png)
-
-### 2.6.3 Representation of phenotype of identified cell clusters (plotMarkerDensity)
-
-The `plotMarkerDensity()` function shows marker expression densities for
-one given cluster.
-
-For each marker distribution, the median expression is represented by a
-black dashed line. In addition, the Hartigan’s Dip test p-value, which
-indicates whether the distribution is unimodal, is indicated by a green
-curve or red if it is non-unimodal.
-
-``` r
-# PhenoClusters plot for specific cluster 
-plotMarkerDensity(DataCell, 
-                  clusters = "58")
-```
-
-    ## Warning: `stat(x)` was deprecated in ggplot2 3.4.0.
-    ## i Please use `after_stat(x)` instead.
-
-    ## Picking joint bandwidth of 0.0252
-
-    ## Picking joint bandwidth of 0.0465
-
-    ## Picking joint bandwidth of 0.0576
-
-    ## Picking joint bandwidth of 0.0712
-
-    ## Picking joint bandwidth of 0.0592
-
-    ## Picking joint bandwidth of 0.0306
-
-    ## Picking joint bandwidth of 0.0565
-
-    ## Picking joint bandwidth of 0.0412
-
-    ## Picking joint bandwidth of 0.0445
-
-    ## Picking joint bandwidth of 0.0731
-
-![](README_files/figure-markdown_github/plotMarkerDensity-1.png)
-
-### 2.6.4 Representation of phenotype of cell clusters using parallels coordinates (plotCoordinates)
-
-The `plotCoordinates()` function shows the phenotype of specific cluster
-or a set of combined clusters.
-
-The median marker expression of each sample is represented using
-parallel coordinates. The X-axis represents the cellular markers and the
-Y-axis represents the marker expressions.
-
-``` r
-# Coordinates plot for specific cluster 
-plotCoordinatesClusters(DataCell, 
-                        condition.samples = c("timepoint"),
-                        clusters = "10")
-```
-
-    ## Using  as id variables
-
-![](README_files/figure-markdown_github/plotCoordinates-1.png)
-
-``` r
-# Possible to make it interactive
-```
-
-# 3. Statistics and visualization
-
-## 3.1 Compute differential abundance analyses
-
-Once the cell clustering performed, it is possible to do a differential
-analysis of cell cluster abundances to identify relevant cell clusters.
-
-The `computeStatistics()` function allows to perform the such operation
-and several parameters must be taken into consideration:
-
--   the `condition` argument, which specifies the biological condition
-    to be compared
--   the `ref.condition` argument, which specifies the reference
-    biological condition
--   the `test.statistics` argument, which specifies the name of the
-    statistical test to use
--   the `paired` argument, which specifies if samples are paired in the
-    statistical comparison
-
-This function is used as follows:
-
-``` r
-# Compute statistics 
-DataCell@statistic <- data.frame()
-
-V1 = selectSamples(DataCell, 
-                   timepoint = "V1")
- 
-list.conditions <- list("V6" = selectSamples(DataCell, timepoint = "V6"),
-                        "V7" = selectSamples(DataCell, timepoint = "V7"),
-                        "V8" = selectSamples(DataCell, timepoint = "V8"))
-
-for (condition in 1:length(list.conditions)) {
-  DataCell <- computeStatistics(DataCell, 
-                                condition = list.conditions[[condition]], 
-                                ref.condition = V1,
-                                comparison = paste0(names(list.conditions)[condition], " vs. V1"), 
-                                test.statistics = "t.test",
-                                paired = FALSE)
-}
-```
-
-    ## Computing of the t.test for: V6_10105LA,V6_10209HE,V6_10306CG,V6_10503DC,V6_11204CD,V6_20208AA,V6_20210RF vs. V1_10105LA,V1_10209HE,V1_10306CG,V1_10503DC,V1_11204CD,V1_20208AA,V1_20210RF
-
-    ## Computing of the t.test for: V7_10105LA,V7_10209HE,V7_10306CG,V7_10503DC,V7_11204CD,V7_20208AA,V7_20210RF vs. V1_10105LA,V1_10209HE,V1_10306CG,V1_10503DC,V1_11204CD,V1_20208AA,V1_20210RF
-
-    ## Computing of the t.test for: V8_10105LA,V8_10209HE,V8_10306CG,V8_10503DC,V8_11204CD,V8_20208AA,V8_20210RF vs. V1_10105LA,V1_10209HE,V1_10306CG,V1_10503DC,V1_11204CD,V1_20208AA,V1_20210RF
-
-## 3.2 Visualisation of statistical analysis
-
-### 3.2.1 Volcano plot of statistical analysis (plotVolcano)
-
-The `plotVolcano()` function shows the clusters whose number of
-associated cells is statistically different between two biological
-conditions and/or timepoints.
-
-For each cluster, the p-value (indicated by -log10(p-value)) is
-represented on the Y-axis and the cell abundance fold-change (indicated
-by log2(fold-change)) is represented on the X-axis. The thresholds for
-the p-value (`th.pv` parameter) and the fold-change (`th.fc` parameter)
-are shown as dotted lines. Cell clusters down-represented are shown in
-green and cell clusters up-represented are shown in red.
-
-Here is an example for generating such representation:
-
-``` r
-# Volcano plot for differential analysis 
-plotVolcano(DataCell,
-            comparison = ("V7 vs. V1"),
-            th.pv = 1.3,
-            th.fc = 1.5,
-            plot.text = TRUE)
-```
-
-![](README_files/figure-markdown_github/plotVolcano-1.png)
-
-``` r
-# Possible to make it interactive
-```
-
-### 3.2.2 Heatmap of statistical analysis results (plotHmStatistics)
-
-The `plotHmStatistics()` function shows the differences in abundance
-between different conditions for each cluster.
-
-For each cluster, the p-value, the log2(fold-change) and the effect size
-(`statistics` parameters) can be represented. Down-represented clusters
-are represented in orange, and up-represented clusters are represented
-in blue. Furthermore, it is possible to choose the clusters to be
-represented with the `clusters` parameter.
-
-Here is an example for generating such representation:
-
-``` r
-# Heatmap of statistics
-hm.stats <- plotHmStatistics(DataCell, 
-                             clusters = NULL,
-                             statistics = "pvalue")
-
-gridExtra::grid.arrange(hm.stats)
-```
-
-![](README_files/figure-markdown_github/plotHmStatistics-1.png)
-
-## 3.3 Visualisation of cell cluster abundances
-
-### 3.3.1 Heatmap of cell cluster abundances (plotHmAbundances)
-
-The `plotHmAbundances()` function shows the cellular distribution of
-samples within a given cluster.
-
-The more the sample is represented within the cluster, the redder the
-tile. If the sample is not represented in the cluster, then the tile
-will be black. The `plotHmAbundances()` function can be interesting to
-visualize the abundance of statistically different clusters between two
-conditions, as in the following example:
-
-``` r
-#Samples to study
-samples = selectSamples(DataCell, 
-                        timepoint = c("V1", "V6"))
-
-#Statistically different clusters
-stats <- DataCell@statistic[DataCell@statistic$comparison == "V6 vs. V1",]
-clusters = stats[stats$pvalue<=0.05 & abs(stats$lfc)>log(1.2)/log(2),]$clusters
-
-# Heatmap of abundances
-hm.abun <- plotHmAbundances(DataCell, 
-                            clusters = clusters,
-                            samples = samples,
-                            rescale = TRUE)
-
-gridExtra::grid.arrange(hm.abun)
-```
-
-![](README_files/figure-markdown_github/plotHmAbundances-1.png)
-
-### 3.3.2 Cell cluster abundances using a boxplot representation (plotBoxplot)
-
-The `plotBoxPlot()` function shows the cell distribution between several
-biological conditions and/or timepoints for a single cluster or for a
-combined set of clusters.
-
-This display shows the abundances of the user-defined cell clusters
-(`clusters` parameter). It is possible to observe the cell abundance as
-a function of the biological condition or timepoint (`obervation`
-parameter). In addition, statistical tests can be performed and
-displayed directly on the boxplot.
-
-Here is an example for generating such representation:
-
-``` r
-# Boxplot for differential analysis
-plotBoxplot(DataCell, 
-            clusters = clusters,
-            samples = NULL,
-            value.y = "percentage",
-            observation = "timepoint", 
-            test.statistics = "t.test")
-```
-
-![](README_files/figure-markdown_github/plotBoxplot-1.png)
-
-``` r
-# Possible to make it interactive
-```
-
-Other possible parameters to customize the `plotBoxPlot` are:
-
--   the `samples` argument, which specifies the biological samples to be
-    displayed
--   the `paired` argument, which specifies if samples are paired in the
-    statistical comparison
-
-### 3.3.3 MDS representation based on cell cluster abundances (plotMDS)
-
-The `plotMDS()` function shows similarities between samples or clusters
-based on cell cluster abundances.
-
-Each point represents a sample or a cluster (`levels` parameter) and the
-distance between the points is proportional to the Euclidean distance
-between these objects. It is possible to observe the cell abundance as a
-function of the biological condition or timepoint (`condition.samples`
-parameter)
-
-Here is an example for generating such representation:
-
-``` r
-# MDS
-plotMDS(DataCell, 
-        levels = "samples", 
-        condition.samples = "timepoint", 
-        clusters = NULL, 
-        samples = NULL,
-        plot.text = TRUE)
-```
-
-    ## Warning: ggrepel: 27 unlabeled data points (too many overlaps). Consider
-    ## increasing max.overlaps
-
-![](README_files/figure-markdown_github/plotMDS-1.png)
-
-``` r
-# Possible to make it interactive
-```
-
-Other possible parameters to customize the `plotMDS` are:
-
--   the `clusters` argument, which specifies the identifiers of the
-    clusters to be displayed
--   the `samples` argument, which specifies the biological samples to be
-    displayed
-
-### 3.3.4 PCA representation based on cell cluster abundances (plotPCA)
-
-The `plotPCA()` function shows similarities between samples or clusters
-based on cell cluster abundances.
-
-Each point represents a sample or a cluster (`levels` parameter). It is
-possible to observe the cell abundance as a function of the biological
-condition or timepoint (`condition.samples` parameter)
-
-``` r
-# PCA
-plotPCA(DataCell, 
-        levels = "clusters", 
-        clusters = NULL, 
-        samples = NULL, 
-        condition.samples = "condition",
-        plot.text = TRUE)
-```
-
-![](README_files/figure-markdown_github/plotPCA-1.png)
-
-``` r
-# Possible to make it interactive
-```
-
-Other possible parameters to customize the `plotPCA` are:
-
--   the `clusters` argument, which specifies the identifiers of the
-    clusters to be displayed
--   the `samples` argument, which specifies the biological samples to be
-    displayed
-
-# 4. Quality control
+### 2.6.3 Control quality of the cell clustering result
 
 The `CellVizR` package allows to perform quality control of generated
-results.
+results, notably to check the quality of the cell clustering.
 
-The quality control can be performed:
-
--   on the input dataset to check the names and range expression of the
-    markers of each sample
--   on the generated results, to check the quality of the cell
-    clustering.
-
-## 4.1 Quality control of the dataset
-
-The input dataset can be checked in two ways. The first method checks
-the concordance of the markers names between the different samples.
-
-Here is an example of generating such quality control:
-
-``` r
-# Check for marker concordance
-QCN <- QCMarkerNames(files)
-```
-
-    ##            nb_cells FS-H FS-A FS-W SS-H SS-A SS-W       FL1-A    FL2-A  FL3-A
-    ## V1_10105LA     5768 FS-H FS-A FS-W SS-H SS-A SS-W TCR gd-FITC NKP44-PE DR-ECD
-    ## V1_10209HE     4944 FS-H FS-A FS-W SS-H SS-A SS-W TCR gd-FITC NKP44-PE DR-ECD
-    ## V1_10306CG     4746 FS-H FS-A FS-W SS-H SS-A SS-W TCR gd-FITC NKP44-PE DR-ECD
-    ## V1_10503DC     5877 FS-H FS-A FS-W SS-H SS-A SS-W TCR gd-FITC NKP44-PE DR-ECD
-    ## V1_11204CD     5194 FS-H FS-A FS-W SS-H SS-A SS-W TCR gd-FITC NKP44-PE DR-ECD
-    ## V1_20208AA     9435 FS-H FS-A FS-W SS-H SS-A SS-W TCR gd-FITC NKP44-PE DR-ECD
-    ##                 FL4-A      FL5-A     FL6-A    FL7-A     FL8-A      FL9-A FL10-A
-    ## V1_10105LA NKp30-Pcy5 NKp46-Pcy7 NKG2D-APC CD3-A700 CD16-A750 CD56-BV421 CD8-KO
-    ## V1_10209HE NKp30-Pcy5 NKp46-Pcy7 NKG2D-APC CD3-A700 CD16-A750 CD56-BV421 CD8-KO
-    ## V1_10306CG NKp30-Pcy5 NKp46-Pcy7 NKG2D-APC CD3-A700 CD16-A750 CD56-BV421 CD8-KO
-    ## V1_10503DC NKp30-Pcy5 NKp46-Pcy7 NKG2D-APC CD3-A700 CD16-A750 CD56-BV421 CD8-KO
-    ## V1_11204CD NKp30-Pcy5 NKp46-Pcy7 NKG2D-APC CD3-A700 CD16-A750 CD56-BV421 CD8-KO
-    ## V1_20208AA NKp30-Pcy5 NKp46-Pcy7 NKG2D-APC CD3-A700 CD16-A750 CD56-BV421 CD8-KO
-
-If the marker names are not the same for each sample, they can be
-corrected using the `renameMarkers` as below:
-
-``` r
-# Rename markers if necessary
-DataCell <- renameMarkers(DataCell, marker.names = c("TCRgd", "NKP44", "HLADR", "NKp30", "NKp46",
-                                                     "NKG2D", "CD3", "CD16", "CD56", "CD8"))
-```
-
-The second method computes the 5 centiles and 95 centiles expression
-values for each marker of each sample:
-
-``` r
-# Check the expression values for markers
-QCR <- QCMarkerRanges(files)
-```
-
-    ##                  FS       FS        FS       SS       SS        SS TCR gd-FITC
-    ## V1_10105LA 3.835954 4.591215 0.8492808 3.243660 4.012122 0.8449608   0.9154929
-    ## V1_10209HE 3.829768 4.557351 0.8449608 3.230622 3.977681 0.8362701   1.0896257
-    ## V1_10306CG 3.947060 4.677327 0.8449608 3.303869 4.055231 0.8406239   1.0983334
-    ## V1_10503DC 3.828357 4.564343 0.8492808 3.287315 4.047948 0.8449608   1.1105192
-    ## V1_11204CD 3.725456 4.474459 0.8449608 3.215499 3.984430 0.8362701   0.9982873
-    ## V1_20208AA 3.812238 4.545145 0.8492808 3.232515 3.996216 0.8406239   1.1983233
-    ##             NKP44-PE    DR-ECD  NKp30-Pcy5 NKp46-Pcy7 NKG2D-APC    CD3-A700
-    ## V1_10105LA 1.0221593 0.9982851  0.34437769   1.912841  2.186237  1.82498352
-    ## V1_10209HE 0.4540053 1.2876305  0.41447530   1.680014  2.092440 -0.25736492
-    ## V1_10306CG 0.3002701 1.4209953  0.02057747   2.385978  2.955476  0.36994782
-    ## V1_10503DC 0.6950154 1.0563525  0.19227490   2.129246  2.526725 -0.57064192
-    ## V1_11204CD 1.0852063 1.3009333  1.03100626   1.903930  1.851252 -0.31361279
-    ## V1_20208AA 1.1473595 1.5286735 -0.03055137   1.761246  2.481763 -0.03495686
-    ##            CD16-A750 CD56-BV421   CD8-KO
-    ## V1_10105LA  1.981205   2.287023 1.398245
-    ## V1_10209HE  2.317233   2.562494 1.469428
-    ## V1_10306CG  2.504834   2.555830 1.471242
-    ## V1_10503DC  2.309174   2.503308 1.793365
-    ## V1_11204CD  2.072469   2.448918 1.915688
-    ## V1_20208AA  2.505797   2.561197 1.540455
-
-    ##                  FS       FS        FS       SS       SS        SS TCR gd-FITC
-    ## V1_10105LA 4.157933 4.908130 0.9200630 3.619960 4.415486 0.9745206    1.894825
-    ## V1_10209HE 4.173238 4.909950 0.8873849 3.582930 4.326441 0.8956605    1.750218
-    ## V1_10306CG 4.248189 4.976780 0.8790391 3.613209 4.356738 0.8956605    1.733319
-    ## V1_10503DC 4.137537 4.878283 0.8956605 3.625537 4.391105 0.9119997    1.838933
-    ## V1_11204CD 4.168662 4.901672 0.8997718 3.600143 4.383557 0.9320248    2.104529
-    ## V1_20208AA 4.155026 4.892967 0.8873849 3.566284 4.348759 0.9200630    1.872118
-    ##            NKP44-PE   DR-ECD NKp30-Pcy5 NKp46-Pcy7 NKG2D-APC CD3-A700 CD16-A750
-    ## V1_10105LA 2.353069 3.359568   2.728439   3.776323  3.607855 2.839736  4.350019
-    ## V1_10209HE 2.096698 3.514636   2.721771   3.565452  3.520383 2.540947  4.428824
-    ## V1_10306CG 2.086451 3.443916   2.818599   3.644543  3.668300 2.725701  4.420814
-    ## V1_10503DC 2.078534 2.726523   2.796699   3.537180  3.538998 2.533955  4.354336
-    ## V1_11204CD 2.277626 2.875062   2.744615   3.588735  3.476107 2.528107  4.214141
-    ## V1_20208AA 2.236382 3.243167   2.740408   3.509518  3.544084 2.644464  4.447594
-    ##            CD56-BV421   CD8-KO
-    ## V1_10105LA   3.960701 2.987863
-    ## V1_10209HE   4.030643 3.127233
-    ## V1_10306CG   3.938093 3.354593
-    ## V1_10503DC   3.866357 3.505325
-    ## V1_11204CD   3.871029 3.441518
-    ## V1_20208AA   3.866826 3.284242
-
-## 4.2 Control quality of the cell clustering result
-
-The quality control of clustering can be checked in two ways.
+The quality control of the clustering can be checked in two ways.
 
 The first method allows the identification of small clusters,
-i.e.clusters whose number of cells is below a specific threshold. The
-results can be represented as a heatmap. On the left are the
-contributions of each sample and on the right are the contribution of
-the whole dataset. If the tile is red then the cluster is less than the
-specified number of cells, if the tile is green, the cluster is greater
-than or equal to the specified number of cells. The percentage of
-clusters with a small number of cells among all clusters is shown at the
-top of the heatmap.
+i.e. clusters whose number of cells is below a specific threshold. The
+results can be represented as a heatmap with clusters in rows and
+samples in columns. All the columns except the last one represent the
+contributions of each sample whereas the far right one represents the
+contribution of the whole samples. If the tile is red, then it means
+that the indicated cluster is less than the specified number of cells
+(and thus considered as “small”). If the tile is grey, then it means
+that the indicated cluster is equal to or greater than the specified
+number of cells. We advice users to only consider the far right column
+of the heatmap for the final interpretation of results. The overall
+percentage of clusters considered as “small” among all clusters is shown
+at the top of the heatmap.
 
 The function is as below:
 
@@ -894,42 +449,6 @@ QCS <- QCSmallClusters(DataCell,
 ```
 
 ![](README_files/figure-markdown_github/QCSmallClusters-1.png)
-
-    ##      V1_10105LA V1_10209HE V1_10306CG V1_10503DC V1_11204CD V1_20208AA
-    ## [1,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [2,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [3,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [4,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [5,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [6,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ##      V1_20210RF V6_10105LA V6_10209HE V6_10306CG V6_10503DC V6_11204CD
-    ## [1,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [2,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [3,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [4,]       TRUE       TRUE       TRUE       TRUE      FALSE       TRUE
-    ## [5,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [6,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ##      V6_20208AA V6_20210RF V7_10105LA V7_10209HE V7_10306CG V7_10503DC
-    ## [1,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [2,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [3,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [4,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [5,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [6,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ##      V7_11204CD V7_20208AA V7_20210RF V8_10105LA V8_10209HE V8_10306CG
-    ## [1,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [2,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [3,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [4,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [5,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ## [6,]       TRUE       TRUE       TRUE       TRUE       TRUE       TRUE
-    ##      V8_10503DC V8_11204CD V8_20208AA V8_20210RF total.cells
-    ## [1,]       TRUE       TRUE       TRUE       TRUE       FALSE
-    ## [2,]       TRUE       TRUE       TRUE       TRUE       FALSE
-    ## [3,]       TRUE       TRUE       TRUE       TRUE       FALSE
-    ## [4,]       TRUE       TRUE       TRUE       TRUE       FALSE
-    ## [5,]       TRUE       TRUE       TRUE       TRUE       FALSE
-    ## [6,]       TRUE       TRUE       TRUE       TRUE       FALSE
 
 The second method allows to identify the uniform clusters, i.e.those
 with unimodal expression and low dispersion of expression for all its
@@ -974,12 +493,418 @@ QCU <- QCUniformClusters(DataCell,
     ## 5        1   HLADR 0.9588102 0.3872350   TRUE
     ## 6        1   NKG2D 0.4408940 0.2182691   TRUE
 
-# 5.Advanced graphical representation
+## 2.7 Basic visualization
+
+Once the manifold has been generated and cell clusters have been
+identified, it is possible to perform different types of visualization
+which are detailed below.
+
+### 2.7.1 Representation of a computed manifold
+
+The `plotManifold()` function displays a computed manifold
+representation for a given analysis. Cell clusters are delimited by
+black lines on the manifold.
+
+The main argument of the `plotManifold()` function is the `markers`
+argument which is used to specify the colour of the cells. A uniform
+downsampling of cells can also be performed with the `downsampling`
+argument different from `NULL` and set to a numerical value superior to
+`0`. If the `density` value is used, then a UMAP representation showing
+the distribution of the cell density for all samples will be shown as
+below:
+
+``` r
+# Display manifold overlay by 'density' 
+plotManifold(DataCell, 
+             markers = "density",
+             samples = NULL,
+             downsampling = 20000)
+```
+
+![](README_files/figure-markdown_github/PlotManifold-1.png)
+
+If the name of the marker is used, then the intensity of marker
+expression, overlaid on the manifold (e.g. CD8), will be shown as below:
+
+``` r
+# Display manifold overlay by 'markers'  
+plotManifold(DataCell, 
+             markers = "CD8",
+             samples = NULL,
+             downsampling = 20000)
+```
+
+![](README_files/figure-markdown_github/PlotManifold2-1.png)
+
+It is possible to specify the biological samples to be displayed in the
+representation using the `samples` argument as below:
+
+``` r
+# Display manifold overlay by 'density' by sample 
+plotManifold(DataCell, 
+             markers = "density",
+             samples = "V1_10105LA",
+             downsampling = 20000)
+```
+
+![](README_files/figure-markdown_github/PlotManifold3-1.png)
+
+If the name of the clusters is used, the the clusters number will be
+shown as below:
+
+``` r
+# Display manifold overlay by 'cluster' 
+plotManifold(DataCell, markers = "clusters", downsampling = 20000) + 
+  ggplot2::guides(color = "none")
+```
+
+![](README_files/figure-markdown_github/PlotManifold4-1.png)
+
+### 2.7.2 Heatmap of cell marker expressions (plotHmExpressions)
+
+The `plotHmExpressions()` function shows marker median relative
+expressions for all clusters in the whole dataset.
+
+The mean of the median expression of each marker is classified into 4
+categories (the number of categories can be changed by users, `nb.cat`
+parameters). Hierarchical clustering is performed at both the marker and
+cluster levels and is represented using dendrograms (the hierarchical
+clustering parameters can be changed by users `method.hclust` parameters
+as well as the number of metaclusters with the `metaclusters` argument).
+
+This function is used as below:
+
+``` r
+# Heatmap of expression markers 
+hm.exp <- plotHmExpressions(DataCell, 
+                            metaclusters = 6)
+gridExtra::grid.arrange(hm.exp)
+```
+
+![](README_files/figure-markdown_github/PlotHMExpressions-1.png)
+
+It is possible to customize the `plotHmExpressions` with these
+parameters:
+
+-   the `markers` argument, which specifies the markers to be displayed
+-   the `clusters` argument, which specifies the identifiers of the
+    clusters to be displayed
+
+These parameters can be used independently of each other as in the
+following example:
+
+``` r
+# Heatmap of expression markers 
+hm.exp <- plotHmExpressions(DataCell, 
+                            markers = c("NKP44", "NKp30", "NKp46", "NKG2D"), 
+                            clusters = c(1:50),
+                            metaclusters = 6)
+gridExtra::grid.arrange(hm.exp)
+```
+
+![](README_files/figure-markdown_github/plotHmExpressions2-1.png)
+
+### 2.7.3 Representation of phenotype of identified cell clusters
+
+The `plotMarkerDensity()` function shows marker expression densities for
+one given cluster.
+
+For each marker distribution, the plot represents the overall marker
+distribution for all the cells (colored plain histogram) as well as the
+marker distribution for the given cluster (transparent red or green
+curve). Plus, the median expression is represented by a vertical black
+dashed line. The red or green curve actually symbolizes the p-value of
+the Hartigan’s Dip test, which indicates whether the distribution is
+unimodal or not: in this case, the curve is colored in green if the
+distrbution is identified as unimodal, whereas in red if this is not the
+case.
+
+``` r
+# PhenoClusters plot for specific cluster 
+plotMarkerDensity(DataCell, 
+                  clusters = "58")
+```
+
+![](README_files/figure-markdown_github/plotMarkerDensity-1.png)
+
+### 2.7.4 Representation of phenotype of cell clusters using parallels coordinates (plotCoordinates)
+
+The `plotCoordinates()` function shows the phenotype of a specific
+cluster or a set of combined clusters.
+
+The median marker expression of each sample is represented using
+parallel coordinates. The X-axis represents the cellular markers and the
+Y-axis represents the marker expressions.
+
+``` r
+# Coordinates plot for specific cluster 
+plotCoordinatesClusters(DataCell, 
+                        condition.samples = c("timepoint"),
+                        clusters = "10")
+```
+
+![](README_files/figure-markdown_github/plotCoordinates-1.png)
+
+# 3. Statistics and visualization
+
+## 3.1 Compute differential abundance analyses
+
+Once the cell clustering performed, it is possible to do a differential
+analysis of cell cluster abundances to identify relevant cell clusters.
+
+The `computeStatistics()` function allows to perform the such operation
+and several parameters must be taken into consideration:
+
+-   the `condition` argument, which specifies the biological condition
+    to be compared
+-   the `ref.condition` argument, which specifies the reference
+    biological condition
+-   the `test.statistics` argument, which specifies the name of the
+    statistical test to use
+-   the `paired` argument, which specifies if samples are paired in the
+    statistical comparison
+
+This function is used as follows:
+
+``` r
+# Compute statistics 
+DataCell@statistic <- data.frame()
+
+V1 = selectSamples(DataCell, 
+                   timepoint = "V1")
+ 
+list.conditions <- list("V6" = selectSamples(DataCell, timepoint = "V6"),
+                        "V7" = selectSamples(DataCell, timepoint = "V7"),
+                        "V8" = selectSamples(DataCell, timepoint = "V8"))
+
+  DataCell <- computeStatistics(DataCell, 
+                                condition = list.conditions[[1]], 
+                                ref.condition = V1,
+                                comparison = paste0(names(list.conditions)[1], " vs. V1"), 
+                                test.statistics = "t.test",
+                                paired = FALSE)
+```
+
+    ## Computing of the t.test for: V6_10105LA,V6_10209HE,V6_10306CG,V6_10503DC,V6_11204CD,V6_20208AA,V6_20210RF vs. V1_10105LA,V1_10209HE,V1_10306CG,V1_10503DC,V1_11204CD,V1_20208AA,V1_20210RF
+
+``` r
+  DataCell <- computeStatistics(DataCell, 
+                                condition = list.conditions[[2]], 
+                                ref.condition = V1,
+                                comparison = paste0(names(list.conditions)[2], " vs. V1"), 
+                                test.statistics = "t.test",
+                                paired = FALSE)
+```
+
+    ## Computing of the t.test for: V7_10105LA,V7_10209HE,V7_10306CG,V7_10503DC,V7_11204CD,V7_20208AA,V7_20210RF vs. V1_10105LA,V1_10209HE,V1_10306CG,V1_10503DC,V1_11204CD,V1_20208AA,V1_20210RF
+
+``` r
+  DataCell <- computeStatistics(DataCell, 
+                                condition = list.conditions[[3]], 
+                                ref.condition = V1,
+                                comparison = paste0(names(list.conditions)[3], " vs. V1"), 
+                                test.statistics = "t.test",
+                                paired = FALSE)
+```
+
+    ## Computing of the t.test for: V8_10105LA,V8_10209HE,V8_10306CG,V8_10503DC,V8_11204CD,V8_20208AA,V8_20210RF vs. V1_10105LA,V1_10209HE,V1_10306CG,V1_10503DC,V1_11204CD,V1_20208AA,V1_20210RF
+
+## 3.2 Visualization of statistical analysis
+
+### 3.2.1 Volcano plot of statistical analysis
+
+The `plotVolcano()` function shows the clusters whose number of
+associated cells is statistically different between two biological
+conditions and/or timepoints.
+
+For each cluster, the p-value (indicated by -log10(p-value)) is
+represented on the Y-axis and the cell abundance fold-change (indicated
+by log2(fold-change)) is represented on the X-axis. The thresholds for
+the p-value (`th.pv` parameter) and the fold-change (`th.fc` parameter)
+are shown as dotted lines. Cell clusters down-represented are shown in
+green and cell clusters up-represented are shown in red.
+
+Here is an example for generating such representation:
+
+``` r
+# Volcano plot for differential analysis 
+plotVolcano(DataCell,
+            comparison = ("V7 vs. V1"),
+            th.pv = 1.3,
+            th.fc = 1.5,
+            plot.text = TRUE)
+```
+
+![](README_files/figure-markdown_github/plotVolcano-1.png)
+
+### 3.2.2 Heatmap of statistical analysis results
+
+The `plotHmStatistics()` function shows the differences in abundance
+between different conditions for each cluster.
+
+For each cluster, the p-value, the log2(fold-change) and the effect size
+(`statistics` parameters) can be represented. Down-represented clusters
+are represented in orange, and up-represented clusters are represented
+in blue. Furthermore, it is possible to choose the clusters to be
+represented with the `clusters` parameter.
+
+Here is an example for generating such representation:
+
+``` r
+# Heatmap of statistics
+hm.stats <- plotHmStatistics(DataCell, 
+                             clusters = NULL,
+                             statistics = "pvalue")
+
+gridExtra::grid.arrange(hm.stats)
+```
+
+![](README_files/figure-markdown_github/plotHmStatistics-1.png)
+
+## 3.3 Visualization of cell cluster abundances
+
+### 3.3.1 Heatmap of cell cluster abundances
+
+The `plotHmAbundances()` function shows the cellular distribution of
+samples within a given cluster.
+
+The more the sample is represented within the cluster, the redder the
+tile. If the sample is not represented in the cluster, then the tile
+will be black. The `plotHmAbundances()` function can be interesting to
+visualize the abundance of statistically different clusters between two
+conditions, as in the following example:
+
+``` r
+#Samples to study
+samples = selectSamples(DataCell, 
+                        timepoint = c("V1", "V6"))
+
+#Statistically different clusters
+stats <- DataCell@statistic[DataCell@statistic$comparison == "V6 vs. V1",]
+clusters = stats[stats$pvalue<=0.05 & abs(stats$lfc)>log(1.2)/log(2),]$clusters
+
+# Heatmap of abundances
+hm.abun <- plotHmAbundances(DataCell, 
+                            clusters = clusters,
+                            samples = samples,
+                            rescale = TRUE)
+
+gridExtra::grid.arrange(hm.abun)
+```
+
+![](README_files/figure-markdown_github/plotHmAbundances-1.png)
+
+### 3.3.2 Cell cluster abundances using a boxplot representation
+
+The `plotBoxPlot()` function shows the cell distribution between several
+biological conditions and/or timepoints for a single cluster or for a
+combined set of clusters.
+
+This display shows the abundances of the user-defined cell clusters
+(`clusters` parameter). It is possible to observe the cell abundance as
+a function of the biological condition or timepoint (`obervation`
+parameter). In addition, statistical tests can be performed and
+displayed directly on the boxplot.
+
+Here is an example for generating such representation:
+
+``` r
+# Boxplot for differential analysis
+plotBoxplot(DataCell, 
+            clusters = clusters,
+            samples = NULL,
+            value.y = "percentage",
+            observation = "timepoint", 
+            test.statistics = "t.test")
+```
+
+![](README_files/figure-markdown_github/plotBoxplot-1.png)
+
+Other possible parameters to customize the `plotBoxPlot` are:
+
+-   the `samples` argument, which specifies the biological samples to be
+    displayed
+-   the `paired` argument, which specifies if samples are paired in the
+    statistical comparison
+
+### 3.3.3 MDS representation based on cell cluster abundances
+
+The `plotMDS()` function shows similarities between samples or clusters
+based on cell cluster abundances.
+
+Each point represents a sample or a cluster (`levels` parameter) and the
+distance between the points is proportional to the Euclidean distance
+between these objects. It is possible to observe the cell abundance as a
+function of the biological condition or timepoint (`condition.samples`
+parameter)
+
+Here is an example for generating such representation:
+
+``` r
+# MDS
+plotMDS(DataCell, 
+        levels = "samples", 
+        condition.samples = "timepoint", 
+        clusters = NULL, 
+        samples = NULL,
+        plot.text = TRUE)
+```
+
+![](README_files/figure-markdown_github/plotMDS-1.png)
+
+Other possible parameters to customize the `plotMDS` are:
+
+-   the `clusters` argument, which specifies the identifiers of the
+    clusters to be displayed
+-   the `samples` argument, which specifies the biological samples to be
+    displayed
+
+### 3.3.4 PCA representation based on cell cluster abundances
+
+The `plotPCA()` function shows similarities between samples or clusters
+based on cell cluster abundances.
+
+Each point represents a sample or a cluster (`levels` parameter). It is
+possible to observe the cell abundance as a function of the biological
+condition or timepoint (`condition.samples` parameter)
+
+``` r
+# PCA
+plotPCA(DataCell, 
+        levels = "clusters", 
+        clusters = NULL, 
+        samples = NULL, 
+        condition.samples = "timepoint",
+        plot.text = TRUE)
+```
+
+![](README_files/figure-markdown_github/plotPCA1-1.png)
+
+``` r
+# PCA
+plotPCA(DataCell, 
+        levels = "samples", 
+        clusters = NULL, 
+        samples = NULL, 
+        condition.samples = "timepoint",
+        plot.text = TRUE)
+```
+
+![](README_files/figure-markdown_github/plotPCA2-1.png)
+
+Other possibl1e parameters to customize the `plotPCA` are:
+
+-   the `clusters` argument, which specifies the identifiers of the
+    clusters to be displayed
+-   the `samples` argument, which specifies the biological samples to be
+    displayed
+
+# 4.Advanced graphical representation
 
 It is important to note that all generated figures are `ggplot` objects
 and can be modified in different ways
 
-## 5.1 Modification of generated plot
+## 4.1 Modification of generated plot
 
 The first possible modifications are those concerning the `ggplot`
 object such as the title of the axes, or the title of graph
@@ -999,11 +924,7 @@ plotBoxplot(DataCell,
 
 ![](README_files/figure-markdown_github/plotBoxplotM-1.png)
 
-``` r
-# Possible to make it interactive
-```
-
-## 5.2 Combined graphical representation
+## 4.2 Combined graphical representation
 
 For the different generated `plotManifold` it is possible to assemble
 them into one figure with the `grid.arrange()` function.
@@ -1047,22 +968,9 @@ plotCombineHM(hm.exp, hm.stats)
     ## 10 10 (21-21, 2-17) arrange    gtable[layout]
     ## 11 11 (22-22, 3-16) arrange gtable[guide-box]
 
-## 5.3 Interactive graphics
+# 5. Advanced usage
 
-Finally, some figures such as `plotCellCounts`, `plotClustersCounts`,
-`plotCoordinates`, `plotVolcano`, `plotBoxplot`, `plotMDS` and `plotPCA`
-are interactive when saved in html format with the following command:
-
-``` r
-plot <- ggiraph::girafe(ggobj = plot,
-                        options = list(ggiraph::opts_sizing(width = .9),
-                                       ggiraph::opts_hover_inv(css = "opacity:0.6;"),
-                                       ggiraph::opts_hover(css = "fill:black;")))
-```
-
-# 6. Advanced usage
-
-## 6.1 Get samples
+## 5.1 Get samples
 
 The `selectSamples()` function allows create a vector containing the
 samples of interest according to their name, condition or timepoint.
@@ -1081,7 +989,7 @@ samples
     ## [1] "V1_10105LA" "V1_10209HE" "V1_10306CG" "V1_10503DC" "V1_11204CD"
     ## [6] "V1_20208AA" "V1_20210RF"
 
-## 6.2 Upsampling
+## 5.2 Upsampling
 
 The `performUpsampling()` function allows the data set to be implemented
 if downsampling has been performed.
@@ -1099,10 +1007,10 @@ DataCell <- performUpsampling(DataCell,
                               transform = "logicle")
 ```
 
-## 6.3 Metadata
+## 5.3 Metaclusters
 
 The `createMetaclusters()` function allows clusters to be combined to
-create a metaclusters.
+create a metacluster.
 
 This function should be used as many times as there are metaclusters to
 be created. Be careful, when metaclusters are created, the original
@@ -1112,11 +1020,11 @@ The procedure is as follows:
 
 ``` r
 DataCell <- createMetaclusters(DataCell, 
-                               clusters = xx, 
-                               metacluster.name = xx)
+                               clusters = c("58", "27"), 
+                               metacluster.name = "NewMetacluster1")
 ```
 
-## 6.4 Export
+## 5.4 Export
 
 The `export()` function allows extracting of the dataset in FCS or txt
 format with some parameters such as UMAP coordinates and clusters.

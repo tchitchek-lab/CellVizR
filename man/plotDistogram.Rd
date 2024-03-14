@@ -2,7 +2,7 @@
 % Please edit documentation in R/viewer.R
 \name{plotDistogram}
 \alias{plotDistogram}
-\title{Plots of a distogram of marker co-expression}
+\title{Plots a distogram of marker co-expression}
 \usage{
 plotDistogram(Celldata, clusters = NULL, method = c("pearson", "spearman"))
 }

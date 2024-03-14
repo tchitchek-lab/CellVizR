@@ -2,7 +2,7 @@
 % Please edit documentation in R/viewer.R
 \name{plotCoordinatesClusters}
 \alias{plotCoordinatesClusters}
-\title{Plots of phenotype of cell clusters using parallels coordinates}
+\title{Plots the phenotype of cell clusters using parallel coordinates}
 \usage{
 plotCoordinatesClusters(
   Celldata,
@@ -24,6 +24,6 @@ plotCoordinatesClusters(
 a ggplot2 object
 }
 \description{
-This function aims to visualize the characteristics of cell clusters using parallels coordinates.
+This function aims to visualize the characteristics of cell clusters using parallel coordinates.
 Each line in the representation corresponds to a biological sample for which marker/gene expressions are displayed.
 }

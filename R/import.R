@@ -1,4 +1,4 @@
-#' @title Imports of cell expression profiles from TSV or FCS files
+#' @title Imports cell expression profiles from TSV or FCS files
 #'
 #' @description This function aims to import acquired cell events from cytometric profiling into a Celldata object.
 #'
@@ -10,7 +10,7 @@
 #' @param files a character vector specifying the path of the tab-separated or FCS files to load
 #' @param filetype a character vector specifying the format of the loaded files. By default, FCS is used
 #' @param transform a character value containing the type of the transformation to apply. Possible values are: 'logicle', 'arcsinh', 'logarithmic' or 'none'
-#' @param d.method a character value containing the type of the downsampling to apply. Possible values are: 'none', 'uniform' or 'density'
+#' @param d.method a character value containing the type of the downsampling to apply. Possible values are: 'none' or 'uniform'
 #' @param parameters.method a list value containing the parameters to use for downsampling
 #' @param exclude.markers a character vector providing the marker names to be excluded during the import
 #' @param seed a numeric value providing the random seed to use during stochastic operations
@@ -22,9 +22,8 @@
 import <- function(files,
                    filetype = "fcs",
                    transform = c("logicle", "arcsinh", "logarithmic", "none"),
-                   d.method = c("none", "uniform", "density"),
-                   parameters.method = list("exclude.pctile" = 0.01, "target.pctile" = 0.05,
-                                            "target.number" = NULL, "target.percent" = 0.1),
+                   d.method = c("none", "uniform"),
+                   parameters.method = list("target.number" = NULL, "target.percent" = 0.1),
                    exclude.markers = NULL,
                    seed = 42) {
 
@@ -33,7 +32,7 @@ import <- function(files,
 
   checkmate::qassert(filetype, "S1")
   checkmate::qassert(transform, "S1")
-  if (d.method == "uniform" || d.method == "density") {
+  if (d.method == "uniform") {
     checkmate::qassert(parameters.method, "L+")
   }
   checkmate::qassert(d.method, "S1")
@@ -45,7 +44,7 @@ import <- function(files,
   samples <- c()
 
   message("Transformation method is: ", transform)
-  if (d.method == "uniform" || d.method == "density") {
+  if (d.method == "uniform") {
     message("Downsampling method is: ", d.method, " and parameters method are: ",
             paste0(names(parameters.method), " = ", parameters.method, collapse = ", "))
     message()
@@ -107,18 +106,6 @@ import <- function(files,
       exprs.raw <- exprs.raw[sampled, ]
       exprs.sub <- exprs.sub[sampled, ]
 
-    } else if (d.method == "density") {
-      all.exprs <- downsamplingDensity(file = file,
-                                       fcs = fcs,
-                                       exprs.raw = exprs.raw,
-                                       exprs.sub = exprs.sub,
-                                       exclude.pctile = parameters.method$exclude.pctile,
-                                       target.pctile = parameters.method$target.pctile,
-                                       target.percent = parameters.method$target.percent,
-                                       target.number = parameters.method$target.number)
-
-      exprs.raw <- all.exprs$exprs.raw
-      exprs.sub <- all.exprs$exprs.sub
     }
 
     if (file == files[1]) {
@@ -156,7 +143,7 @@ import <- function(files,
   return(res)
 }
 
-#' @title Imports of cell expression profiles from MTX files
+#' @title Imports cell expression profiles from MTX files
 #'
 #' @description This function aims to import acquired cell events from single-cell transcriptomic profiling into a Celldata object.
 #'
@@ -235,80 +222,6 @@ downsamplingUniform <- function(file,
     stop("Specify only one parameter")
   }
   return(sampled)
-}
-
-# @title Internal - Computes the downsampling density-based
-#
-# @description This function aims to perform a downsampling density-based cells
-#
-# @param file a character vector specifying the path of the tab-separated or FCS files to load
-# @param fcs
-# @param exprs.raw a data.frame providing the raw marker expressions
-# @param exprs.sub a data.frame providing the marker expressions
-# @param exclude.pctile a numeric value specifying the density threshold to be excluded
-# @param target.pctile a numeric value specifying the density threshold to be maintained
-# @param target.percent a numeric value providing the percentage of cells to downsample for each sample
-# @param target.number a numeric value providing the number of cells to downsample for each sample
-#
-# @return a list containing the two dowsampled expression data.frame
-#
-# @export
-#
-downsamplingDensity <- function(file,
-                                fcs,
-                                exprs.raw,
-                                exprs.sub,
-                                exclude.pctile,
-                                target.pctile,
-                                target.percent,
-                                target.number) {
-
-  idxs <- names(flowCore::markernames(fcs))
-  density <- spade::SPADE.density(exprs.sub[, idxs])
-
-  ### from spade
-  exprs.sub <- cbind(exprs.sub, "density" = density)
-
-  d.idxs <- match("density", colnames(exprs.sub))
-  boundary <- stats::quantile(exprs.sub[, d.idxs],
-                              c(exclude.pctile, target.pctile), names = FALSE)
-
-  idx.e <- exprs.sub[, d.idxs] > boundary[1]
-  exprs.sub <- exprs.sub[idx.e, ]
-  exprs.raw <- exprs.raw[idx.e, ]
-
-  if (!is.null(target.percent) && is.null(target.number)) {
-    target.number <- round(target.percent * nrow(exprs.sub))
-    message("Number of cells: ", target.number, " for ", basename(file))
-  }
-
-  density <- exprs.sub[, d.idxs]
-  if (is.null(target.number) && is.null(target.percent)) {
-    boundary <- boundary[2]
-    idx.c <- boundary / density > stats::runif(nrow(exprs.sub))
-    exprs.sub <- exprs.sub[idx.c, ]
-    exprs.raw <- exprs.raw[idx.c, ]
-
-  } else if (target.number < nrow(exprs.sub)) {
-    density.s <- sort(density)
-    cdf <- rev(cumsum(1 / rev(density.s)))
-    boundary <- target.number / cdf[1]
-    if (boundary > density.s[1]) {
-      targets <- (target.number - seq(1, length(density.s))) / cdf
-      boundary <- targets[which.min(targets - density.s > 0)]
-    }
-
-    idx.c <- boundary / density > stats::runif(length(density))
-    exprs.sub <- exprs.sub[idx.c, ]
-    exprs.raw <- exprs.raw[idx.c, ]
-  } else if (target.number > nrow(exprs.sub)) {
-    stop("Number of events is too high")
-  }
-  ### from spade
-
-  exprs.sub <- subset(exprs.sub, select = -c(get("density")))
-
-  return(list("exprs.raw" = exprs.raw, "exprs.sub" = exprs.sub))
 }
 
 #' @title Renames markers within a Celldata object

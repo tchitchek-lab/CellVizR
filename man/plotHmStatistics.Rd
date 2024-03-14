@@ -8,7 +8,8 @@ plotHmStatistics(
   Celldata,
   clusters = NULL,
   statistics = c("pvalue", "lfc", "effsize"),
-  saturation = 3
+  saturation = 3,
+  pval.thr = 0.05
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ plotHmStatistics(
 \item{statistics}{a character value providing the name of the statistic to display. Possible values are: 'pvalue' for p-value, 'lfc' for log2 fold change or 'eff' for effect size}
 
 \item{saturation}{a numeric value providing the saturation value for statistics to display}
+
+\item{pval.thr}{a numeric value defining the p-value threshold below which an asterisk is displayed in a tile}
 }
 \value{
 a ggplot2 object

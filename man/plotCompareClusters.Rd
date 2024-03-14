@@ -17,5 +17,5 @@ plotCompareClusters(Celldata, clusters1, clusters2)
 a ggplot2 object
 }
 \description{
-This function aims to visualise the expression of a given marker in each cluster.
+This function aims to visualize the expression of a given marker in each cluster.
 }
