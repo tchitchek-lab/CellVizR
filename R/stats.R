@@ -87,8 +87,8 @@ computeStatistics <- function(Celldata,
   stats$lfc <- as.numeric(stats$lfc)
   stats$effsize <- as.numeric(stats$effsize)
   
-  if(p.adjust!="none"){
-	stats$pvalue = p.adjust(stats$pvalue,method="p.adjust")
+  if(p.adjust != "none"){
+	stats$pvalue = p.adjust(stats$pvalue,method = p.adjust)
   }
   
   if (nrow(Celldata@statistic) == 0) {
